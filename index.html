@@ -563,16 +563,19 @@ const bacteria = [
     desc:'The anthrax bacterium. Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. A significant bioterrorism concern.',
     facts:[{l:'Shape',v:'Large rod'},{l:'Gram',v:'Positive'},{l:'Spore',v:'Central'},{l:'Rating',v:'Lethal'},{l:'Capsule',v:'Poly-D-glutamate'}],
     reviews:[]
-  }
-]}, 
-  {
+  }, 
+{
     id: 13, 
-    name: 'Nocardia',
-    sci: 'Nocardia asteroides',
-    severity: 'Lethal', 
+    name: 'Nocardia', 
+    sci: 'Nocardia asteroides', 
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Nocardia_in_modified_Ziehl-Neelsen_staining.jpg/960px-Nocardia_in_modified_Ziehl-Neelsen_staining.jpg',
-    emoji: '🟢'
-  };
+    emoji: '🟢',
+    desc: 'Weakly acid-fast, opportunistic pathogen forming beautiful branching, beaded filaments that resemble fungal hyphae under the microscope. Commonly causes pulmonary or cutaneous infections.',
+    facts: [{l:'Shape',v:'Branching filament'},{l:'Stain',v:'Modified Acid-fast'},{l:'Rating',v:'Lethal'},{l:'O₂',v:'Strict aerobe'}],
+    reviews: []
+  }
 
 let currentFilter = 'all';
 let currentMicrobe = null;
