@@ -14,7 +14,7 @@ const bacteria = [
     name: "E. coli",
     sci: "Escherichia coli",
     type: "gram-negative",
-    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/EscherichiaColi_NIAID.jpg/400px-EscherichiaColi_NIAID.jpg",
+    img: "https://www.cdc.gov/ecoli/media/images/2024/04/ecoli_16.9-ratio.jpg",
     emoji: "🦠",
     desc: "One of the most studied organisms in biology. Lives in the intestines of warm-blooded animals. Mostly harmless but some strains cause severe food poisoning.",
     facts: [
