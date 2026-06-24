@@ -3,10 +3,7 @@
 // ============================================
 // HOW TO EDIT:
 // - Change any text between the quote marks " "
-// - To add a new bacterium, copy one block and paste it below
-// - For images: go to Google Images, right-click any image, 
-//   click "Copy image address", paste it between the quotes for img
-// - Save the file and re-upload to GitHub
+// - To add images: Upload a picture to GitHub, copy its filename, and paste it inside the "img" quotes (e.g. "staph.jpg")
 // ============================================
 
 const bacteria = [
@@ -14,7 +11,7 @@ const bacteria = [
     name: "E. coli",
     sci: "Escherichia coli",
     type: "gram-negative",
-    img: "https://www.cdc.gov/ecoli/media/images/2024/04/ecoli_16.9-ratio.jpg",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/EscherichiaColi_NIAID.jpg/400px-EscherichiaColi_NIAID.jpg",
     emoji: "🦠",
     desc: "One of the most studied organisms in biology. Lives in the intestines of warm-blooded animals. Mostly harmless but some strains cause severe food poisoning.",
     facts: [
@@ -64,8 +61,35 @@ const bacteria = [
     ]
   },
 
-  // ---- ADD YOUR OWN BACTERIA BELOW THIS LINE ----
-  // Copy the block above (from the { to the }, ) and paste it here
-  // Then change the text inside the quote marks
+  {
+    name: "Pseudomonas",
+    sci: "Pseudomonas aeruginosa",
+    type: "gram-negative",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Pseudomonas_aeruginosa_Gram.jpg/400px-Pseudomonas_aeruginosa_Gram.jpg",
+    emoji: "🟢",
+    desc: "An opportunistic pathogen notorious for causing serious hospital-acquired infections. Produces a distinctive sweet, grape-like odor and blue-green pyocyanin pigment on agar plates.",
+    facts: [
+      { l: "Shape", v: "Rod" },
+      { l: "Gram", v: "Negative" },
+      { l: "Habitat", v: "Moist environments" },
+      { l: "Risk", v: "High" }
+    ],
+    reviews: []
+  },
 
+  {
+    name: "C. botulinum",
+    sci: "Clostridium botulinum",
+    type: "anaerobe",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Clostridium_botulinum.jpg/400px-Clostridium_botulinum.jpg",
+    emoji: "⚰️",
+    desc: "An obligate anaerobic, spore-forming rod that produces botulinum toxin—the most lethal neurotoxin known. Found in soil and improperly canned food products.",
+    facts: [
+      { l: "Shape", v: "Rod" },
+      { l: "Gram", v: "Positive" },
+      { l: "Oxygen", v: "Strict Anaerobe" },
+      { l: "Risk", v: "Extreme" }
+    ],
+    reviews: []
+  }
 ];
