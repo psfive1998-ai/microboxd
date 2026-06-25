@@ -1046,7 +1046,7 @@ const bacteria = [
     type: 'gram-positive',
     gramLabel: 'Gram +',
     gramClass: 'gram-pos',
-    img: 'https://microbecanvas.com/uploads/image/bacterien/corynebacterium-jeikeium/corynebacterium-jeikeium-bloedkweek-350x220.jpg',
+    img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780750601870500080-f03-02-9780750601870.jpg',
     emoji: '🏥',
     desc: 'A prominent opportunistic pathogen among the coryneform bacteria, highly notorious for causing nosocomial infections in immunocompromised or neutropenic patients with indwelling medical devices. It is characterized by its remarkable multi-drug resistance profile, frequently leaving vancomycin as the only effective treatment option.',
     facts: [
@@ -1115,6 +1115,142 @@ const bacteria = [
       { l: 'Role', v: 'Probiotic / Industrial Fermentation' },
       { l: 'Growth', v: 'Facultative anaerobe' },
       { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 42,
+    name: 'M. leprae',
+    sci: 'Mycobacterium leprae',
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Mycobacterium_leprae_in_Magnification_of_1000X.jpg/960px-Mycobacterium_leprae_in_Magnification_of_1000X.jpg',
+    emoji: '🪵',
+    desc: 'An intracellular, acid-fast bacterium that causes leprosy (Hansen\'s disease). It has an incredibly long doubling time (around two weeks) and holds a unique preference for cooler temperatures, tropically targeting peripheral nerves, skin, and mucous membranes. This leads to characteristic nerve damage, loss of sensation, and disfiguring skin lesions.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Rod (grouped in globi)' },
+      { l: 'Stain', v: 'Acid-fast (Ziehl-Neelsen / Fite)' },
+      { l: 'Target', v: 'Schwann cells / Peripheral nerves' },
+      { l: 'Cultivable', v: 'No (requires animal models like armadillos)' },
+      { l: 'Growth Rate', v: 'Extremely slow (months to years)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 43,
+    name: 'MAC (M. avium complex)',
+    sci: 'Mycobacterium avium-intracellulare',
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Mycobacterium_avium-intracellulare_01.png/960px-Mycobacterium_avium-intracellulare_01.png',
+    emoji: '🕊️',
+    desc: 'A grouping of non-tuberculous mycobacteria (NTM) commonly found in soil and water. While harmless to healthy individuals, it is a formidable opportunistic pathogen in immunocompromised patients—particularly those with advanced HIV/AIDS or pre-existing lung disease—causing severe disseminated infections or chronic pulmonary disease mimicking tuberculosis.',
+    facts: [
+      { l: 'Shape', v: 'Straight or slightly curved Rod' },
+      { l: 'Stain', v: 'Acid-fast' },
+      { l: 'Classification', v: 'Runyon Group III (Non-chromogen)' },
+      { l: 'Environment', v: 'Ubiquitous (Water, soil, house dust)' },
+      { l: 'Risk Factor', v: 'Low CD4 count (<50 cells/µL)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 44,
+    name: 'B. bifidum',
+    sci: 'Bifidobacterium bifidum',
+    severity: 'benign',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/23372/23372_lores.jpg',
+    emoji: '👶',
+    desc: 'One of the most prominent probiotic bacterial residents of the mammalian gut, dominating the intestinal microbiota of breastfed infants. It is a non-spore-forming, strictly anaerobic rod that characteristically branches into distinct "Y" or "V" shapes, actively fermenting carbohydrates to produce lactic and acetic acids that naturally suppress gut pathogens.',
+    facts: [
+      { l: 'Shape', v: 'Branched Rod (Y or V shapes)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'O₂', v: 'Strict Anaerobe' },
+      { l: 'Role', v: 'Probiotic / Infant Gut Pioneer' },
+      { l: 'Fermentation', v: 'Heterolactic (No gas production)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 45,
+    name: 'B. infantis',
+    sci: 'Bifidobacterium infantis',
+    severity: 'benign',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Bifidobacterium_longum_en_microscopie_%C3%A9lectronique.jpg/960px-Bifidobacterium_longum_en_microscopie_%C3%A9lectronique.jpg',
+    emoji: '🍼',
+    desc: 'A specialized infant gut probiotic that plays a crucial evolutionary role in newborn development. It is uniquely equipped with a complete suite of genes dedicated to capturing and digesting Human Milk Oligosaccharides (HMOs)—complex sugars in breastmilk that humans cannot digest themselves—allowing it to swiftly colonize the gut, lower intestinal pH, and train the developing immune system.',
+    facts: [
+      { l: 'Shape', v: 'Clubbed, Pleomorphic Rod (Y-shaped)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Specialty', v: 'HMO Metabolism Utilization' },
+      { l: 'O₂', v: 'Strict Anaerobe' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 46,
+    name: 'Streptomyces griseus',
+    sci: 'Streptomyces griseus',
+    severity: 'benign',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Streptomyces_griseus_color_enhanced_scanning_electron_micrograph..jpg/960px-Streptomyces_griseus_color_enhanced_scanning_electron_micrograph..jpg',
+    emoji: '💊',
+    desc: 'A soil-dwelling, filamentous bacterium famous for its historic role in medicine. It forms an extensively branched mycelium resembling fungal hyphae and reproduces by producing chains of spores (conidia). It is celebrated as the original source of streptomycin—the very first antibiotic discovered that successfully cured tuberculosis—sparking a golden era of soil microflora screening.',
+    facts: [
+      { l: 'Shape', v: 'Branching Filamentous Hyphae' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Claim to Fame', v: 'Source of Streptomycin (Albert Schatz, 1943)' },
+      { l: 'O₂', v: 'Strict Aerobe' },
+      { l: 'Colonies', v: 'Powdery / Chalky texture' }
+    ],
+    reviews: []
+  },
+ {
+    id: 47,
+    name: 'Streptomyces coelicolor',
+    sci: 'Streptomyces coelicolor',
+    severity: 'benign',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/NFDI4BIOIMAGE_Calendar_July_2025.png/960px-NFDI4BIOIMAGE_Calendar_July_2025.png',
+    emoji: '🎨',
+    desc: 'The undisputed premier model organism for studying actinomycete genetics, cell differentiation, and antibiotic biosynthesis. Living primarily in soil, it undergoes a complex lifecycle transitioning from substrate mycelium to aerial hyphae and spores. It is visually striking due to its production of actinorhodin, a pH-responsive pigment that changes color from red to vibrant blue as the colony matures.',
+    facts: [
+      { l: 'Shape', v: 'Filamentous / Branching threads' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Pigment', v: 'Actinorhodin (pH-dependent Red/Blue)' },
+      { l: 'Genomics', v: 'Massive linear chromosome (~8.7 Mb)' },
+      { l: 'O₂', v: 'Strict Aerobe' }
+    ],
+    reviews: []
+  },
+  {
+    id: 48,
+    name: 'Gardnerella vaginalis',
+    sci: 'Gardnerella vaginalis',
+    severity: 'moderate',
+    type: 'gram-variable',
+    gramLabel: 'Gram Var',
+    gramClass: 'gram-var',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/ClueCell_de_vaginose_%C3%A0_Gardnerella.jpg/960px-ClueCell_de_vaginose_%C3%A0_Gardnerella.jpg',
+    emoji: '🧪',
+    desc: 'A facultatively anaerobic, gram-variable rod that is the primary clinical hallmark of bacterial vaginosis (BV). While it has a gram-positive cell wall structure, the wall is exceptionally thin, causing it to often stain gram-negative or variable. In microscopic examinations of vaginal discharge, it is famously diagnosed by the presence of "clue cells"—epithelial cells completely covered in a dense biofilm of these tiny coccobacilli.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Coccobacillus' },
+      { l: 'Gram', v: 'Variable (Gram-positive wall structure)' },
+      { l: 'Key Marker', v: 'Clue Cells on Wet Mount' },
+      { l: 'Catalase', v: 'Negative' },
+      { l: 'Oxidase', v: 'Negative' }
     ],
     reviews: []
   },
