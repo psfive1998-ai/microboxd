@@ -1254,6 +1254,106 @@ const bacteria = [
     ],
     reviews: []
   },
+  {
+    id: 49,
+    name: 'Mycoplasma pneumoniae',
+    sci: 'Mycoplasma pneumoniae',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://scx1.b-cdn.net/csz/news/800a/2025/essentiality-scan-reve.jpg',
+    emoji: '🫁',
+    desc: 'An atypical bacterium famous for lacking a peptidoglycan cell wall entirely, making it completely resistant to beta-lactam antibiotics like penicillin. It is the primary causative agent of "walking pneumonia," a milder form of community-acquired pneumonia. It uses a specialized terminal attachment organelle to burrow through respiratory mucus and adhere strictly to ciliated epithelial cells, damaging them via hydrogen peroxide production.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic / Spindle-shaped' },
+      { l: 'Gram', v: 'None (Stains poorly; lacks cell wall)' },
+      { l: 'Key Disease', v: 'Walking Pneumonia / Tracheobronchitis' },
+      { l: 'Membrane', v: 'Contains Sterols (requires cholesterol to grow)' },
+      { l: 'Diagnosis', v: 'PCR / Serology (Cold agglutinins titer)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 50,
+    name: 'Mycoplasma genitalium',
+    sci: 'Mycoplasma genitalium',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYACb3o2u8gaSmAgxrHCSdUR4hoXGpF5iDR6iPR-E5JnRkNAbsVdJ7YHM&s=10',
+    emoji: '🧬',
+    desc: 'A sexually transmitted atypical bacterium notable for possessing one of the smallest genomes of any free-living organism (~580 kb). Lacking a cell wall, it is highly pleomorphic and intrinsically resistant to penicillins. It features a distinctive flask-shaped structure with a prominent terminal tip organelle used to adhere to and invade urogenital epithelial cells, causing nongonococcal urethritis and pelvic inflammatory disease.',
+    facts: [
+      { l: 'Shape', v: 'Flask / Pear-shaped with terminal tip' },
+      { l: 'Gram', v: 'None (Lacks cell wall structure)' },
+      { l: 'Genome Size', v: 'Extremely minimal (~580 kilobases)' },
+      { l: 'Transmission', v: 'Sexually transmitted infection (STI)' },
+      { l: 'Resistance', v: 'High rate of macrolide (azithromycin) resistance' }
+    ],
+    reviews: []
+  },
+  {
+    id: 51,
+    name: 'Mycoplasma hominis',
+    sci: 'Mycoplasma hominis',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/11024/11024_lores.jpg',
+    emoji: '🍳',
+    desc: 'An opportunistic, wall-less bacterium frequently found as a commensal resident of the human lower urogenital tract. When the vaginal ecosystem is disrupted, it can proliferate alongside other anaerobes, contributing to bacterial vaginosis, pelvic inflammatory disease, and post-abortal or postpartum fever. On agar media, its tiny colonies exhibit a classic, distinctive "fried-egg" visual morphology.',
+    facts: [
+      { l: 'Shape', v: 'Highly pleomorphic (Lacks cell wall)' },
+      { l: 'Gram', v: 'None (Does not respond to Gram stain)' },
+      { l: 'Colony Appearance', v: '"Fried-egg" morphology on A7/A8 agar' },
+      { l: 'Metabolism', v: 'Metabolizes arginine (unlike M. pneumoniae)' },
+      { l: 'Intrinsic Resistance', v: 'Resistant to Erythromycin (Macrolides)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 52,
+    name: 'Mycoplasma amphoriforme',
+    sci: 'Mycoplasma amphoriforme',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://www.microbiologyresearch.org/docserver/ahah/fulltext/micro/152/7/2181fig3_thmb.gif', // Using family representative due to extreme fastidiousness/lack of open SEMs
+    emoji: '🏺',
+    desc: 'An emerging atypical pathogen named for its distinct flask or amphora-like cell morphology. Devoid of a peptidoglycan cell wall, it relies on a specialized polar tip with gliding motility to colonize respiratory epithelium. It is clinically significant as a cause of chronic, relapsing-remitting lower respiratory tract infections, uniquely dominating the airway microbiota of primary antibody-deficient (PAD) and immunocompromised hosts.',
+    facts: [
+      { l: 'Shape', v: 'Flask / Amphora-shaped with polar tip' },
+      { l: 'Gram', v: 'None (Cell wall-deficient Mollicutes)' },
+      { l: 'Primary Target', v: 'Immunocompromised / CVID patients' },
+      { l: 'Metabolism', v: 'Ferments Glucose (Arginine/Urease negative)' },
+      { l: 'Colony Appearance', v: 'Small, convex with "ground glass" texture' }
+    ],
+    reviews: []
+  },
+  {
+    id: 53,
+    name: 'Acholeplasma laidlawii',
+    sci: 'Acholeplasma laidlawii',
+    severity: 'benign',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Acholeplasma_laidlawii_PG8_Cells_and_EVs_%28cropped%29.jpg/960px-Acholeplasma_laidlawii_PG8_Cells_and_EVs_%28cropped%29.jpg',
+    emoji: '🧫',
+    desc: 'A wall-less, highly pleomorphic saprophytic bacterium belonging to the order Acholeplasmatales. Unlike its close relatives in the Mycoplasma genus, it is fully sterol-independent, meaning it can synthesize its own membrane lipids and grow perfectly without exogenous cholesterol. It is notoriously famous as a widespread, fastidious contaminant of mammalian cell cultures and commercial bovine serum stocks.',
+    facts: [
+      { l: 'Shape', v: 'Highly pleomorphic (Spheres to filaments)' },
+      { l: 'Gram', v: 'None (Lacks peptidoglycan cell wall)' },
+      { l: 'Cholesterol', v: 'Sterol-independent (Unique among mollicutes)' },
+      { l: 'Habitat', v: 'Soil, sewage, compost, and cell cultures' },
+      { l: 'Genome', v: 'Single circular chromosome (~1.5 Mb)' }
+    ],
+    reviews: []
+  },
 ];
 
 
