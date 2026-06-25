@@ -352,10 +352,7 @@
       background: var(--accent); color: var(--accent-fg);
       border: none; border-radius: 8px; padding: 9px 20px;
       font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font);
-    }
-  </style>
-</head>
-<body>
+    }<body>
 
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
@@ -364,48 +361,71 @@
   </div>
 </div>
 
-<div class="hero">
-  <div class="hero-eyebrow">🦠 Bacteria Edition</div>
-  <h1>What have you <em>encountered?</em></h1>
-  <div class="search-wrap">
-    <i class="ti ti-search"></i>
-    <input type="text" id="searchInput" placeholder="Search by name, shape, or habitat..." oninput="renderGrid()" />
+<div id="discoverView" class="app-view active-view">
+  <div class="hero">
+    <div class="hero-eyebrow">🦠 Bacteria Edition</div>
+    <h1>What have you <em>encountered?</em></h1>
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, shape, or habitat..." oninput="renderGrid()" />
+    </div>
+  </div>
+
+  <div class="live-feed-box">
+    <div class="live-feed-tag"><div class="pulse-dot"></div>Live Feed</div>
+    <div class="live-feed-text" id="liveFeedText">Loading global activity network...</div>
+  </div>
+
+  <div class="filters">
+    <div class="pill active" onclick="setFilter('all',this)">All</div>
+    <div class="pill" onclick="setFilter('gram-positive',this)">Gram-positive</div>
+    <div class="pill" onclick="setFilter('gram-negative',this)">Gram-negative</div>
+    <div class="pill" onclick="setFilter('acid-fast',this)">Acid-fast</div>
+    <div class="pill" onclick="setFilter('spirochete',this)">Spirochetes</div>
+    <div class="pill" onclick="setFilter('anaerobe',this)">Anaerobes</div>
+  </div>
+
+  <div class="section-label">Popular bacteria</div>
+  <div class="micro-grid" id="microGrid"></div>
+</div>
+
+<div id="logView" class="app-view">
+  <div class="section-label">Your Encounters</div>
+  <div class="micro-grid" id="loggedGrid"></div>
+  <div id="emptyLogPlaceholder" class="placeholder-view">
+    <i class="ti ti-biohazard" style="font-size: 48px; color: var(--border); margin-bottom: 12px; display: block; text-align: center;"></i>
+    <h2 style="font-family: var(--serif); text-align: center; font-size: 20px; font-weight: 400; margin-bottom: 6px;">Your archive is empty</h2>
+    <p style="text-align: center; color: var(--muted); font-size: 13px; line-height: 1.5;">Specimens logged out in the field will appear inside this workspace collection tracker.</p>
   </div>
 </div>
 
-<div class="live-feed-box">
-  <div class="live-feed-tag"><div class="pulse-dot"></div>Live Feed</div>
-  <div class="live-feed-text" id="liveFeedText">Loading global activity network...</div>
+<div id="communityView" class="app-view">
+  <div class="placeholder-view" style="padding: 60px 24px; text-align: center; color: var(--muted);">
+    <i class="ti ti-users" style="font-size: 48px; color: var(--border); margin-bottom: 12px; display: block;"></i>
+    <h2 style="font-family: var(--serif); color: var(--text); font-size: 20px; font-weight: 400; margin-bottom: 6px;">Global Lab Networks</h2>
+    <p style="font-size: 13px; line-height: 1.5;">Syncing active feeds from academic facilities, diagnostic lines, and regional micro-counters...</p>
+  </div>
 </div>
 
-<div class="filters">
-  <div class="pill active" onclick="setFilter('all',this)">All</div>
-  <div class="pill" onclick="setFilter('gram-positive',this)">Gram-positive</div>
-  <div class="pill" onclick="setFilter('gram-negative',this)">Gram-negative</div>
-  <div class="pill" onclick="setFilter('acid-fast',this)">Acid-fast</div>
-  <div class="pill" onclick="setFilter('spirochete',this)">Spirochetes</div>
-  <div class="pill" onclick="setFilter('anaerobe',this)">Anaerobes</div>
-</div>
-
-<div class="section-label">Popular bacteria</div>
-<div class="micro-grid" id="microGrid"></div>
-
-<div class="profile-section">
-  <div class="profile-card">
-    <div class="profile-avatar">YO</div>
-    <div class="profile-info">
-      <div class="name">Your collection</div>
-      <div class="stats" id="profileStats">Start logging bacteria to build your profile</div>
+<div id="profileView" class="app-view">
+  <div class="section-label">Your Profile Workspace</div>
+  <div class="profile-section">
+    <div class="profile-card">
+      <div class="profile-avatar">YO</div>
+      <div class="profile-info">
+        <div class="name">Your collection</div>
+        <div class="stats" id="profileStats">Start logging bacteria to build your profile</div>
+      </div>
+      <div class="rank-pill" id="rankPill">Novice</div>
     </div>
-    <div class="rank-pill" id="rankPill">Novice</div>
   </div>
 </div>
 
 <div class="nav-tabs">
-  <div class="nav-tab active"><i class="ti ti-home"></i>Discover</div>
-  <div class="nav-tab"><i class="ti ti-book"></i>My log</div>
-  <div class="nav-tab"><i class="ti ti-users"></i>Community</div>
-  <div class="nav-tab"><i class="ti ti-user"></i>Profile</div>
+  <div class="nav-tab active" onclick="switchTab('discover', this)"><i class="ti ti-home"></i>Discover</div>
+  <div class="nav-tab" onclick="switchTab('log', this)"><i class="ti ti-book"></i>My log</div>
+  <div class="nav-tab" onclick="switchTab('community', this)"><i class="ti ti-users"></i>Community</div>
+  <div class="nav-tab" onclick="switchTab('profile', this)"><i class="ti ti-user"></i>Profile</div>
 </div>
 
 <div class="detail-overlay" id="detailOverlay">
