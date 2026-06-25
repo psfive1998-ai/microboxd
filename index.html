@@ -1776,6 +1776,7 @@ const bacteria = [
 
 
 
+// ── PASTE YOUR BACTERIA ARRAY DATA HERE ──
 
 let currentFilter = 'all';
 let currentMicrobe = null;
@@ -1808,13 +1809,17 @@ function runLiveFeed() {
   feedEl.textContent = dynamicEncounters[0];
 }
 
-/* ── TAB ROUTING PANEL CONTROLLER ── */
+/* ── TAB NAVIGATION PANEL CONTROLLER ── */
 function switchTab(tabId, el) {
   document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
   document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active-view'));
   
   el.classList.add('active');
-  document.getElementById(tabId + 'View').classList.add('active-view');
+  
+  // Adjusted target mapping to handle your markup views correctly
+  const finalId = tabId === 'discover' ? 'discoverView' : tabId + 'View';
+  const targetView = document.getElementById(finalId);
+  if (targetView) targetView.classList.add('active-view');
   
   if (tabId === 'log') {
     renderLoggedGrid();
@@ -2030,7 +2035,3 @@ window.onload = function() {
   renderGrid();
   runLiveFeed();
 };
-</script>
-
-</body>
-</html>
