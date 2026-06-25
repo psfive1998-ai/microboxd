@@ -1784,7 +1784,6 @@ let logged = new Set();
 let userReviews = [];
 let pendingPhotos = [];
 
-/* ── LIVE FEED RADAR SIMULATION ── */
 const dynamicEncounters = [
   'User "lab_rat99" just logged an E. coli sample in Beijing, China',
   'Dr. Maria isolated a lethal strain of M. tuberculosis in Nairobi, Kenya',
@@ -1809,7 +1808,21 @@ function runLiveFeed() {
   feedEl.textContent = dynamicEncounters[0];
 }
 
+/* ── TAB ROUTING PANEL CONTROLLER ── */
+function switchTab(tabId, el) {
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active-view'));
+  
+  el.classList.add('active');
+  document.getElementById(tabId + 'View').classList.add('active-view');
+  
+  if (tabId === 'log') {
+    renderLoggedGrid();
+  }
+}
+
 function renderGrid() {
+  if (typeof bacteria === 'undefined') return;
   const q = document.getElementById('searchInput').value.toLowerCase();
   const grid = document.getElementById('microGrid');
   const filtered = bacteria.filter(b => {
@@ -1821,12 +1834,31 @@ function renderGrid() {
     grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted);font-size:13px;">No bacteria found matching "${document.getElementById('searchInput').value}"</div>`;
     return;
   }
-  grid.innerHTML = filtered.map(b => `
+  grid.innerHTML = filtered.map(b => generateCardHtml(b)).join('');
+}
+
+function renderLoggedGrid() {
+  if (typeof bacteria === 'undefined') return;
+  const grid = document.getElementById('loggedGrid');
+  const placeholder = document.getElementById('emptyLogPlaceholder');
+  const loggedItems = bacteria.filter(b => logged.has(b.id));
+  
+  if (loggedItems.length === 0) {
+    grid.innerHTML = '';
+    placeholder.style.display = 'block';
+  } else {
+    placeholder.style.display = 'none';
+    grid.innerHTML = loggedItems.map(b => generateCardHtml(b)).join('');
+  }
+}
+
+function generateCardHtml(b) {
+  return `
     <div class="micro-card" onclick="openDetail(${b.id})">
       <div class="card-img-wrap">
         <img class="card-img" src="${b.img}" alt="${b.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
         <div class="card-placeholder">
-          <span class="emoji">${b.emoji}</span>
+          <span class="emoji">${b.emoji || '🦠'}</span>
           <span class="label">No image</span>
         </div>
         <div class="gram-badge ${b.gramClass}">${b.gramLabel}</div>
@@ -1842,7 +1874,7 @@ function renderGrid() {
         </div>
       </div>
     </div>
-  `).join('');
+  `;
 }
 
 function setFilter(f, el) {
@@ -1853,6 +1885,7 @@ function setFilter(f, el) {
 }
 
 function openDetail(id) {
+  if (typeof bacteria === 'undefined') return;
   currentMicrobe = bacteria.find(b => b.id === id);
   document.getElementById('sheetName').textContent = currentMicrobe.name;
   document.getElementById('sheetSci').textContent = currentMicrobe.sci;
@@ -1897,6 +1930,7 @@ function toggleLog() {
   }
   openDetail(currentMicrobe.id);
   renderGrid();
+  renderLoggedGrid();
   updateProfile();
 }
 
@@ -1976,6 +2010,7 @@ function submitReview() {
 
 function updateProfile() {
   const total = logged.size;
+  const totalBact = typeof bacteria !== 'undefined' ? bacteria.length : 0;
   document.getElementById('loggedCount').textContent = `${total} logged`;
   const stats = document.getElementById('profileStats');
   const rank = document.getElementById('rankPill');
@@ -1984,14 +2019,13 @@ function updateProfile() {
     stats.textContent = 'Start logging bacteria to build your profile';
     rank.textContent = 'Novice';
   } else {
-    stats.textContent = `You have cataloged ${total} species out of ${bacteria.length}.`;
+    stats.textContent = `You have cataloged ${total} species out of ${totalBact}.`;
     if (total <= 3) rank.textContent = 'Lab Assistant';
     else if (total <= 8) rank.textContent = 'Microbiologist';
     else rank.textContent = 'Chief Pathologist';
   }
 }
 
-// Global initialization
 window.onload = function() {
   renderGrid();
   runLiveFeed();
