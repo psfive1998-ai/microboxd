@@ -2043,9 +2043,16 @@ function updateProfile() {
 }
 
 window.onload = function() {
+
+  const saved = localStorage.getItem('myLoggedBacteria');
+  if (saved) {
+    logged = new Set(JSON.parse(saved));
+  }
+
   renderGrid();
   runLiveFeed();
-};
+  updateProfile();
+}; 
 </script>
 
 </body>
