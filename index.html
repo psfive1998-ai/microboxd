@@ -2052,8 +2052,11 @@ window.onload = function() {
   renderGrid();
   runLiveFeed();
   updateProfile();
-}; 
+  if (typeof renderLoggedGrid === 'function') {
+    renderLoggedGrid();
+  }
+};
 </script>
-
+  
 </body>
 </html>
