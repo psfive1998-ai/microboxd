@@ -1897,7 +1897,7 @@ const bacteria = [
     type: 'gram-negative',
     gramLabel: 'Gram -',
     gramClass: 'gram-neg',
-    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/21921/21921_lores.jpg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vibrio_parahaemolyticus_01.jpg/960px-Vibrio_parahaemolyticus_01.jpg',
     emoji: '🍤',
     desc: 'A motile, curved, rod-shaped, Gram-negative bacterium that naturally inhabits warm coastal and estuarine waters globally. It is a leading cause of seafood-borne bacterial gastroenteritis worldwide, typically contracted via the consumption of raw or undercooked shellfish, particularly oysters and shrimp. Unlike its highly lethal relative V. vulnificus, it generally causes a self-limiting, watery diarrhea accompanied by abdominal cramps, nausea, vomiting, and fever. Its pathogenicity is primarily driven by the production of a thermostable direct hemolysin (TDH).',
     facts: [
@@ -1906,6 +1906,89 @@ const bacteria = [
       { l: 'Key Disease', v: 'Acute gastroenteritis (Watery diarrhea, cramps, vomiting)' },
       { l: 'Growth Media', v: 'Halophilic (requires NaCl); forms green to blue-green colonies on TCBS agar (sucrose-negative)' },
       { l: 'Differentiator', v: 'Distinguished by the Kanagawa phenomenon (beta-hemolysis on high-salt Wagatsuma agar via TDH production)' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 78, 
+    name: 'Campylobacter jejuni',
+    sci: 'Campylobacter jejuni',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ARS_Campylobacter_jejuni.jpg/960px-ARS_Campylobacter_jejuni.jpg',
+    emoji: '🐓',
+    desc: 'A helical, comma, or "gull-wing" shaped, Gram-negative, microaerophilic bacterium that is one of the most common causes of bacterial gastroenteritis worldwide. Transmission typically occurs through the consumption of undercooked poultry, unpasteurized milk, or contaminated water. The infection causes acute, often bloody diarrhea, severe abdominal pain, and fever. A critical clinical association is its role as a major antecedent trigger for Guillain-Barré syndrome (an acute demyelinating polyneuropathy) and reactive arthritis, driven by molecular mimicry between bacterial lipooligosaccharides and human nerve gangliosides.',
+    facts: [
+      { l: 'Shape', v: 'Spiral, curved, or "gull-wing" shaped rods (highly motile with a characteristic "darting" motility)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Campylobacteriosis (Bloody diarrhea, mimicking acute appendicitis) / Guillain-Barré syndrome link' },
+      { l: 'Growth Media', v: 'Microaerophilic (requires reduced O2, increased CO2); grows best at 42°C on selective media like Skirrow or Campy-BAP agar' },
+      { l: 'Differentiator', v: 'Oxidase and catalase positive; thermophilic (42°C growth helps differentiate it from other enteric pathogens)' }
+    ],
+    reviews: []
+},
+
+{
+    id: 79, 
+    name: 'Bacteroides fragilis',
+    sci: 'Bacteroides fragilis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/10806/10806_lores.jpg',
+    emoji: '💥',
+    desc: 'An obligate anaerobic, Gram-negative, pleomorphic rod-shaped bacterium that constitutes a major component of the normal human colonic microbiota. While generally commensal, it becomes a highly significant opportunistic pathogen when the mucosal barrier is breached due to trauma, surgery, or disease. It is the most common anaerobe isolated from intra-abdominal abscesses, peritonitis, and pelvic inflammatory infections. Its pathogenicity is heavily driven by a prominent capsular polysaccharide that directly induces abscess formation, and it is notoriously resistant to many standard antibiotics, including penicillin, due to beta-lactamase production.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic rods / Coccobacillus' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Intra-abdominal abscesses, peritonitis, and bacteremia' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows well on Bacteroides Bile Esculin (BBE) agar, forming dark colonies with black halos via esculin hydrolysis' },
+      { l: 'Differentiator', v: 'Bile-resistant (unlike many other anaerobes); possesses a unique capsular polysaccharide that triggers host T-cell responses to form abscesses' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 80, 
+    name: 'Fusobacterium nucleatum',
+    sci: 'Fusobacterium nucleatum',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/2967/2967_lores.jpg',
+    emoji: '🦷',
+    desc: 'An obligate anaerobic, Gram-negative, spindle-shaped rod that is a prominent member of the normal human oral microbiota. It plays a critical structural role in dental plaque biofilm development by acting as a bridge organism, co-aggregating with early and late colonizers. Beyond periodontal disease and gingivitis, it is highly associated with extra-oral pathologies, including intra-abdominal infections, aspiration pneumonia, and adverse pregnancy outcomes like preterm birth. Emerging clinical research also strongly links its overabundance in the gut biofilm to the progression and chemoresistance of colorectal cancer.',
+    facts: [
+      { l: 'Shape', v: 'Elongated, needle-like or spindle-shaped (fusiform) rods with sharply pointed ends' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Periodontal disease, Vincent angina (trench mouth), and colorectal cancer progression' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows well on enriched media (e.g., blood agar) supplemented with crystal violet and erythromycin' },
+      { l: 'Differentiator', v: 'Distinctive thin, spindle morphology; produces butyric acid as a major metabolic end product and lacks the potent hemolytic activity of F. necrophorum' }
+    ],
+    reviews: []
+},
+{
+    id: 81, 
+    name: 'Fusobacterium necrophorum',
+    sci: 'Fusobacterium necrophorum',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/23047/23047_lores.jpg',
+    emoji: '🫁',
+    desc: 'An obligate anaerobic, pleomorphic, Gram-negative rod that is considered a highly virulent and aggressive species within its genus. While it can inhabit the human oral cavity and gastrointestinal tract, it is notoriously known as the primary causative agent of Lemierre syndrome. This life-threatening condition typically begins as an acute peritonsillar abscess or pharyngitis that progresses to invade the parapharyngeal space, leading to septic thrombophlebitis of the internal jugular vein and subsequent septic embolization, most frequently to the lungs.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic, irregular rods that can vary from short rods to long, filamentous forms' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Lemierre syndrome (Jugular vein septic thrombophlebitis + metastatic lung abscesses)' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows on anaerobic blood agar, often producing distinct beta-hemolysis' },
+      { l: 'Differentiator', v: 'Strongly hemolytic and lipase-positive; possesses potent endotoxins and a hemagglutinin factor that drives its extreme tissue invasiveness' }
     ],
     reviews: []
 }
