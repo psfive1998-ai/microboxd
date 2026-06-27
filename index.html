@@ -1793,7 +1793,7 @@ const bacteria = [
     id: 74, 
     name: 'Brucella abortus',
     sci: 'Brucella abortus',
-    severity: 'severe',
+    severity: 'mild to moderate',
     type: 'gram-negative',
     gramLabel: 'Gram -',
     gramClass: 'gram-neg',
@@ -1806,6 +1806,107 @@ const bacteria = [
       { l: 'Key Disease', v: 'Brucellosis / Undulant Fever (Fluctuating fever, drenching sweats)' },
       { l: 'Growth Media', v: 'Requires enriched media (e.g., blood agar); often enhanced by 5-10% CO2' },
       { l: 'Differentiator', v: 'Zoonotic pathogen with a distinct "undulant" (wave-like) fever pattern and animal reservoir' }
+    ],
+    reviews: []
+}
+  {
+    id: 75, 
+    name: 'Brucella melitensis',
+    sci: 'Brucella melitensis',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/03272002/00006/PHIL_1937_lores.jpg', 
+    emoji: '🐐',
+    desc: 'A small, intracellular, Gram-negative coccobacillus primarily associated with sheep and goats. It is considered the most pathogenic, invasive, and severe species of Brucella in humans, serving as a primary cause of human brucellosis (Malta fever / Mediterranean fever). Transmission occurs predominantly through the consumption of unpasteurized goat or sheep dairy products, or direct contact with infected livestock. It manifests as an acute or chronic systemic illness featuring a classic undulating fever, severe arthralgia/osteoarticular complications, drenching sweats, and splenomegaly.',
+    facts: [
+      { l: 'Shape', v: 'Small Coccobacillus' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Brucellosis / Malta Fever (Severe undulant fever and joint pain)' },
+      { l: 'Growth Media', v: 'Enriched media (Serum or blood agar); does NOT require CO2 for growth (unlike B. abortus)' },
+      { l: 'Differentiator', v: 'Most virulent Brucella species in humans; primarily associated with caprine/ovine reservoirs' }
+    ],
+    reviews: []
+}
+  {
+    id: 76, 
+    name: 'Pasteurella multocida',
+    sci: 'Pasteurella multocida',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D1%8F_%D1%83%D0%BB%D1%8C%D1%82%D1%80%D0%B0%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D1%85_%D1%81%D1%80%D0%B5%D0%B7%D0%BE%D0%B2_%D0%B1%D0%B0%D0%BA%D1%82%D0%B5%D1%80%D0%B8%D0%B9_P._multocida_8_%D1%87%D0%B0%D1%81%D0%BE%D0%B2_%D0%BA%D1%83%D0%BB%D1%8C%D1%82%D0%B8%D0%B2%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.jpg/960px-%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D1%8F_%D1%83%D0%BB%D1%8C%D1%82%D1%80%D0%B0%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D1%85_%D1%81%D1%80%D0%B5%D0%B7%D0%BE%D0%B2_%D0%B1%D0%B0%D0%BA%D1%82%D0%B5%D1%80%D0%B8%D0%B9_P._multocida_8_%D1%87%D0%B0%D1%81%D0%BE%D0%B2_%D0%BA%D1%83%D0%BB%D1%8C%D1%82%D0%B8%D0%B2%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.jpg',
+    emoji: '🐱',
+    desc: 'A small, Gram-negative, facultatively anaerobic coccobacillus that is part of the normal oral flora of many domestic and wild animals, particularly cats and dogs. It is notorious for causing rapid-onset soft tissue infections following animal bites or scratches, often presenting within 24 hours with intense pain, erythema, and swelling. If left untreated, it can quickly progress to tenosynovitis, osteomyelitis, or systemic bacteremia. It exhibits characteristic bipolar staining ("safety pin" appearance) under microscopy.',
+    facts: [
+      { l: 'Shape', v: 'Coccobacillus (Shows bipolar "safety pin" staining with Wayson/Giemsa stains)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Cellulitis/Soft tissue infection (Following cat or dog bites)' },
+      { l: 'Growth Media', v: 'Grows well on blood and chocolate agar, but notably FAILS to grow on MacConkey agar' },
+      { l: 'Differentiator', v: 'Oxidase-positive and indole-positive; exhibits a distinct musty odor due to indole production' }
+    ],
+    reviews: []
+}
+  {
+   {
+    id: 77, 
+    name: 'B. henselae',
+    sci: 'Bartonella henselae',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/PMC3294597_10-0647-F.png/960px-PMC3294597_10-0647-F.png',
+    emoji: '🐈',
+    desc: 'A fastidious, facultative intracellular, Gram-negative bacterium that is the primary causative agent of Cat Scratch Disease (CSD) and bacillary angiomatosis. Transmission typically occurs through a bite or scratch from an infected domestic cat (especially kittens) or via flea feces. In immunocompetent patients, it manifests as a benign local papule followed by painful regional lymphadenopathy. In immunocompromised individuals (e.g., HIV/AIDS patients), it can lead to bacillary angiomatosis, characterized by proliferation of blood vessels forming tumor-like skin lesions that can be mistaken for Kaposi sarcoma.',
+    facts: [
+      { l: 'Shape', v: 'Slightly curved, pleomorphic rod / coccobacillus' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized using Warthin-Starry silver stain)' },
+      { l: 'Key Disease', v: 'Cat Scratch Disease (Immunocompetent) / Bacillary Angiomatosis (Immunocompromised)' },
+      { l: 'Growth Media', v: 'Extremely slow-growing on enriched blood agar (requires up to 2–6 weeks)' },
+      { l: 'Differentiator', v: 'Causes vascular proliferation (bacillary angiomatosis) in immunocompromised hosts, driven by VEGF induction' }
+    ],
+    reviews: []
+}
+    {
+    id: 78,
+    name: 'Vibrio vulnificus',
+    sci: 'Vibrio vulnificus',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/7815/7815_lores.jpg',
+    emoji: '🦪',
+    desc: 'A virulent, motile, curved rod-shaped, Gram-negative bacterium found in warm, brackish marine environments. It can cause highly aggressive, life-threatening infections through two primary routes: ingestion of contaminated raw seafood (especially oysters), which leads to rapid septicemia with hemorrhagic bullae, or wound exposure to contaminated seawater, causing fulminant necrotizing fasciitis. It is notoriously opportunistic, with exceptionally high mortality rates in patients who are immunocompromised or have chronic liver disease (e.g., cirrhosis, hemochromatosis) due to its dependency on free iron.',
+    facts: [
+      { l: 'Shape', v: 'Curved, comma-shaped rod (highly motile with a single polar flagellum)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Necrotizing fasciitis (wound infection) / Primary septicemia with hemorrhagic bullae' },
+      { l: 'Growth Media', v: 'Halophilic (requires NaCl); turns green/blue-green on TCBS agar (sucrose-negative)' },
+      { l: 'Differentiator', v: 'Extremely aggressive "flesh-eating" progression in patients with high serum iron levels or liver disease' }
+    ],
+    reviews: []
+}
+    {
+    id: 79, 
+    name: 'Vibrio parahaemolyticus',
+    sci: 'Vibrio parahaemolyticus',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/21921/21921_lores.jpg',
+    emoji: '🍤',
+    desc: 'A motile, curved, rod-shaped, Gram-negative bacterium that naturally inhabits warm coastal and estuarine waters globally. It is a leading cause of seafood-borne bacterial gastroenteritis worldwide, typically contracted via the consumption of raw or undercooked shellfish, particularly oysters and shrimp. Unlike its highly lethal relative V. vulnificus, it generally causes a self-limiting, watery diarrhea accompanied by abdominal cramps, nausea, vomiting, and fever. Its pathogenicity is primarily driven by the production of a thermostable direct hemolysin (TDH).',
+    facts: [
+      { l: 'Shape', v: 'Curved, comma-shaped rod' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Acute gastroenteritis (Watery diarrhea, cramps, vomiting)' },
+      { l: 'Growth Media', v: 'Halophilic (requires NaCl); forms green to blue-green colonies on TCBS agar (sucrose-negative)' },
+      { l: 'Differentiator', v: 'Distinguished by the Kanagawa phenomenon (beta-hemolysis on high-salt Wagatsuma agar via TDH production)' }
     ],
     reviews: []
 }
