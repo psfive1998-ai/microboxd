@@ -2203,7 +2203,7 @@ const bacteria = [
 }
   ,
 {
-    id: 93, // Or whichever sequential ID fits your dataset
+    id: 93, 
     name: 'Anaplasma phagocytophilum',
     sci: 'Anaplasma phagocytophilum',
     severity: 'severe',
@@ -2223,6 +2223,7 @@ const bacteria = [
     reviews: []
 }
   ,
+,
 {
     id: 94, 
     name: 'Ehrlichia chaffeensis',
@@ -2231,7 +2232,7 @@ const bacteria = [
     type: 'gram-negative',
     gramLabel: 'Gram -',
     gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Ehrlichia%2BBabesia-dog.jpg/960px-Ehrlichia%2BBabesia-dog.jpg', // Morphological placeholder for intracellular structures
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Ehrlichia%2BBabesia-dog.jpg/960px-Ehrlichia%2BBabesia-dog.jpg', 
     emoji: '🪵',
     desc: 'An obligate intracellular, Gram-negative bacterium that acts as the primary causative agent of human monocytic ehrlichiosis (HME). It is primarily transmitted via the bite of the lone star tick (Amblyomma americanum). Similar to Anaplasma, it multiplies within membrane-bound cytoplasmic vacuoles of host immune cells, but it specifically targets monocytes and macrophages rather than granulocytes. It forms distinctive microcolonies called morulae, leading to a systemic febrile illness that frequently features leukopenia, thrombocytopenia, and elevated liver enzymes.',
     facts: [
@@ -2243,36 +2244,35 @@ const bacteria = [
     ],
     reviews: []
 },
-  {
-  id: 95,
-  name: 'Chlamydia psittaci',
-  sci: 'Chlamydia psittaci',
-  severity: 'moderate',
-  type: 'gram-negative',
-  gramLabel: 'Gram -',
-  gramClass: 'gram-neg',
-  img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Chlamydophila_psittaci_FA_stain.jpg/960px-Chlamydophila_psittaci_FA_stain.jpg',
-  emoji: '🦜',
-  desc: 'An obligate intracellular, Gram-negative bacterium that causes psittacosis (parrot fever), a zoonotic respiratory disease transmitted primarily through inhalation of aerosolized secretions, feathers, or dried feces from infected birds such as parrots, parakeets, pigeons, and poultry. Like other Chlamydia species, it exhibits a unique biphasic developmental cycle consisting of infectious elementary bodies (EBs) and metabolically active reticulate bodies (RBs) that replicate within membrane-bound inclusions inside host epithelial cells.',
-  facts: [
-    { l: 'Shape', v: 'Small, pleomorphic obligate intracellular coccobacillus with a biphasic life cycle (elementary and reticulate bodies)' },
-    { l: 'Gram', v: 'Negative (Gram stains poorly; better visualized using Giemsa stain, immunofluorescence, or PCR)' },
-    { l: 'Key Disease', v: 'Psittacosis (Parrot fever) – atypical pneumonia with fever, headache, dry cough, and systemic symptoms' },
-    { l: 'Growth Media', v: 'Obligate intracellular; cannot grow on artificial media. Cultured only in tissue cell cultures or embryonated eggs under specialized laboratory conditions' },
-    { l: 'Differentiator', v: 'Transmitted from birds to humans and characterized by intracellular inclusions containing elementary and reticulate bodies within host cells' }
-  ],
-  reviews: []
-}
- ,
 {
-    id: 95, 
-    name: 'Thermus aquaticus',
-    sci: 'Thermus aquaticus',
-    severity: 'none', // Non-pathogenic, environmental extremophile
-    type: 'gram-negative', // Has an outer membrane but complex cell wall structure; technically stains Gram-negative
+    id: 95,
+    name: 'Chlamydia psittaci',
+    sci: 'Chlamydia psittaci',
+    severity: 'moderate',
+    type: 'gram-negative',
     gramLabel: 'Gram -',
     gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Thermus_aquaticus.JPG/960px-Thermus_aquaticus.JPG', // Morphological placeholder
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Chlamydophila_psittaci_FA_stain.jpg/960px-Chlamydophila_psittaci_FA_stain.jpg',
+    emoji: '🦜',
+    desc: 'An obligate intracellular, Gram-negative bacterium that causes psittacosis (parrot fever), a zoonotic respiratory disease transmitted primarily through inhalation of aerosolized secretions, feathers, or dried feces from infected birds such as parrots, parakeets, pigeons, and poultry. Like other Chlamydia species, it exhibits a unique biphasic developmental cycle consisting of infectious elementary bodies (EBs) and metabolically active reticulate bodies (RBs) that replicate within membrane-bound inclusions inside host epithelial cells.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic obligate intracellular coccobacillus with a biphasic life cycle (elementary and reticulate bodies)' },
+      { l: 'Gram', v: 'Negative (Gram stains poorly; better visualized using Giemsa stain, immunofluorescence, or PCR)' },
+      { l: 'Key Disease', v: 'Psittacosis (Parrot fever) – atypical pneumonia with fever, headache, dry cough, and systemic symptoms' },
+      { l: 'Growth Media', v: 'Obligate intracellular; cannot grow on artificial media. Cultured only in tissue cell cultures or embryonated eggs under specialized laboratory conditions' },
+      { l: 'Differentiator', v: 'Transmitted from birds to humans and characterized by intracellular inclusions containing elementary and reticulate bodies within host cells' }
+    ],
+    reviews: []
+},
+{
+    id: 96, 
+    name: 'Thermus aquaticus',
+    sci: 'Thermus aquaticus',
+    severity: 'none', 
+    type: 'gram-negative', 
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Thermus_aquaticus.JPG/960px-Thermus_aquaticus.JPG', 
     emoji: '🌋',
     desc: 'A hyperthermophilic, aerobic, Gram-negative bacterium famous for thriving in extreme thermal environments such as hot springs and hydrothermal vents. It is the original source of the revolutionary Taq DNA polymerase, an enzyme capable of withstanding the high denaturation temperatures required during the polymerase chain reaction (PCR). Its discovery transformed molecular biology, biotechnology, and genetic research by enabling automated DNA amplification.',
     facts: [
@@ -2283,24 +2283,27 @@ const bacteria = [
       { l: 'Differentiator', v: 'Distinguished by its extreme thermostability and production of Taq polymerase, allowing it to survive at temperatures where most other bacterial proteins denature' }
     ],
     reviews: []
-}
-  ,
+},
 {
-    id: 96, 
+    id: 97, 
     name: 'Rhizobium leguminosarum',
     sci: 'Rhizobium leguminosarum',
-    severity: 'none', // Non-pathogenic, beneficial agricultural symbiote
+    severity: 'none', 
     type: 'gram-negative',
     gramLabel: 'Gram -',
     gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Root_nodules_of_Fabaceae.png/960px-Root_nodules_of_Fabaceae.png', // Morphological placeholder
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Root_nodules_of_Fabaceae.png/960px-Root_nodules_of_Fabaceae.png', 
     emoji: '🌱',
     desc: 'An aerobic, Gram-negative, rod-shaped soil bacterium renowned for its mutualistic symbiotic relationship with leguminous plants (such as peas, clover, and lentils). It colonizes the root hairs of host plants, inducing the formation of specialized root nodules where it differentiates into nitrogen-fixing bacteroids. Inside these nodules, the bacterium utilizes the nitrogenase enzyme complex to convert atmospheric nitrogen into bioavailable ammonia, providing crucial nutrients to the plant in exchange for carbohydrates.',
     facts: [
       { l: 'Shape', v: 'Regular rod-shaped cell when free-living in soil; pleomorphic or Y-shaped (bacteroid) inside root nodules' },
       { l: 'Gram', v: 'Negative (Stains pink/red; non-spore-forming and typically motile via peritrichous or polar flagella)' },
       { l: 'Key Disease', v: 'Non-pathogenic (Eco-friendly biofertilizer that enhances soil fertility and reduces the need for chemical nitrogen fertilizers)' },
-      { l
+      { l: 'Growth Media', v: 'Aerobic heterotroph; grown routinely on Yeast Extract Mannitol (YEM) agar, typically forming characteristic mucoid, translucent colonies due to exopolysaccharide production' },
+      { l: 'Differentiator', v: 'Identified by its specific ability to induce nodulation on compatible legume roots and its oxygen-sensitive nitrogenase activity, protected by plant leghemoglobin' }
+    ],
+    reviews: []
+}
   ];
 
 
