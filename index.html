@@ -2452,56 +2452,57 @@ const bacteria = [
   }
 ];
 
-// Paste this immediately AFTER your const bacteria = [ ... ]; array finishes.
-
+<script>
 let currentCategory = "all";
 let currentSubCategory = "all";
 let currentMicrobe = null;
 
-function renderGrid() {
-    const grid = document.getElementById("microGrid");
-    if (!grid) return;
-
-    let filtered = bacteria.filter(m => {
-        let categoryMatch = false;
-        
-        if (currentCategory === "all") {
-            categoryMatch = true;
-        } else if (currentCategory === "bacteria") {
-            // Matches all your specific bacterial categories
-            categoryMatch = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe", "atypical", "gram-variable"].includes(m.category);
-        } else {
-            categoryMatch = m.category === currentCategory;
-        }
-        
-        const subCategoryMatch = currentSubCategory === "all" || m.subCategory === currentSubCategory;
-        return categoryMatch && subCategoryMatch;
-    });
-    
-    grid.innerHTML = filtered.map(generateCard).join("");
-}
-
+ 
 function generateCard(m) {
     return `
-    <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="width: 100%; height: 150px; background: #000; overflow: hidden;">
-            <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+    <div class="micro-card" onclick="openDetail(${m.id})">
+        <div style="width: 100%; height: 130px; background: #111; overflow: hidden; border-bottom: 0.5px solid var(--border);">
+            <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
         </div>
         <div class="card-info">
-            <h3>${m.name}</h3>
-            <div class="sci"><em>${m.sci}</em></div>
-            <p>${m.category}</p>
-            <small>${m.subCategory}</small>
+            <h3>${m.name} ${m.emoji || ''}</h3>
+            <div class="sci"><sup>${m.subCategory || ''}</sup> <em>${m.sci}</em></div>
         </div>
     </div>
     `;
 }
 
+// 2. FIXED: Robust matching that understands that gram-positive/negative/acid-fast are all Bacteria
+function checkCategoryMatch(microbeCat, filterCat) {
+    const cat = (microbeCat || "").toLowerCase();
+    const filter = filterCat.toLowerCase();
+    
+    if (filter === "all") return true;
+    if (filter === "bacteria") {
+        // If it's a known bacterial type or not explicitly a virus/parasite, treat as bacteria
+        return cat.includes("gram") || cat.includes("acid-fast") || cat.includes("spirochete") || cat.includes("anaerobe") || (cat !== "virus" && cat !== "parasite");
+    }
+    return cat === filter;
+}
+
+function renderGrid() {
+    const grid = document.getElementById("microGrid");
+    if (!grid) return;
+
+    const filtered = bacteria.filter(m => {
+        const matchesCategory = checkCategoryMatch(m.category, currentCategory);
+        const matchesSub = currentSubCategory === "all" || m.subCategory === currentSubCategory;
+        return matchesCategory && matchesSub;
+    });
+
+    grid.innerHTML = filtered.map(generateCard).join("");
+}
+
 function openDetail(id) {
     currentMicrobe = bacteria.find(x => x.id == id);
     if (!currentMicrobe) return;
-    
+
     document.getElementById("sheetName").textContent = currentMicrobe.name;
     document.getElementById("sheetSci").textContent = currentMicrobe.sci;
     document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
@@ -2515,6 +2516,17 @@ function closeDetail() {
 function setCategory(category) {
     currentCategory = category;
     currentSubCategory = "all";
+
+    // Manage active visual state for navigation pills
+    const pills = document.querySelectorAll('.filters .pill');
+    pills.forEach(pill => {
+        pill.classList.remove('active');
+        const onClickAttr = pill.getAttribute('onclick') || '';
+        if (onClickAttr.includes(`'${category}'`)) {
+            pill.classList.add('active');
+        }
+    });
+
     renderGrid();
 }
 
@@ -2527,29 +2539,24 @@ function searchMicrobes(text) {
     text = text.toLowerCase();
     const grid = document.getElementById("microGrid");
     if (!grid) return;
-    
+
     const filtered = bacteria.filter(m => {
         const matchesSearch =
-            m.name.toLowerCase().includes(text) ||
-            m.sci.toLowerCase().includes(text) ||
-            m.category.toLowerCase().includes(text) ||
-            m.subCategory.toLowerCase().includes(text);
-            
-        let matchesCategory = false;
-        if (currentCategory === "all") {
-            matchesCategory = true;
-        } else if (currentCategory === "bacteria") {
-            matchesCategory = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe", "atypical", "gram-variable"].includes(m.category);
-        } else {
-            matchesCategory = m.category === currentCategory;
-        }
-        
+            (m.name || "").toLowerCase().includes(text) ||
+            (m.sci || "").toLowerCase().includes(text) ||
+            (m.category || "").toLowerCase().includes(text) ||
+            (m.subCategory || "").toLowerCase().includes(text);
+
+        const matchesCategory = checkCategoryMatch(m.category, currentCategory);
         const matchesSub = currentSubCategory === "all" || m.subCategory === currentSubCategory;
+
         return matchesSearch && matchesCategory && matchesSub;
     });
+    
     grid.innerHTML = filtered.map(generateCard).join("");
 }
 
+// Initialize on page load
 window.onload = function () {
     renderGrid();
 };
