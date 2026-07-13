@@ -27,7 +27,6 @@
 
 <script>
   const bacteria = [
-const bacteria = [
   {
     id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'mild to lethal',
     category: 'gram-negative', subCategory: 'Gram −', gramClass: 'gram-neg',
@@ -2361,47 +2360,139 @@ const bacteria = [
     reviews: []
   }
 ];
-let currentCategory = 'all';
-  let currentSubCategory = 'all';
-  let logged = new Set();
+<script>
 
-  function renderGrid() {
-    const grid = document.getElementById('microGrid');
-    if (!grid) return;
-    const filtered = bacteria.filter(b => {
-      const matchCat = currentCategory === 'all' || b.category === currentCategory;
-      const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
-      return matchCat && matchSub;
+let currentCategory = "all";
+let currentSubCategory = "all";
+let currentMicrobe = null;
+let logged = new Set();
+
+function renderGrid() {
+
+    const grid = document.getElementById("microGrid");
+
+    let filtered = bacteria.filter(m => {
+
+        const categoryMatch =
+            currentCategory === "all" ||
+            m.category === currentCategory;
+
+        const subCategoryMatch =
+            currentSubCategory === "all" ||
+            m.subCategory === currentSubCategory;
+
+        return categoryMatch && subCategoryMatch;
+
     });
-    grid.innerHTML = filtered.map(b => `
-      <div class="micro-card" onclick="openDetail(${b.id})">
-        <h3>${b.name}</h3>
-        <p>${b.category} / ${b.subCategory}</p>
-      </div>`).join('');
-  }
 
-  function openDetail(id) {
-    const b = bacteria.find(x => x.id === id);
-    if (!b) return;
-    const nameEl = document.getElementById('sheetName');
-    if (nameEl) nameEl.textContent = b.name;
-    const overlay = document.getElementById('detailOverlay');
-    if (overlay) overlay.classList.add('open');
-  }
+    grid.innerHTML = filtered.map(generateCard).join("");
 
-  function closeDetail() {
-    document.getElementById('detailOverlay').classList.remove('open');
-  }
+}
 
-  function setFilter(cat, sub, el) {
-    currentCategory = cat;
-    currentSubCategory = sub;
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
+function generateCard(m){
+
+    return `
+
+    <div class="micro-card" onclick="openDetail(${m.id})">
+
+        <h3>${m.name}</h3>
+
+        <strong><em>${m.sci}</em></strong>
+
+        <p>${m.category}</p>
+
+        <small>${m.subCategory}</small>
+
+    </div>
+
+    `;
+
+}
+
+function openDetail(id){
+
+    currentMicrobe = bacteria.find(m => m.id == id);
+
+    if(!currentMicrobe) return;
+
+    document.getElementById("sheetName").textContent =
+        currentMicrobe.name;
+
+    document.getElementById("sheetSci").textContent =
+        currentMicrobe.sci;
+
+    document.getElementById("sheetDesc").textContent =
+        currentMicrobe.desc;
+
+    document
+        .getElementById("detailOverlay")
+        .classList.add("open");
+
+}
+
+function closeDetail(){
+
+    document
+        .getElementById("detailOverlay")
+        .classList.remove("open");
+
+}
+
+function setCategory(category){
+
+    currentCategory = category;
+
+    currentSubCategory = "all";
+
     renderGrid();
-  }
 
-  window.onload = () => { renderGrid(); };
+}
+
+function setSubCategory(sub){
+
+    currentSubCategory = sub;
+
+    renderGrid();
+
+}
+
+function searchMicrobes(text){
+
+    text = text.toLowerCase();
+
+    const grid = document.getElementById("microGrid");
+
+    const filtered = bacteria.filter(m=>{
+
+        const matchesSearch =
+            m.name.toLowerCase().includes(text) ||
+            m.sci.toLowerCase().includes(text) ||
+            m.category.toLowerCase().includes(text) ||
+            m.subCategory.toLowerCase().includes(text);
+
+        const matchesCategory =
+            currentCategory=="all" ||
+            m.category==currentCategory;
+
+        const matchesSub =
+            currentSubCategory=="all" ||
+            m.subCategory==currentSubCategory;
+
+        return matchesSearch &&
+               matchesCategory &&
+               matchesSub;
+
+    });
+
+    grid.innerHTML =
+        filtered.map(generateCard).join("");
+
+}
+
+window.onload=function(){
+
+    renderGrid();
+
+};
+
 </script>
-</body>
-</html>
