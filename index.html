@@ -2474,26 +2474,27 @@ function generateCard(m) {
     let badge = "";
     const cat = (m.category || "").toLowerCase();
 
+    // Classy, muted color palette
     if (cat.includes('gram-positive')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#2563eb; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">GRAM +</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#4a5568; padding:2px 8px; border-radius:4px; color:#edf2f7; font-weight:600; letter-spacing:0.05em; margin-bottom:5px;">GRAM +</span>';
     } else if (cat.includes('gram-negative')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#ea580c; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">GRAM −</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#718096; padding:2px 8px; border-radius:4px; color:#edf2f7; font-weight:600; letter-spacing:0.05em; margin-bottom:5px;">GRAM −</span>';
     } else if (cat.includes('virus')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#8a2be2; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">VIRUS</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#a0aec0; padding:2px 8px; border-radius:4px; color:#2d3748; font-weight:600; letter-spacing:0.05em; margin-bottom:5px;">VIRUS</span>';
     } else if (cat.includes('parasite')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#059669; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">PARASITE</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#8fbc8f; padding:2px 8px; border-radius:4px; color:#2d3748; font-weight:600; letter-spacing:0.05em; margin-bottom:5px;">PARASITE</span>';
     }
 
     return `
     <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
+        <div style="width: 100%; height: 130px; background: #1a202c; overflow: hidden; border-bottom: 1px solid #e2e8f0;">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
         </div>
-        <div class="card-info">
+        <div class="card-info" style="padding: 12px;">
             <div style="min-height: 15px;">${badge}</div>
-            <h3>${m.name}</h3>
-            <div class="sci"><em>${m.sci}</em></div>
+            <h3 style="margin: 0; font-family: sans-serif; font-size: 16px; color: #2d3748;">${m.name}</h3>
+            <div class="sci" style="font-size: 13px; color: #718096; margin-top: 2px;"><em>${m.sci}</em></div>
         </div>
     </div>
     `;
