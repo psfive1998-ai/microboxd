@@ -94,10 +94,17 @@
   </div>
 </div>
 <div class="filters">
-  <div class="pill active" onclick="setCategory('all')">All</div>
-  <div class="pill" onclick="setCategory('bacteria')">Bacteria</div>
-  <div class="pill" onclick="setCategory('virus')">Viruses</div>
-  <div class="pill" onclick="setCategory('parasite')">Parasites</div>
+    <div class="pill" onclick="setCategory('all')">All</div>
+    <div class="pill" id="btn-bacteria" onclick="setCategory('bacteria')">Bacteria</div>
+    <div class="pill" onclick="setCategory('virus')">Viruses</div>
+    <div class="pill" onclick="setCategory('parasite')">Parasites</div>
+</div>
+
+<div id="subFilterRow" style="display:none; flex-wrap:wrap; gap:8px; margin-top:10px; padding-left:5px;">
+    <div class="pill-sub" onclick="filterBySub('gram-positive')">G+</div>
+    <div class="pill-sub" onclick="filterBySub('gram-negative')">G-</div>
+    <div class="pill-sub" onclick="filterBySub('acid-fast')">Acid-Fast</div>
+    <div class="pill-sub" onclick="filterBySub('spirochete')">Spirochetes</div>
 </div>
 <div class="section-label">Popular pathogens</div>
 <div id="microGrid" class="micro-grid"></div>
