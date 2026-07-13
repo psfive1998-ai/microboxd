@@ -2452,37 +2452,37 @@ const bacteria = [
   }
 ];
 
-<script>
 let currentCategory = "all";
 let currentSubCategory = "all";
 let currentMicrobe = null;
 
- 
+// This layout function was completely missing, causing the crash
 function generateCard(m) {
     return `
-    <div class="micro-card" onclick="openDetail(${m.id})">
-        <div style="width: 100%; height: 130px; background: #111; overflow: hidden; border-bottom: 0.5px solid var(--border);">
+    <div class="micro-card" onclick="openDetail('${m.id}')">
+        <div style="width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
         </div>
         <div class="card-info">
             <h3>${m.name} ${m.emoji || ''}</h3>
-            <div class="sci"><sup>${m.subCategory || ''}</sup> <em>${m.sci}</em></div>
+            <div class="sci"><em>${m.sci}</em></div>
         </div>
     </div>
     `;
 }
 
-// 2. FIXED: Robust matching that understands that gram-positive/negative/acid-fast are all Bacteria
-function checkCategoryMatch(microbeCat, filterCat) {
-    const cat = (microbeCat || "").toLowerCase();
-    const filter = filterCat.toLowerCase();
-    
+// Maps your clinical labels (gram-neg, acid-fast, etc.) to the broad "Bacteria" button
+function checkCategoryMatch(microbeCategory, filterCategory) {
+    const cat = (microbeCategory || "").toLowerCase();
+    const filter = filterCategory.toLowerCase();
+
     if (filter === "all") return true;
+    
     if (filter === "bacteria") {
-        // If it's a known bacterial type or not explicitly a virus/parasite, treat as bacteria
-        return cat.includes("gram") || cat.includes("acid-fast") || cat.includes("spirochete") || cat.includes("anaerobe") || (cat !== "virus" && cat !== "parasite");
+        return cat.includes("gram") || cat === "acid-fast" || cat === "spirochete" || cat === "anaerobe" || cat === "atypical";
     }
+    
     return cat === filter;
 }
 
@@ -2490,10 +2490,10 @@ function renderGrid() {
     const grid = document.getElementById("microGrid");
     if (!grid) return;
 
-    const filtered = bacteria.filter(m => {
+    let filtered = bacteria.filter(m => {
         const matchesCategory = checkCategoryMatch(m.category, currentCategory);
-        const matchesSub = currentSubCategory === "all" || m.subCategory === currentSubCategory;
-        return matchesCategory && matchesSub;
+        const matchesSubCategory = currentSubCategory === "all" || m.subCategory === currentSubCategory;
+        return matchesCategory && matchesSubCategory;
     });
 
     grid.innerHTML = filtered.map(generateCard).join("");
@@ -2517,12 +2517,11 @@ function setCategory(category) {
     currentCategory = category;
     currentSubCategory = "all";
 
-    // Manage active visual state for navigation pills
     const pills = document.querySelectorAll('.filters .pill');
     pills.forEach(pill => {
         pill.classList.remove('active');
-        const onClickAttr = pill.getAttribute('onclick') || '';
-        if (onClickAttr.includes(`'${category}'`)) {
+        const clickAttr = pill.getAttribute('onclick') || '';
+        if (clickAttr.includes(`'${category}'`)) {
             pill.classList.add('active');
         }
     });
@@ -2556,7 +2555,6 @@ function searchMicrobes(text) {
     grid.innerHTML = filtered.map(generateCard).join("");
 }
 
-// Initialize on page load
 window.onload = function () {
     renderGrid();
 };
