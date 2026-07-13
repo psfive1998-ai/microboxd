@@ -2497,18 +2497,25 @@ function renderGrid() {
     });
 
     grid.innerHTML = filtered.map(generateCard).join("");
-}
-
 function openDetail(id) {
-    currentMicrobe = bacteria.find(x => x.id == id);
+    currentMicrobe = bacteria.find(x => x.id == Number(id));
     if (!currentMicrobe) return;
 
     document.getElementById("sheetName").textContent = currentMicrobe.name;
-    document.getElementById("sheetSci").textContent = currentMicrobe.sci;
-    document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
+    document.getElementById("sheetSci").innerHTML = `<em>${currentMicrobe.sci}</em>`;
+    
+    let factsHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; background:var(--surface); padding:12px; border-radius:8px; font-size:12px;">';
+    if (currentMicrobe.facts) {
+        currentMicrobe.facts.forEach(f => {
+            factsHtml += `<div><span style="color:var(--muted);">${f.l}:</span> <strong>${f.v}</strong></div>`;
+        });
+    }
+    factsHtml += '</div>';
+
+    document.getElementById("sheetDesc").innerHTML = factsHtml + `<p>${currentMicrobe.desc}</p>`;
+    
     document.getElementById("detailOverlay").classList.add("open");
 }
-
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
 }
