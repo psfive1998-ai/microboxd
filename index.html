@@ -94,10 +94,10 @@
   </div>
 </div>
 <div class="filters">
-  <div class="pill active" onclick="setCategory('all', this)">All</div>
-  <div class="pill" onclick="setCategory('bacteria', this)">Bacteria</div>
-  <div class="pill" onclick="setCategory('virus', this)">Viruses</div>
-  <div class="pill" onclick="setCategory('parasite', this)">Parasites</div>
+  <div class="pill active" onclick="setCategory('all')">All</div>
+  <div class="pill" onclick="setCategory('bacteria')">Bacteria</div>
+  <div class="pill" onclick="setCategory('virus')">Viruses</div>
+  <div class="pill" onclick="setCategory('parasite')">Parasites</div>
 </div>
 <div class="section-label">Popular pathogens</div>
 <div id="microGrid" class="micro-grid"></div>
@@ -2451,66 +2451,85 @@ const bacteria = [
     reviews: []
   }
 ];
-<script>
-<script>
 let currentCategory = "all";
 let currentSubCategory = "all";
-
+let currentMicrobe = null;
+let logged = new Set();
 function renderGrid() {
     const grid = document.getElementById("microGrid");
-    if (!grid) return;
-
     let filtered = bacteria.filter(m => {
-        const categoryMatch = currentCategory === "all" || m.category === currentCategory;
-        const subCategoryMatch = currentSubCategory === "all" || m.subCategory === currentSubCategory;
+        const categoryMatch =
+            currentCategory === "all" ||
+            m.category === currentCategory;
+        const subCategoryMatch =
+            currentSubCategory === "all" ||
+            m.subCategory === currentSubCategory;
         return categoryMatch && subCategoryMatch;
     });
-    
     grid.innerHTML = filtered.map(generateCard).join("");
 }
-
-function generateCard(m) {
+function generateCard(m){
     return `
-    <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="width: 100%; height: 150px; background: #000; overflow: hidden;">
-            <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;" 
-                 onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
-        </div>
-        <div class="card-info">
-            <h3>${m.name}</h3>
-            <div class="sci"><em>${m.sci}</em></div>
-            <p>${m.category}</p>
-            <small>${m.subCategory}</small>
-        </div>
+    <div class="micro-card" onclick="openDetail(${m.id})">
+        <h3>${m.name}</h3>
+        <strong><em>${m.sci}</em></strong>
+        <p>${m.category}</p>
+        <small>${m.subCategory}</small>
     </div>
     `;
 }
-
-function openDetail(id) {
-    let m = bacteria.find(x => x.id == id);
-    if (!m) return;
-    
-    document.getElementById("sheetName").textContent = m.name;
-    document.getElementById("sheetSci").textContent = m.sci;
-    document.getElementById("sheetDesc").textContent = m.desc;
-    document.getElementById("detailOverlay").classList.add("open");
+function openDetail(id){
+    currentMicrobe = bacteria.find(m => m.id == id);
+    if(!currentMicrobe) return;
+    document.getElementById("sheetName").textContent =
+        currentMicrobe.name;
+    document.getElementById("sheetSci").textContent =
+        currentMicrobe.sci;
+    document.getElementById("sheetDesc").textContent =
+        currentMicrobe.desc;
+    document
+        .getElementById("detailOverlay")
+        .classList.add("open");
 }
-
-function closeDetail() {
-    document.getElementById("detailOverlay").classList.remove("open");
+function closeDetail(){
+    document
+        .getElementById("detailOverlay")
+        .classList.remove("open");
 }
-
-function setCategory(cat) {
-    currentCategory = cat;
+function setCategory(category){
+    currentCategory = category;
+    currentSubCategory = "all";
     renderGrid();
 }
-
-function setSubCategory(sub) {
+function setSubCategory(sub){
     currentSubCategory = sub;
     renderGrid();
 }
-
-window.onload = renderGrid;
+function searchMicrobes(text){
+    text = text.toLowerCase();
+    const grid = document.getElementById("microGrid");
+    const filtered = bacteria.filter(m=>{
+        const matchesSearch =
+            m.name.toLowerCase().includes(text) ||
+            m.sci.toLowerCase().includes(text) ||
+            m.category.toLowerCase().includes(text) ||
+            m.subCategory.toLowerCase().includes(text);
+        const matchesCategory =
+            currentCategory=="all" ||
+            m.category==currentCategory;
+        const matchesSub =
+            currentSubCategory=="all" ||
+            m.subCategory==currentSubCategory;
+        return matchesSearch &&
+               matchesCategory &&
+               matchesSub;
+    });
+    grid.innerHTML =
+        filtered.map(generateCard).join("");
+}
+window.onload = function () {
+    renderGrid();
+};
 </script>
 </body>
 </html>
