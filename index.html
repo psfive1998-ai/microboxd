@@ -1,3 +1,2449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microboxd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #111113;
+      --surface:   #18181b;
+      --surface2:  #1e1e23;
+      --border:    #2a2a32;
+      --text:      #e8e6e0;
+      --muted:     #6b6b78;
+      --accent:    #b8f5c2;
+      --accent-dim:#1a2e1c;
+      --accent-fg: #0a2a10;
+      --font:      'Inter', sans-serif;
+      --serif:     'Playfair Display', Georgia, serif;
+      
+      /* Severity Colors */
+      --benign:    #5ce67e;
+      --moderate:  #ffb84d;
+      --lethal:    #ff4d4d;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── VIEW ROUTING MANAGEMENT ── */
+    .app-view { display: none; flex: 1; width: 100%; }
+    .app-view.active-view { display: block !important; }
+
+    /* ── PLACEHOLDERS FOR VIEWS ── */
+    .placeholder-view {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      background: rgba(17,17,19,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .logo {
+      font-family: var(--serif);
+      font-size: 22px; letter-spacing: -0.3px;
+      color: var(--accent);
+    }
+    .logo span { color: var(--text); font-style: italic; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .badge-count {
+      background: var(--accent-dim); color: var(--accent);
+      font-size: 11px; font-weight: 500;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── HERO STRIP ── */
+    .hero {
+      padding: 28px 24px 20px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .hero h1 {
+      font-family: var(--serif); font-size: 28px; font-weight: 400;
+      line-height: 1.25; margin-bottom: 18px;
+    }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; padding: 11px 16px;
+    }
+    .search-wrap input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text); font-size: 14px; font-family: var(--font);
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap i { color: var(--muted); font-size: 18px; }
+
+    /* ── LIVE ACTIVITY FEED ── */
+    .live-feed-box {
+      margin: 16px 24px 8px;
+      background: rgba(24, 24, 27, 0.6);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .live-feed-tag {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .live-feed-tag .pulse-dot {
+      width: 5px; height: 5px; background: var(--accent); border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+    .live-feed-text {
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* ── FILTER PILLS ── */
+    .filters {
+      display: flex; gap: 8px; padding: 14px 24px;
+      overflow-x: auto; border-bottom: 0.5px solid var(--border);
+      scrollbar-width: none;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+    .pill {
+      flex-shrink: 0;
+      padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      border: 0.5px solid var(--border); background: var(--surface);
+      color: var(--muted); cursor: pointer; transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .pill.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .pill:hover:not(.active) { color: var(--text); border-color: #444; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted); padding: 18px 24px 10px;
+    }
+
+    /* ── GRID ── */
+    .micro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1px; background: var(--border);
+      margin: 0;
+    }
+    .micro-card {
+      background: var(--bg); cursor: pointer;
+      transition: background 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .micro-card:hover { background: var(--surface); }
+    .card-img-wrap {
+      position: relative; width: 100%; padding-bottom: 100%;
+      overflow: hidden; background: var(--surface2);
+    }
+    .card-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; transition: transform 0.3s;
+    }
+    .micro-card:hover .card-img { transform: scale(1.04); }
+    .card-placeholder {
+      position: absolute; inset: 0;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px;
+    }
+    .card-placeholder .emoji { font-size: 36px; }
+    .card-placeholder .label { font-size: 10px; color: var(--muted); }
+    
+    .gram-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 9px; padding: 2px 8px; border-radius: 4px;
+      font-weight: 600; letter-spacing: 0.3px;
+      backdrop-filter: blur(6px);
+    }
+    .gram-pos { background: rgba(255,200,100,0.15); color: #f5c842; }
+    .gram-neg { background: rgba(100,180,255,0.15); color: #6eb8f5; }
+    .gram-afast { background: rgba(200,100,100,0.15); color: #f56e6e; }
+    
+    /* Severity Badges */
+    .severity-badge {
+      position: absolute; bottom: 8px; left: 8px;
+      font-size: 9px; padding: 1px 6px; border-radius: 4px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .sev-benign { background: rgba(92, 230, 126, 0.15); color: var(--benign); }
+    .sev-moderate { background: rgba(255, 184, 77, 0.15); color: var(--moderate); }
+    .sev-lethal { background: rgba(255, 77, 77, 0.15); color: var(--lethal); }
+
+    .logged-check {
+      position: absolute; top: 8px; right: 8px;
+      background: var(--accent); color: var(--accent-fg);
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .card-info { padding: 10px 12px 12px; }
+    .card-info h3 { font-size: 13px; }
+    .sci { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 2px; }
+    .card-stars { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--accent); margin-top: 6px; }
+    .card-stars span { color: var(--muted); margin-left: 2px; }
+
+    /* ── FOOTER NAVIGATION BAR ── */
+    .nav-tabs {
+      position: sticky; bottom: 0; z-index: 50;
+      display: flex; background: var(--surface);
+      border-top: 0.5px solid var(--border); height: 60px;
+    }
+    .nav-tab {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 500; color: var(--muted);
+      cursor: pointer; gap: 4px; transition: color 0.15s;
+    }
+    .nav-tab i { font-size: 20px; }
+    .nav-tab.active { color: var(--accent); }
+
+    /* ── PROFILE WORKSPACE STYLES ── */
+    .profile-section { padding: 24px; }
+    .profile-card {
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px;
+    }
+    .profile-avatar {
+      width: 44px; height: 44px; background: var(--surface2);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px; color: var(--text); border: 0.5px solid var(--border);
+    }
+    .profile-info { flex: 1; }
+    .profile-info .name { font-size: 14px; font-weight: 500; }
+    .profile-info .stats { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .rank-pill {
+      background: var(--accent-dim); color: var(--accent);
+      font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
+    }
+
+    /* ── MODAL SHEET DETAILS ── */
+    .detail-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: none; justify-content: flex-end; flex-direction: column;
+    }
+    .detail-overlay.open { display: flex; }
+    .detail-sheet {
+      background: var(--bg); border-top: 0.5px solid var(--border);
+      border-top-left-radius: 20px; border-top-right-radius: 20px;
+      max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .sheet-handle {
+      width: 36px; height: 4px; background: var(--border);
+      border-radius: 2px; margin: 10px auto 0;
+    }
+    .sheet-hero { position: relative; width: 100%; height: 200px; background: var(--surface); }
+    .sheet-hero img { width: 100%; height: 100%; object-fit: cover; }
+    .sheet-hero .gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, var(--bg));
+    }
+    .sheet-body { padding: 0 24px 40px; }
+    .sheet-top { display: flex; justify-content: space-between; align-items: flex-start; margin-top: -10px; position: relative; z-index: 10; }
+    .sheet-top h2 { font-family: var(--serif); font-size: 24px; font-weight: 400; }
+    .sci-name { font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .close-btn {
+      width: 32px; height: 32px; background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .desc-text { font-size: 13px; color: #b5b5be; line-height: 1.6; margin-top: 16px; }
+    
+    .facts-row { display: flex; gap: 8px; overflow-x: auto; margin-top: 18px; scrollbar-width: none; }
+    .facts-row::-webkit-scrollbar { display: none; }
+    .fact {
+      flex-shrink: 0; background: var(--surface); border: 0.5px solid var(--border);
+      padding: 8px 14px; border-radius: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 2px;
+    }
+    .fact strong { color: var(--muted); font-weight: 400; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .action-row { display: flex; gap: 10px; margin-top: 24px; }
+    .btn-log {
+      flex: 1; height: 44px; background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; color: var(--text); font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-log.logged { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .btn-wishlist {
+      width: 44px; height: 44px; background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
+    }
+    .divider { height: 0.5px; background: var(--border); margin: 24px 0; }
+    
+    .reviews-heading { font-family: var(--serif); font-size: 18px; margin-bottom: 14px; }
+    .review { border-bottom: 0.5px solid var(--border); padding: 14px 0; }
+    .review:last-of-type { border: none; }
+    .review-top { display: flex; align-items: center; gap: 10px; }
+    .rev-avatar {
+      width: 28px; height: 28px; background: var(--surface2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;
+    }
+    .rev-name { font-size: 12px; font-weight: 500; flex: 1; }
+    .rev-stars { color: var(--accent); font-size: 10px; }
+    .rev-text { font-size: 12px; color: #b5b5be; line-height: 1.5; margin-top: 8px; }
+    .rev-photo { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; margin-top: 10px; border: 0.5px solid var(--border); }
+    
+    .write-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 20px; }
+    .write-label { font-size: 12px; font-weight: 500; margin-bottom: 10px; }
+    .star-row { display: flex; gap: 4px; margin-bottom: 14px; }
+    .star-btn { background: none; border: none; color: var(--border); font-size: 20px; cursor: pointer; }
+    .star-btn.lit { color: var(--accent); }
+    
+    .upload-trigger {
+      display: flex; align-items: center; gap: 8px; border: 0.5px dashed var(--border);
+      background: var(--bg); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--muted); cursor: pointer;
+    }
+    .upload-trigger input { display: none; }
+    .photo-previews { display: flex; gap: 6px; margin-top: 10px; }
+    .photo-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 0.5px solid var(--border); }
+    
+    .write-box textarea {
+      width: 100%; height: 80px; background: var(--bg); border: 0.5px solid var(--border);
+      border-radius: 10px; padding: 12px; color: var(--text); font-family: var(--font); font-size: 12px;
+      resize: none; outline: none; margin-top: 12px;
+    }
+    .write-box textarea::placeholder { color: var(--muted); }
+    .write-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .photo-count { font-size: 11px; color: var(--muted); }
+    .btn-post {
+      background: var(--accent); color: var(--accent-fg); border: none;
+      padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">micro<span>boxd</span></div>
+  <div class="topbar-right">
+    <div class="badge-count" id="loggedCount">0 logged</div>
+  </div>
+</div>
+
+<div id="discoverView" class="app-view active-view">
+  <div class="hero">
+    <div class="hero-eyebrow">🦠 Bacteria Edition</div>
+    <h1>What have you <em>encountered?</em></h1>
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, shape, or habitat..." oninput="renderGrid()" />
+    </div>
+  </div>
+
+  <div class="live-feed-box">
+    <div class="live-feed-tag"><div class="pulse-dot"></div>Live Feed</div>
+    <div class="live-feed-text" id="liveFeedText">Loading global activity network...</div>
+  </div>
+
+  <div class="filters">
+    <div class="pill active" onclick="setFilter('all',this)">All</div>
+    <div class="pill" onclick="setFilter('gram-positive',this)">Gram-positive</div>
+    <div class="pill" onclick="setFilter('gram-negative',this)">Gram-negative</div>
+    <div class="pill" onclick="setFilter('acid-fast',this)">Acid-fast</div>
+    <div class="pill" onclick="setFilter('spirochete',this)">Spirochetes</div>
+    <div class="pill" onclick="setFilter('anaerobe',this)">Anaerobes</div>
+  </div>
+
+  <div class="section-label">Popular bacteria</div>
+  <div class="micro-grid" id="microGrid"></div>
+</div>
+
+<div id="logView" class="app-view">
+  <div class="section-label">Your Encounters</div>
+  <div class="micro-grid" id="loggedGrid"></div>
+  <div id="emptyLogPlaceholder" class="placeholder-view">
+    <i class="ti ti-biohazard" style="font-size: 48px; color: var(--border); margin-bottom: 12px; display: block; text-align: center;"></i>
+    <h2 style="font-family: var(--serif); text-align: center; font-size: 20px; font-weight: 400; margin-bottom: 6px;">Your archive is empty</h2>
+    <p style="text-align: center; color: var(--muted); font-size: 13px; line-height: 1.5;">Specimens logged out in the field will appear inside this workspace collection tracker.</p>
+  </div>
+</div>
+
+<div id="communityView" class="app-view">
+  <div class="placeholder-view">
+    <i class="ti ti-users" style="font-size: 48px; color: var(--border); margin-bottom: 12px; display: block;"></i>
+    <h2 style="font-family: var(--serif); color: var(--text); font-size: 20px; font-weight: 400; margin-bottom: 6px;">Global Lab Networks</h2>
+    <p style="font-size: 13px; line-height: 1.5;">Syncing active feeds from academic facilities, diagnostic lines, and regional micro-counters...</p>
+  </div>
+</div>
+
+<div id="profileView" class="app-view">
+  <div class="section-label">Your Profile Workspace</div>
+  <div class="profile-section">
+    <div class="profile-card">
+      <div class="profile-avatar">YO</div>
+      <div class="profile-info">
+        <div class="name">Your collection</div>
+        <div class="stats" id="profileStats">Start logging bacteria to build your profile</div>
+      </div>
+      <div class="rank-pill" id="rankPill">Novice</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('discover', this)"><i class="ti ti-home"></i>Discover</div>
+  <div class="nav-tab" onclick="switchTab('log', this)"><i class="ti ti-book"></i>My log</div>
+  <div class="nav-tab" onclick="switchTab('community', this)"><i class="ti ti-users"></i>Community</div>
+  <div class="nav-tab" onclick="switchTab('profile', this)"><i class="ti ti-user"></i>Profile</div>
+</div>
+
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hero" id="sheetHero"></div>
+    <div class="sheet-body">
+      <div class="sheet-top">
+        <div>
+          <h2 id="sheetName"></h2>
+          <div class="sci-name" id="sheetSci"></div>
+        </div>
+        <div class="close-btn" onclick="closeDetail()"><i class="ti ti-x"></i></div>
+      </div>
+      <p class="desc-text" id="sheetDesc"></p>
+      <div class="facts-row" id="sheetFacts"></div>
+      <div class="action-row">
+        <button class="btn-log" id="logBtn" onclick="toggleLog()">+ Log encounter</button>
+        <button class="btn-wishlist" title="Add to wishlist"><i class="ti ti-bookmark"></i></button>
+      </div>
+      <div class="divider"></div>
+      <div class="reviews-heading">Community reviews</div>
+      <div id="reviewsList"></div>
+      <div class="write-box">
+        <div class="write-label">Write your review</div>
+        <div class="star-row" id="starRow">
+          <button class="star-btn" onclick="setStar(1)">★</button>
+          <button class="star-btn" onclick="setStar(2)">★</button>
+          <button class="star-btn" onclick="setStar(3)">★</button>
+          <button class="star-btn" onclick="setStar(4)">★</button>
+          <button class="star-btn" onclick="setStar(5)">★</button>
+        </div>
+        <label class="upload-trigger">
+          <i class="ti ti-camera" style="font-size:16px;"></i>
+          Attach a microscope photo or encounter picture
+          <input type="file" id="photoUpload" accept="image/*" multiple onchange="handlePhotos(event)" />
+        </label>
+        <div class="photo-previews" id="photoPreviews"></div>
+        <textarea id="reviewText" placeholder="Describe your encounter..."></textarea>
+        <div class="write-footer">
+          <span class="photo-count" id="photoCount"></span>
+          <button class="btn-post" onclick="submitReview()">Post review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const bacteria = [
+  {
+    id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'mild to lethal',
+    type: 'gram-negative', gramLabel: 'Gram −', gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Escherichia_coli_electron_microscopy.jpg/960px-Escherichia_coli_electron_microscopy.jpg',
+    emoji: '🦠',
+    desc: 'One of the most studied organisms in biology. A facultative anaerobe living in the intestines of warm-blooded animals. Mostly harmless — but pathogenic strains like O157:H7 cause severe food poisoning.',
+    facts: [{ l: 'Shape', v: 'Rod (bacillus)' }, { l: 'Gram', v: 'Negative' }, { l: 'Habitat', v: 'Intestines' }, { l: 'Rating', v: 'Moderate' }, { l: 'O₂', v: 'Facultative' }],
+    reviews: [{ user: 'DrMaria', stars: 4, text: 'Found this in a water sample during fieldwork in Kenya. The rod-shaped cells under phase contrast were unmistakable.', photo: null }, { user: 'LabRat99', stars: 3, text: 'Classic model organism. Grows overnight on LB agar, golden colonies if you add the right plasmid!', photo: null }]
+  },
+  {
+    id: 2, name: 'Staph aureus', sci: 'Staphylococcus aureus', severity: 'mild',
+    type: 'gram-positive', gramLabel: 'Gram +', gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/201708_Staphylococcus_aureus.svg/1280px-201708_Staphylococcus_aureus.svg.png?_=20170824150410',
+    emoji: '🟡',
+    desc: 'Golden grape-like clusters under the microscope. A formidable opportunistic pathogen causing everything from minor skin infections to life-threatening bacteremia. MRSA strains are a global health crisis.',
+    facts: [{ l: 'Shape', v: 'Coccus' }, { l: 'Gram', v: 'Positive' }, { l: 'Colonies', v: 'Golden' }, { l: 'Rating', v: 'Moderate' }, { l: 'MRSA', v: 'Yes' }],
+    reviews: [{ user: 'ClinMicro', stars: 5, text: 'Isolated from a wound swab. The coagulase test confirmed it immediately. Always a thriller to see on a plate.', photo: null }]
+  },
+  {
+    id: 3, name: 'M. tuberculosis', sci: 'Mycobacterium tuberculosis', severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Mycobacterium_Tuberculosis_Bacteria%2C_the_Cause_of_TB.jpg/960px-Mycobacterium_Tuberculosis_Bacteria%2C_the_Cause_of_TB.jpg',
+    emoji: '🔴',
+    desc: 'The ancient enemy. Has co-evolved with humans for thousands of years. Acid-fast due to its waxy mycolic acid cell wall — requires Ziehl-Neelsen staining to visualise. Extraordinarily slow growing.',
+    facts: [{ l: 'Shape', v: 'Rod' }, { l: 'Stain', v: 'Acid-fast' }, { l: 'Growth', v: 'Very slow (weeks)' }, { l: 'Rating', v: 'Lethal' }, { l: 'O₂', v: 'Obligate aerobe' }],
+    reviews: [{ user: 'PulmPath', stars: 5, text: 'Spotted bright red rods on a Ziehl-Neelsen smear. One of those career moments you never forget.', photo: null }]
+  },
+  {
+    id: 4, name: 'Strep pneumoniae', sci: 'Streptococcus pneumoniae', severity: 'moderate',
+    type: 'gram-positive', gramLabel: 'Gram +', gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Streptococcus_pneumoniae-263.jpg/960px-Streptococcus_pneumoniae-263.jpg',
+    emoji: '🫁',
+    desc: 'Lancet-shaped diplococci in pairs. A leading cause of pneumonia, meningitis, and otitis media worldwide. Has a distinctive polysaccharide capsule that helps it evade immune defenses.',
+    facts: [{ l: 'Shape', v: 'Diplococcus' }, { l: 'Gram', v: 'Positive' }, { l: 'Capsule', v: 'Yes' }, { l: 'Rating', v: 'Moderate' }, { l: 'Alpha-haemolytic', v: 'Yes' }],
+    reviews: []
+  },
+  {
+    id: 5, name: 'Salmonella', sci: 'Salmonella enterica', severity: 'moderate',
+    type: 'gram-negative', gramLabel: 'Gram −', gramClass: 'gram-neg',
+    img: 'https://www.microbiologyinpictures.com/bacteria-photos/salmonella-photos/salmonella-typhimurium.jpg',
+    emoji: '🍳',
+    desc: 'A leading cause of foodborne illness globally. Motile, facultative anaerobe. Invades intestinal epithelial cells causing gastroenteritis. Typhoid fever is caused by serovar Typhi.',
+    facts: [{ l: 'Shape', v: 'Rod' }, { l: 'Gram', v: 'Negative' }, { l: 'Motile', v: 'Yes' }, { l: 'Rating', v: 'Moderate' }, { l: 'Source', v: 'Poultry, eggs' }],
+    reviews: [{ user: 'FoodMicro', stars: 4, text: 'Recovered from a chicken sample. The H2S production on XLD agar gave black-centred colonies — classic.', photo: null }]
+  },
+  {
+    id: 6, name: 'Helicobacter pylori', sci: 'Helicobacter pylori', severity: 'moderate',
+    type: 'gram-negative', gramLabel: 'Gram −', gramClass: 'gram-neg',
+    img: 'https://www.researchgate.net/profile/Ali-Al-Ahmad/publication/351107186/figure/fig1/AS:1017089947078656@1619504548498/Morphology-of-H-pylori-Field-emission-scanning-electron-microscopic-FESEM-image-of-a.ppm',
+    emoji: '🌀',
+    desc: 'The corkscrew-shaped ulcer-maker. Lives in the harsh acidic environment of the stomach by producing urease to neutralise acid around it. A Nobel Prize-winning discovery linked it to peptic ulcers.',
+    facts: [{ l: 'Shape', v: 'Helical rod' }, { l: 'Gram', v: 'Negative' }, { l: 'Habitat', v: 'Stomach' }, { l: 'Rating', v: 'Moderate' }, { l: 'Urease', v: 'Positive' }],
+    reviews: [{ user: 'GastroDoc', stars: 5, text: 'The fact that this organism can survive stomach acid still amazes me. Barry Marshall was right all along.', photo: null }]
+  },
+  {
+    id: 7, name: 'Treponema pallidum', sci: 'Treponema pallidum', severity: 'moderate',
+    type: 'spirochete', gramLabel: 'Spirochete', gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Treponemapallidum.jpg/960px-Treponemapallidum.jpg',
+    emoji: '🌊',
+    desc: 'The invisible corkscrew. Too thin to see by normal light microscopy — requires darkfield. The causative agent of syphilis, an ancient STI that still mimics many other diseases.',
+    facts: [{ l: 'Shape', v: 'Spirochete' }, { l: 'Staining', v: 'Darkfield only' }, { l: 'Rating', v: 'Moderate' }, { l: 'Disease', v: 'Syphilis' }, { l: 'Cultivable', v: 'No' }],
+    reviews: []
+  },
+  {
+    id: 8, name: 'Clostridium botulinum', sci: 'Clostridium botulinum', severity: 'lethal',
+    type: 'anaerobe', gramLabel: 'Gram +', gramClass: 'gram-pos',
+    img: 'https://mechpath.com/wp-content/uploads/2015/11/figure-12.jpg',
+    emoji: '⚰️',
+    desc: 'Producer of the most lethal toxin known to science. An obligate anaerobe forming spores that survive boiling. Found in soil and improperly canned foods. Ironically, its toxin (Botox) is used cosmetically.',
+    facts: [{ l: 'Shape', v: 'Rod' }, { l: 'Gram', v: 'Positive' }, { l: 'O₂', v: 'Obligate anaerobe' }, { l: 'Rating', v: 'Lethal' }, { l: 'Spore', v: 'Subterminal' }],
+    reviews: [{ user: 'ToxinLab', stars: 5, text: 'Growing this requires a proper anaerobic cabinet. The drumstick-shaped spores are unmistakable. Terrifying organism.', photo: null }]
+  },
+  {
+    id: 9, name: 'Pseudomonas aeruginosa', sci: 'Pseudomonas aeruginosa', severity: 'moderate',
+    type: 'gram-negative', gramLabel: 'Gram −', gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Lung_cells_infection_by_Pseudomonas_aeruginosa.tif/lossless-page1-960px-Lung_cells_infection_by_Pseudomonas_aeruginosa.tif.png',
+    emoji: '🟢',
+    desc: 'The blue-green menace. An opportunistic pathogen infamous for infecting burn wounds and the lungs of cystic fibrosis patients. Produces pyocyanin giving cultures a distinctive blue-green hue.',
+    facts: [{ l: 'Shape', v: 'Rod' }, { l: 'Gram', v: 'Negative' }, { l: 'Pigment', v: 'Blue-green' }, { l: 'Rating', v: 'Moderate' }, { l: 'Motile', v: 'Yes' }],
+    reviews: []
+  },
+  {
+    id: 10, name: 'Lactobacillus acidophilus', sci: 'Lactobacillus acidophilus', severity: 'mild',
+    type: 'gram-positive', gramLabel: 'Gram +', gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Lactobacillus_acidophilus_%28259_09%29_Lactobacillus_acidophilus_%28D%C3%B6derlein_bacillus%29.jpg/960px-Lactobacillus_acidophilus_%28259_09%29_Lactobacillus_acidophilus_%28D%C3%B6derlein_bacillus%29.jpg',
+    emoji: '🥛',
+    desc: 'Your friendly gut resident. A probiotic bacterium that ferments lactose to lactic acid, lowering vaginal and gut pH to protect against pathogens. Found in yoghurt, kefir, and a healthy microbiome.',
+    facts: [{ l: 'Shape', v: 'Long rod' }, { l: 'Gram', v: 'Positive' }, { l: 'Role', v: 'Probiotic' }, { l: 'Rating', v: 'Benign' }, { l: 'Product', v: 'Lactic acid' }],
+    reviews: [{ user: 'MicrobiomeFan', stars: 5, text: 'Found in every yoghurt I tested for my thesis. Healthy, beneficial, and beautiful long rods on Gram stain.', photo: null }]
+  },
+  {
+    id: 11, name: 'Neisseria meningitidis', sci: 'Neisseria meningitidis', severity: 'lethal',
+    type: 'gram-negative', gramLabel: 'Gram −', gramClass: 'gram-neg',
+    img: 'https://media.sciencephoto.com/image/c0074745/800wm/C0074745-Meningitis_bacteria,_SEM.jpg',
+    emoji: '🧠',
+    desc: 'The meningitis bacterium. Diplococci that colonise the nasopharynx of carriers. When it crosses the blood-brain barrier, it can cause devastating bacterial meningitis within hours.',
+    facts: [{ l: 'Shape', v: 'Diplococcus' }, { l: 'Gram', v: 'Negative' }, { l: 'Rating', v: 'Lethal' }, { l: 'Carrier rate', v: '~10%' }, { l: 'Capsule', v: 'Yes' }],
+    reviews: []
+  },
+  {
+    id: 12, name: 'Bacillus anthracis', sci: 'Bacillus anthracis', severity: 'lethal',
+    type: 'gram-positive', gramLabel: 'Gram +', gramClass: 'gram-pos',
+    img: 'https://www.rki.de/SharedDocs/Bilder/InfAZ/Anthrax/EM_Leo_P-08_B_anthracis_REM_vegetativ_en.jpg?__blob=normal&v=4',
+    emoji: '⚠️',
+    desc: 'The anthrax bacterium. Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. A significant bioterrorism concern.',
+    facts: [{ l: 'Shape', v: 'Large rod' }, { l: 'Gram', v: 'Positive' }, { l: 'Spore', v: 'Central' }, { l: 'Rating', v: 'Lethal' }, { l: 'Capsule', v: 'Poly-D-glutamate' }],
+    reviews: []
+  }, 
+  {
+    id: 13, 
+    name: 'Nocardia', 
+    sci: 'Nocardia asteroides', 
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Nocardia_in_modified_Ziehl-Neelsen_staining.jpg/960px-Nocardia_in_modified_Ziehl-Neelsen_staining.jpg',
+    emoji: '🟢',
+    desc: 'Weakly acid-fast, opportunistic pathogen forming beautiful branching, beaded filaments that resemble fungal hyphae under the microscope. Commonly causes pulmonary or cutaneous infections.',
+    facts: [{ l: 'Shape', v: 'Branching filament' }, { l: 'Stain', v: 'Modified Acid-fast' }, { l: 'Rating', v: 'Lethal' }, { l: 'O₂', v: 'Strict aerobe' }],
+    reviews: []
+  },
+  {
+    id: 14,
+    name: 'Group A Strep',
+    sci: 'Streptococcus pyogenes',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=500&auto=format&fit=crop',
+    emoji: '📿',
+    desc: 'A major human pathogen responsible for streptococcal pharyngitis (strep throat), scarlet fever, impetigo, and severe invasive infections like necrotizing fasciitis. Characterized by its ability to completely lyse red blood cells.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Hemolysis', v: 'Beta (Group A)' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 15,
+    name: 'Cholera',
+    sci: 'Vibrio cholerae',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Vibrio_cholerae.jpg/960px-Vibrio_cholerae.jpg',
+    emoji: '🧬',
+    desc: 'A waterborne pathogen that causes cholera, an acute diarrheal illness. It secretes an enterotoxin that causes massive, rapid fluid and electrolyte loss from the small intestine, leading to severe dehydration and shock within hours if untreated.',
+    facts: [
+      { l: 'Shape', v: 'Comma-shaped rod (Vibrio)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Motility', v: 'Highly motile (Darting)' },
+      { l: 'Oxidase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 16,
+    name: 'Plague Bacillus',
+    sci: 'Yersinia pestis',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Yersinia_pestis_fluorescent_-_PHIL_1917.jpg/960px-Yersinia_pestis_fluorescent_-_PHIL_1917.jpg',
+    emoji: '🐀',
+    desc: '"The Black Death" this pathogen operates primarily as a zoonotic disease—meaning it circulates naturally in wild rodent populations and typically spills over to humans via the bites of infected rodent fleas, though it can also transmit through direct contact with infectious body fluids or contaminated respiratory droplets. Once inside a host, Y. pestis can manifest in three clinical forms based on its route of entry: bubonic, septicemic, or pneumonic',
+    facts: [
+      { l: 'Shape', v: 'Plump rod with rounded ends (Coccobacillus)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Motility', v: 'Strictly non-motile' },
+      { l: 'Oxidase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 17, // Changed from duplicated 16 to 17
+    name: 'Lyme Disease',
+    sci: 'Borrelia burgdorferi',
+    severity: 'moderate',
+    type: 'spirochete',
+    gramLabel: 'Spirochete',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/13176/13176_lores.jpg',
+    emoji: '🌀',
+    desc: 'A tick-borne spirochete that causes Lyme disease. Transmitted by Ixodes ticks, it typically manifests initially with a characteristic "bulls-eye" rash (erythema migrans) and can later cause neurological, joint, and cardiac complications if left untreated.',
+    facts: [
+      { l: 'Shape', v: 'Spirochete (Spiral)' },
+      { l: 'Gram', v: 'Weak Negative / Stains poorly' },
+      { l: 'Vector', v: 'Ixodes (Blacklegged) Tick' },
+      { l: 'Visualization', v: 'Dark-field / Giemsa stain' }
+    ],
+    reviews: []
+  },
+  {
+    id: 18, // Shifted IDs sequentially onwards
+    name: 'Staph epidermidis',
+    sci: 'Staphylococcus epidermidis',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Staphylococcus_epidermidis_01.png/960px-Staphylococcus_epidermidis_01.png',
+    emoji: '🧫',
+    desc: 'A major component of the normal human skin flora. While typically benign and protective against pathogens on the skin surface, it is a leading cause of opportunistic nosocomial infections due to its high capacity to form stubborn biofilms on medical devices like catheters and prosthetic valves.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (clusters)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Novobiocin', v: 'Sensitive' },
+      { l: 'Coagulase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 19,
+    name: 'Group B Strep',
+    sci: 'Streptococcus agalactiae',
+    severity: 'generally mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/4/41/Col%C3%B4nia_de_streptococcus_agalactiae.jpg?_=20130911101047',
+    emoji: '👶',
+    desc: 'Commonly colonizes the maternal gastrointestinal and genitourinary tracts. It is a critical opportunistic pathogen during childbirth, serving as a leading cause of neonatal sepsis, pneumonia, and severe neonatal meningitis.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (pairs/chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Hemolysis', v: 'Beta (Narrow zone)' },
+      { l: 'CAMP Test', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 20,
+    name: 'Staph saprophyticus',
+    sci: 'Staphylococcus saprophyticus',
+    severity: 'moderate',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://www.hartmann-science-center.com/-/media/country/hsc/pathogens/haufenkokken-b5_540x540px.jpg?mw=540&rev=17f12ef327e845179d45a7378778be47&sc_lang=en&hash=ABB34F02CE9B1EC0AD953926326534BA',
+    emoji: '🍋',
+    desc: 'A coagulase-negative staphylococcus that is a well-known cause of uncomplicated urinary tract infections (UTIs), particularly in young, sexually active females. It is naturally resistant to the antibiotic novobiocin.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (clusters)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Novobiocin', v: 'Resistant' },
+      { l: 'Coagulase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 21,
+    name: 'Staph lugdunensis',
+    sci: 'Staphylococcus lugdunensis',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://live.staticflickr.com/5488/9678039192_db1e15f323_b.jpg',
+    emoji: '💔',
+    desc: 'A coagulase-negative staphylococcus (CoNS) that uniquely behaves like Staphylococcus aureus in its virulence. It is notorious for causing aggressive, destructive infective endocarditis (often destroying heart valves) and severe skin or soft tissue infections.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (clusters)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Coagulase', v: 'Negative (Free)' },
+      { l: 'PYR Test', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 22,
+    name: 'Staph haemolyticus',
+    sci: 'Staphylococcus haemolyticus',
+    severity: 'moderate',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Staphylococcus_haemolyticus_in_Wet_Mount.jpg/960px-Staphylococcus_haemolyticus_in_Wet_Mount.jpg',
+    emoji: '💊',
+    desc: 'The second most frequently isolated coagulase-negative staphylococcus in clinical settings. It is highly notorious for its multi-drug resistance profile, particularly its widespread resistance to glycopeptides like vancomycin, making hospital-acquired infections difficult to treat.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (clusters)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Hemolysis', v: 'Beta (Strongly hemolytic)' },
+      { l: 'Coagulase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 23,
+    name: 'Micrococcus luteus',
+    sci: 'Micrococcus luteus',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://blog.microbiologics.com/wp-content/uploads/2015/11/1-54-1024x683.jpg',
+    emoji: '🟡',
+    desc: 'A common, saprophytic bacterium found in soil, water, and normal human skin flora. It is famously recognized by its distinct, vibrant yellow colonies on agar plate media. While typically non-pathogenic, it can act as an opportunistic pathogen in immunocompromised patients.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (tetrads)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Colonies', v: 'Bright Yellow' },
+      { l: 'Catalase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 24,
+    name: 'Viridans Strep',
+    sci: 'Streptococcus mutans / mitis',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Streptococcus_mutans_01.jpg',
+    emoji: '🦷',
+    desc: 'Prominent members of the Viridans streptococci group that reside in the human oral cavity. S. mutans ferment sucrose into lactic acid, dropping oral pH and causing dental caries (cavities). If they enter the bloodstream during dental procedures, they can cause subacute bacterial endocarditis.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Hemolysis', v: 'Alpha (Green partial)' },
+      { l: 'Optochin', v: 'Resistant' }
+    ],
+    reviews: []
+  },
+  {
+    id: 25,
+    name: 'Streptococcus thermophilus',
+    sci: 'Streptococcus thermophilus',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://images.pixels.com/images-medium-large-5/1-streptococcus-thermophilus-dennis-kunkel-microscopyscience-photo-library.jpg',
+    emoji: '🥣',
+    desc: 'An essential, food-grade lactic acid bacterium widely utilized in the dairy industry. Working symbiotically with Lactobacillus species, it ferments lactose into lactic acid, which coagulates milk proteins to produce yogurt and various cheeses.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (pairs/chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Optimal Temp', v: 'Thermophilic (40-45°C)' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 26,
+    name: 'Enterococcus faecalis',
+    sci: 'Enterococcus faecalis',
+    severity: 'moderate',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Enterococcus_faecalis20023-300.jpg',
+    emoji: '🏥',
+    desc: 'A prominent commensal bacterium of the human gastrointestinal tract that serves as a major opportunistic nosocomial pathogen. It frequently causes complicated urinary tract infections (UTIs), surgical site infections, and endocarditis, and is notorious for its intrinsic resistance to many common antibiotics.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (pairs/short chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Growth in Bile', v: 'Positive (6.5% NaCl)' },
+      { l: 'PYR Test', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 27,
+    name: 'VRE (E. faecium)',
+    sci: 'Enterococcus faecium',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Entercoccus_sp2_lores.jpg',
+    emoji: '🛡️',
+    desc: 'A robust gastrointestinal commensal that is significantly more likely than E. faecalis to carry multi-drug resistance genes. It is a notorious hospital-acquired pathogen, particularly feared for Vancomycin-Resistant Enterococcus (VRE) strains that cause difficult-to-treat bacteremia, endocarditis, and urinary tract infections.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (pairs/chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Resistance', v: 'Vancomycin (VRE common)' },
+      { l: 'Arabinose', v: 'Ferments (Differentiates from E. faecalis)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 28,
+    name: 'Leuconostoc mesenteroides',
+    sci: 'Leuconostoc mesenteroides',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://genome.jgi.doe.gov/portal/leume/leume.jpg',
+    emoji: '🥬',
+    desc: 'An essential lactic acid bacterium used extensively in industrial food fermentation. It initiates the fermentation process of vegetables, such as sauerkraut and kimchi, by rapidly converting sugars into lactic acid, acetic acid, carbon dioxide, and ethanol, effectively preserving the food and creating its characteristic sour flavor.',
+    facts: [
+      { l: 'Shape', v: 'Coccus (pairs/chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Gas Production', v: 'Heterofermentative (CO2+)' },
+      { l: 'Vancomycin', v: 'Intrinsically Resistant' }
+    ],
+    reviews: []
+  },
+  {
+    id: 29,
+    name: 'Bacillus subtilis',
+    sci: 'Bacillus subtilis',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Microscope_view_of_Bacillus_subtilis_2.jpg/960px-Microscope_view_of_Bacillus_subtilis_2.jpg',
+    emoji: '🔬',
+    desc: 'A heavily studied, spore-forming bacterium utilized as a premier laboratory model organism for Gram-positive bacteria. It is widely used to study bacterial chromosome replication, cell differentiation, and endospore formation, and serves as an important host for industrial enzyme production due to its high secretory capacity.',
+    facts: [
+      { l: 'Shape', v: 'Rod (Bacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Spores', v: 'Endospore-forming' },
+      { l: 'Motility', v: 'Motile (Peritrichous flagella)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 30,
+    name: 'Bacillus thuringiensis',
+    sci: 'Bacillus thuringiensis',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Bt-toxin-crystals.jpg/960px-Bt-toxin-crystals.jpg',
+    emoji: '🐛',
+    desc: 'Gram-positive, soil-dwelling bacterium, and is the most commonly used biological pesticide worldwide.',
+    facts: [
+      { l: 'Shape', v: 'Cylindrical Rod-shaped (Bacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Motile' },
+      { l: 'Oxidase', v: 'Negative' },
+      { l: 'Catalase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 31,
+    name: 'Bacillus anthracis',
+    sci: 'Bacillus anthracis',
+    severity: 'Lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Neutrophil_with_anthrax_copy.jpg/960px-Neutrophil_with_anthrax_copy.jpg',
+    emoji: '⚠️',
+    desc: 'Spore-forming, gram-positive bacterium that causes anthrax. Found naturally in soil worldwide, it primarily infects livestock and wildlife. Humans contract the disease through cutaneous contact, inhalation, or ingestion of spores.',
+    facts: [
+      { l: 'Shape', v: 'Rod-shaped (Bacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Non-Motile' },
+      { l: 'Oxidase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 32, // Adjusted from 31 to 32 to fill the empty sequence gap
+    name: 'Bacillus cereus',
+    sci: 'Bacillus cereus',
+    severity: 'Mild to Moderate',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://mediasvc.eurekalert.org/Api/v1/Multimedia/cdb851e6-18bf-4951-86d3-5bbb5e1deb79/Rendition/low-res/Content/Public',
+    emoji: '🍛',
+    desc: 'Spore-forming bacterium found naturally in soil, on vegetables, and in many raw and processed foods. It causes foodborne illness through two distinct toxins: one that induces vomiting (emetic) and another that causes diarrhea.',
+    facts: [
+      { l: 'Shape', v: 'Rod-shaped (Bacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Motile' },
+      { l: 'Oxidase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 33,
+    name: 'Clostridium tetani',
+    sci: 'Clostridium tetani',
+    severity: 'Lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Ic%C3%B4ne-bact%C3%A9riologie.png',
+    emoji: '🩹',
+    desc: 'An anaerobic, spore-forming, Gram-positive bacterium responsible for the disease tetanus. Its highly resilient spores exist ubiquitously in soil and animal feces and infect the body via open wounds or cuts, producing a potent neurotoxin that causes severe muscle spasms and lockjaw.',
+    facts: [
+      { l: 'Shape', v: 'Rod-shaped (Bacillus/Drumstick)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Generally Motile' },
+      { l: 'Oxidase', v: 'Negative' },
+      { l: 'O2', v: 'Obligate anaerobe' }
+    ],
+    reviews: []
+  },
+  {
+    id: 34,
+    name: 'Clostridium perfringens',
+    sci: 'Clostridium perfringens',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Clostridium_perfringens.jpg/1280px-Clostridium_perfringens.jpg',
+    emoji: '🥩',
+    desc: 'An anaerobic, spore-forming, Gram-positive rod known for its rapid doubling time. It is a major cause of histotoxic infections like gas gangrene (clostridial myonecrosis) via its destructive alpha-toxin, as well as a highly common cause of food poisoning linked to improperly cooked or reheated meats and gravies.',
+    facts: [
+      { l: 'Shape', v: 'Large Rod (Boxcar-shaped)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Non-Motile' },
+      { l: 'Hemolysis', v: 'Double zone (Alpha + Beta)' },
+      { l: 'O₂', v: 'Obligate anaerobe' }
+    ],
+    reviews: []
+  },
+  {
+    id: 35,
+    name: 'C. difficile',
+    sci: 'Clostridioides difficile',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Clostridium_difficile_01.jpg/960px-Clostridium_difficile_01.jpg',
+    emoji: '💊',
+    desc: 'An anaerobic, spore-forming rod that is a notorious cause of healthcare-associated diarrhea. It opportunistically proliferates in the colon after broad-spectrum antibiotic therapy eliminates normal gut flora, releasing potent exotoxins (Toxin A and B) that cause severe inflammation and pseudomembranous colitis.',
+    facts: [
+      { l: 'Shape', v: 'Rod (Bacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Toxins', v: 'Enterotoxin A & Cytotoxin B' },
+      { l: 'Transmission', v: 'Fecal-oral (Spores)' },
+      { l: 'O₂', v: 'Obligate anaerobe' }
+    ],
+    reviews: []
+  },
+  {
+    id: 36,
+    name: 'Listeria monocytogenes',
+    sci: 'Listeria monocytogenes',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Listeria_Bacterium_02.jpg/960px-Listeria_Bacterium_02.jpg',
+    emoji: '🧀',
+    desc: 'A small, Gram-positive, non-spore-forming rod capable of surviving and multiplying at refrigeration temperatures. It is a dangerous foodborne pathogen typically contracted from unpasteurized dairy, deli meats, and soft cheeses, posing a severe risk of septicemia, meningitis, and spontaneous abortion in pregnant women, newborns, and the immunocompromised.',
+    facts: [
+      { l: 'Shape', v: 'Small Rod (Coccobacillus)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Motility', v: 'Tumbling (25°C) / Actin tails (37°C)' },
+      { l: 'Hemolysis', v: 'Beta (Narrow/Weak)' },
+      { l: 'Catalase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 37,
+    name: 'Corynebacterium diphtheriae',
+    sci: 'Corynebacterium diphtheriae',
+    severity: 'lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/CDC_15191_%281979%29.png/960px-CDC_15191_%281979%29.png',
+    emoji: '🦒',
+    desc: 'A non-spore-forming, pleomorphic rod famously exhibiting a "Chinese letter" or club-shaped arrangement. It produces a potent lethal exotoxin (diphtheria toxin) that inhibits cellular protein synthesis, causing the characteristic thick, gray pseudomembrane across the throat and tonsils that can lead to airway obstruction and systemic complications.',
+    facts: [
+      { l: 'Shape', v: 'Club-shaped Rods (V/L shapes)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Granules', v: 'Metachromatic (Albert stain)' },
+      { l: 'Motility', v: 'Non-Motile' },
+      { l: 'Catalase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 38,
+    name: 'Corynebacterium  jeikeium',
+    sci: 'Corynebacterium jeikeium',
+    severity: 'moderate',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780750601870500080-f03-02-9780750601870.jpg',
+    emoji: '🏥',
+    desc: 'A prominent opportunistic pathogen among the coryneform bacteria, highly notorious for causing nosocomial infections in immunocompromised or neutropenic patients with indwelling medical devices. It is characterized by its remarkable multi-drug resistance profile, frequently leaving vancomycin as the only effective treatment option.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic/Coccoid Rod' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Lipophilic', v: 'Yes (Requires lipid for growth)' },
+      { l: 'Motility', v: 'Non-Motile' },
+      { l: 'Catalase', v: 'Positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 39,
+    name: 'Lactobacillus bulgaricus',
+    sci: 'Lactobacillus delbrueckii subsp. bulgaricus',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Microscopic_Image_Lactobacillus_bulgaricus_GLB44.jpg?_=20190914015812',
+    emoji: '🥣',
+    desc: 'An essential, food-grade lactic acid bacterium widely known for its role in yogurt production. It works in a structural symbiosis with Streptococcus thermophilus, fermenting lactose into lactic acid, which curdles milk proteins and produces the volatile aroma compounds (like acetaldehyde) that give yogurt its classic tart flavor.',
+    facts: [
+      { l: 'Shape', v: 'Long, filamentous Rod' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Product', v: 'Lactic Acid / Acetaldehyde' },
+      { l: 'Optimal Temp', v: 'Thermophilic (40–44°C)' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 40,
+    name: 'Lactobacillus rhamnosus',
+    sci: 'Lactobacillus rhamnosus',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbaj0O4fUsxR8jLBvPJqnibU6JzBR3Gk5TkjTvKfEWBmrarcgdLqYfMfbM5wQ8Z1Evp9hgF55dSkVfn6C9n7Rb2dPkPoFDxajMx1v-_28&s=10',
+    emoji: '🛡️',
+    desc: 'A highly resilient, probiotic bacterium prized for its exceptional ability to survive the harsh acidic environment of the stomach and bile tract. Widely used in functional foods and supplements, it helps stabilize the intestinal epithelial barrier, outcompetes gut pathogens, and supports immune regulation.',
+    facts: [
+      { l: 'Shape', v: 'Short Rod (often in chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Role', v: 'Probiotic / Gut Health' },
+      { l: 'Growth', v: 'Facultative heterofermentative' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 41,
+    name: 'Lactobacillus casei',
+    sci: 'Lactobacillus casei',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Lactobacillus_casei_2.jpg/960px-Lactobacillus_casei_2.jpg',
+    emoji: '🍼',
+    desc: 'A versatile lactic acid bacterium found natively in the human oral and intestinal cavities, as well as in dairy products and fermented vegetables. Famously utilized in commercial probiotic dairy drinks, it is highly adaptive and widely documented for its role in regulating digestive transit and supporting mucosal immunity.',
+    facts: [
+      { l: 'Shape', v: 'Straight Rod (Square-ended/Chains)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Role', v: 'Probiotic / Industrial Fermentation' },
+      { l: 'Growth', v: 'Facultative anaerobe' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 42,
+    name: 'M. leprae',
+    sci: 'Mycobacterium leprae',
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Mycobacterium_leprae_in_Magnification_of_1000X.jpg/960px-Mycobacterium_leprae_in_Magnification_of_1000X.jpg',
+    emoji: '🪵',
+    desc: 'An intracellular, acid-fast bacterium that causes leprosy (Hansen\'s disease). It has an incredibly long doubling time (around two weeks) and holds a unique preference for cooler temperatures, tropically targeting peripheral nerves, skin, and mucous membranes. This leads to characteristic nerve damage, loss of sensation, and disfiguring skin lesions.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Rod (grouped in globi)' },
+      { l: 'Stain', v: 'Acid-fast (Ziehl-Neelsen / Fite)' },
+      { l: 'Target', v: 'Schwann cells / Peripheral nerves' },
+      { l: 'Cultivable', v: 'No (requires animal models like armadillos)' },
+      { l: 'Growth Rate', v: 'Extremely slow (months to years)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 43,
+    name: 'MAC (M. avium complex)',
+    sci: 'Mycobacterium avium-intracellulare',
+    severity: 'lethal',
+    type: 'acid-fast', gramLabel: 'Acid-fast', gramClass: 'gram-afast',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Mycobacterium_avium-intracellulare_01.png/960px-Mycobacterium_avium-intracellulare_01.png',
+    emoji: '🕊️',
+    desc: 'A grouping of non-tuberculous mycobacteria (NTM) commonly found in soil and water. While harmless to healthy individuals, it is a formidable opportunistic pathogen in immunocompromised patients—particularly those with advanced HIV/AIDS or pre-existing lung disease—causing severe disseminated infections or chronic pulmonary disease mimicking tuberculosis.',
+    facts: [
+      { l: 'Shape', v: 'Straight or slightly curved Rod' },
+      { l: 'Stain', v: 'Acid-fast' },
+      { l: 'Classification', v: 'Runyon Group III (Non-chromogen)' },
+      { l: 'Environment', v: 'Ubiquitous (Water, soil, house dust)' },
+      { l: 'Risk Factor', v: 'Low CD4 count (<50 cells/µL)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 44,
+    name: 'B. bifidum',
+    sci: 'Bifidobacterium bifidum',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/23372/23372_lores.jpg',
+    emoji: '👶',
+    desc: 'One of the most prominent probiotic bacterial residents of the mammalian gut, dominating the intestinal microbiota of breastfed infants. It is a non-spore-forming, strictly anaerobic rod that characteristically branches into distinct "Y" or "V" shapes, actively fermenting carbohydrates to produce lactic and acetic acids that naturally suppress gut pathogens.',
+    facts: [
+      { l: 'Shape', v: 'Branched Rod (Y or V shapes)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'O₂', v: 'Strict Anaerobe' },
+      { l: 'Role', v: 'Probiotic / Infant Gut Pioneer' },
+      { l: 'Fermentation', v: 'Heterolactic (No gas production)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 45,
+    name: 'B. infantis',
+    sci: 'Bifidobacterium infantis',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Bifidobacterium_longum_en_microscopie_%C3%A9lectronique.jpg/960px-Bifidobacterium_longum_en_microscopie_%C3%A9lectronique.jpg',
+    emoji: '🍼',
+    desc: 'A specialized infant gut probiotic that plays a crucial evolutionary role in newborn development. It is uniquely equipped with a complete suite of genes dedicated to capturing and digesting Human Milk Oligosaccharides (HMOs)—complex sugars in breastmilk that humans cannot digest themselves—allowing it to swiftly colonize the gut, lower intestinal pH, and train the developing immune system.',
+    facts: [
+      { l: 'Shape', v: 'Clubbed, Pleomorphic Rod (Y-shaped)' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Specialty', v: 'HMO Metabolism Utilization' },
+      { l: 'O₂', v: 'Strict Anaerobe' },
+      { l: 'Catalase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 46,
+    name: 'Streptomyces griseus',
+    sci: 'Streptomyces griseus',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Streptomyces_griseus_color_enhanced_scanning_electron_micrograph..jpg/960px-Streptomyces_griseus_color_enhanced_scanning_electron_micrograph..jpg',
+    emoji: '💊',
+    desc: 'A soil-dwelling, filamentous bacterium famous for its historic role in medicine. It forms an extensively branched mycelium resembling fungal hyphae and reproduces by producing chains of spores (conidia). It is celebrated as the original source of streptomycin—the very first antibiotic discovered that successfully cured tuberculosis—sparking a golden era of soil microflora screening.',
+    facts: [
+      { l: 'Shape', v: 'Branching Filamentous Hyphae' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Claim to Fame', v: 'Source of Streptomycin (Albert Schatz, 1943)' },
+      { l: 'O₂', v: 'Strict Aerobe' },
+      { l: 'Colonies', v: 'Powdery / Chalky texture' }
+    ],
+    reviews: []
+  },
+ {
+    id: 47,
+    name: 'Streptomyces coelicolor',
+    sci: 'Streptomyces coelicolor',
+    severity: 'mild',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/NFDI4BIOIMAGE_Calendar_July_2025.png/960px-NFDI4BIOIMAGE_Calendar_July_2025.png',
+    emoji: '🎨',
+    desc: 'The undisputed premier model organism for studying actinomycete genetics, cell differentiation, and antibiotic biosynthesis. Living primarily in soil, it undergoes a complex lifecycle transitioning from substrate mycelium to aerial hyphae and spores. It is visually striking due to its production of actinorhodin, a pH-responsive pigment that changes color from red to vibrant blue as the colony matures.',
+    facts: [
+      { l: 'Shape', v: 'Filamentous / Branching threads' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Pigment', v: 'Actinorhodin (pH-dependent Red/Blue)' },
+      { l: 'Genomics', v: 'Massive linear chromosome (~8.7 Mb)' },
+      { l: 'O₂', v: 'Strict Aerobe' }
+    ],
+    reviews: []
+  },
+  {
+    id: 48,
+    name: 'Gardnerella vaginalis',
+    sci: 'Gardnerella vaginalis',
+    severity: 'moderate',
+    type: 'gram-variable',
+    gramLabel: 'Gram Var',
+    gramClass: 'gram-var',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/ClueCell_de_vaginose_%C3%A0_Gardnerella.jpg/960px-ClueCell_de_vaginose_%C3%A0_Gardnerella.jpg',
+    emoji: '🧪',
+    desc: 'A facultatively anaerobic, gram-variable rod that is the primary clinical hallmark of bacterial vaginosis (BV). While it has a gram-positive cell wall structure, the wall is exceptionally thin, causing it to often stain gram-negative or variable. In microscopic examinations of vaginal discharge, it is famously diagnosed by the presence of "clue cells"—epithelial cells completely covered in a dense biofilm of these tiny coccobacilli.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Coccobacillus' },
+      { l: 'Gram', v: 'Variable (Gram-positive wall structure)' },
+      { l: 'Key Marker', v: 'Clue Cells on Wet Mount' },
+      { l: 'Catalase', v: 'Negative' },
+      { l: 'Oxidase', v: 'Negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 49,
+    name: 'Mycoplasma pneumoniae',
+    sci: 'Mycoplasma pneumoniae',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://scx1.b-cdn.net/csz/news/800a/2025/essentiality-scan-reve.jpg',
+    emoji: '🫁',
+    desc: 'An atypical bacterium famous for lacking a peptidoglycan cell wall entirely, making it completely resistant to beta-lactam antibiotics like penicillin. It is the primary causative agent of "walking pneumonia," a milder form of community-acquired pneumonia. It uses a specialized terminal attachment organelle to burrow through respiratory mucus and adhere strictly to ciliated epithelial cells, damaging them via hydrogen peroxide production.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic / Spindle-shaped' },
+      { l: 'Gram', v: 'None (Stains poorly; lacks cell wall)' },
+      { l: 'Key Disease', v: 'Walking Pneumonia / Tracheobronchitis' },
+      { l: 'Membrane', v: 'Contains Sterols (requires cholesterol to grow)' },
+      { l: 'Diagnosis', v: 'PCR / Serology (Cold agglutinins titer)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 50,
+    name: 'Mycoplasma genitalium',
+    sci: 'Mycoplasma genitalium',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYACb3o2u8gaSmAgxrHCSdUR4hoXGpF5iDR6iPR-E5JnRkNAbsVdJ7YHM&s=10',
+    emoji: '🧬',
+    desc: 'A sexually transmitted atypical bacterium notable for possessing one of the smallest genomes of any free-living organism (~580 kb). Lacking a cell wall, it is highly pleomorphic and intrinsically resistant to penicillins. It features a distinctive flask-shaped structure with a prominent terminal tip organelle used to adhere to and invade urogenital epithelial cells, causing nongonococcal urethritis and pelvic inflammatory disease.',
+    facts: [
+      { l: 'Shape', v: 'Flask / Pear-shaped with terminal tip' },
+      { l: 'Gram', v: 'None (Lacks cell wall structure)' },
+      { l: 'Genome Size', v: 'Extremely minimal (~580 kilobases)' },
+      { l: 'Transmission', v: 'Sexually transmitted infection (STI)' },
+      { l: 'Resistance', v: 'High rate of macrolide (azithromycin) resistance' }
+    ],
+    reviews: []
+  },
+  {
+    id: 51,
+    name: 'Mycoplasma hominis',
+    sci: 'Mycoplasma hominis',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/11024/11024_lores.jpg',
+    emoji: '🍳',
+    desc: 'An opportunistic, wall-less bacterium frequently found as a commensal resident of the human lower urogenital tract. When the vaginal ecosystem is disrupted, it can proliferate alongside other anaerobes, contributing to bacterial vaginosis, pelvic inflammatory disease, and post-abortal or postpartum fever. On agar media, its tiny colonies exhibit a classic, distinctive "fried-egg" visual morphology.',
+    facts: [
+      { l: 'Shape', v: 'Highly pleomorphic (Lacks cell wall)' },
+      { l: 'Gram', v: 'None (Does not respond to Gram stain)' },
+      { l: 'Colony Appearance', v: '"Fried-egg" morphology on A7/A8 agar' },
+      { l: 'Metabolism', v: 'Metabolizes arginine (unlike M. pneumoniae)' },
+      { l: 'Intrinsic Resistance', v: 'Resistant to Erythromycin (Macrolides)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 52,
+    name: 'Mycoplasma amphoriforme',
+    sci: 'Mycoplasma amphoriforme',
+    severity: 'moderate',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://ars.els-cdn.com/content/image/1-s2.0-S0732889323001001-gr1.jpg', 
+    emoji: '🏺',
+    desc: 'An emerging atypical pathogen named for its distinct flask or amphora-like cell morphology. Devoid of a peptidoglycan cell wall, it relies on a specialized polar tip with gliding motility to colonize respiratory epithelium. It is clinically significant as a cause of chronic, relapsing-remitting lower respiratory tract infections, uniquely dominating the airway microbiota of primary antibody-deficient (PAD) and immunocompromised hosts.',
+    facts: [
+      { l: 'Shape', v: 'Flask / Amphora-shaped with polar tip' },
+      { l: 'Gram', v: 'None (Cell wall-deficient Mollicutes)' },
+      { l: 'Primary Target', v: 'Immunocompromised / CVID patients' },
+      { l: 'Metabolism', v: 'Ferments Glucose (Arginine/Urease negative)' },
+      { l: 'Colony Appearance', v: 'Small, convex with "ground glass" texture' }
+    ],
+    reviews: []
+  },
+  {
+    id: 53,
+    name: 'Acholeplasma laidlawii',
+    sci: 'Acholeplasma laidlawii',
+    severity: 'mild',
+    type: 'atypical',
+    gramLabel: 'Wall-less',
+    gramClass: 'gram-atypic',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Acholeplasma_laidlawii_PG8_Cells_and_EVs_%28cropped%29.jpg/960px-Acholeplasma_laidlawii_PG8_Cells_and_EVs_%28cropped%29.jpg',
+    emoji: '🧫',
+    desc: 'A wall-less, highly pleomorphic saprophytic bacterium belonging to the order Acholeplasmatales. Unlike its close relatives in the Mycoplasma genus, it is fully sterol-independent, meaning it can synthesize its own membrane lipids and grow perfectly without exogenous cholesterol. It is notoriously famous as a widespread, fastidious contaminant of mammalian cell cultures and commercial bovine serum stocks.',
+    facts: [
+      { l: 'Shape', v: 'Highly pleomorphic (Spheres to filaments)' },
+      { l: 'Gram', v: 'None (Lacks peptidoglycan cell wall)' },
+      { l: 'Cholesterol', v: 'Sterol-independent (Unique among mollicutes)' },
+      { l: 'Habitat', v: 'Soil, sewage, compost, and cell cultures' },
+      { l: 'Genome', v: 'Single circular chromosome (~1.5 Mb)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 54,
+    name: 'Coxiella burnetii',
+    sci: 'Coxiella burnetii',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Coxiella_burnetii%2C_the_bacteria_that_causes_Q_Fever.jpg/960px-Coxiella_burnetii%2C_the_bacteria_that_causes_Q_Fever.jpg', 
+    emoji: '🐐',
+    desc: 'An obligate intracellular, small gram-negative coccobacillus that causes Q fever. It primarily infects domestic ruminants like goats, sheep, and cattle, concentrating heavily in the placenta. Humans contract it via inhalation of dust contaminated by birth fluids. It produces a highly resilient "small cell variant" spore-like form that survives environmental extremes, drying, and disinfectants for months.',
+    facts: [
+      { l: 'Shape', v: 'Small Coccobacillus' },
+      { l: 'Gram', v: 'Negative (Stains poorly; Gimenez preferred)' },
+      { l: 'Zoonotic Source', v: 'Ruminants (Placental fluid / Milk)' },
+      { l: 'Cellular Niche', v: 'Obligate Intracellular (Phagolysosome)' },
+      { l: 'Key Disease', v: 'Q Fever (Acute flu-like or Chronic Endocarditis)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 55,
+    name: 'Erysipelothrix rhusiopathiae',
+    sci: 'Erysipelothrix rhusiopathiae',
+    severity: 'moderate to lethal',
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/20145/20145_lores.jpg',
+    emoji: '🐖',
+    desc: 'A facultatively anaerobic, slender gram-positive rod distributed widely in nature. It is a famous animal pathogen causing "swine erysipelas," which manifests as characteristic diamond-shaped skin lesions in pigs. In humans, it is an occupational zoonosis affecting butchers, veterinarians, and fishermen, entering via skin breaks to cause "erysipeloid"—a painful, localized purple skin cellulitis.',
+    facts: [
+      { l: 'Shape', v: 'Slender Rods / Long filaments' },
+      { l: 'Gram', v: 'Positive' },
+      { l: 'Zoonotic Source', v: 'Pigs, Poultry, Fish, and Shellfish' },
+      { l: 'Human Disease', v: 'Erysipeloid (Painful localized cutaneous lesion)' },
+      { l: 'Biochemicals', v: 'Catalase-negative, Oxidase-negative, H2S-producer' }
+    ],
+    reviews: []
+  },
+  {
+ id: 33,
+  name: 'Francisella Tularensis (Tularemia) ',
+  sci: 'Francisella Tularensis ',
+  severity: 'Moderate to lethal',
+  type: 'gram-negative',
+  gramLabel: 'Gram -',
+  gramClass: 'gram-neg',
+  img: 'https://wwwn.cdc.gov/phil///PHIL_Images/28327/28327_lores.jpg',
+  emoji: ' comma ',
+  desc: 'A highly infectious, Gram-negative, facultative intracellular bacterium that causes tularemia (rabbit fever). It is incredibly virulent—requiring exposure to as few as 10 to 50 organisms to cause severe illness—which has led to its classification as a Tier 1 Select Agent, humans are typically accidental hosts.',
+  facts: [
+    { l: 'Shape', v: 'Coccobacillus' },
+    { l: 'Gram', v: 'Negative' },
+    { l: 'Motility', v: 'Non-Motile' },
+    { l: 'Catalase', v: 'Weakly catalase-positive' } ],
+  reviews: []
+},
+  {
+    id: 56,
+    name: 'Neisseria gonorrhoeae',
+    sci: 'Neisseria gonorrhoeae',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Neisseria_gonorrhoeae_Bacteria_-_53136008302.jpg/960px-Neisseria_gonorrhoeae_Bacteria_-_53136008302.jpg',
+    emoji: '☕',
+    desc: "A fastidious, gram-negative diplococcus that is the causative agent of gonorrhea, a major sexually transmitted infection. It classically appears under microscopy as pairs with flattened adjacent sides, resembling coffee beans, frequently found nested inside polymorphonuclear leukocytes (neutrophils). It utilizes antigenic variation of its pili and Opa proteins to continuously evade host immune surveillance.",
+    facts: [
+      { l: 'Shape', v: 'Diplococcus (Coffee-bean pairs)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Niche', v: 'Intracellular within Neutrophils (PMNs)' },
+      { l: 'Growth Media', v: 'Thayer-Martin / Chocolate Agar' },
+      { l: 'Biochemicals', v: 'Oxidase-positive, Catalase-positive, Glucose-oxidizer' }
+    ],
+    reviews: []
+  },
+  {
+    id: 57,
+    name: 'Moraxella catarrhalis',
+    sci: 'Moraxella catarrhalis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/15012/15012_lores.jpg',
+    emoji: '🏒',
+    desc: "A gram-negative, aerobic diplococcus that is a common commensal of the human upper respiratory tract but acts as an opportunistic pathogen. It is a frequent culprit behind otitis media in children and acute exacerbations of COPD in adults. Biochemically, it is famous for the 'hockey puck sign'—its colonies are so unreactive and cohesive that they can be slid intact across an agar plate surface with a loop.",
+    facts: [
+      { l: 'Shape', v: 'Diplococcus (Flattened adjacent sides)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Colony Test', v: 'Positive "Hockey Puck" slide sign' },
+      { l: 'Key Enzymes', v: 'Butyrate esterase positive (MCTA test)' },
+      { l: 'Resistance', v: 'Nearly 90-95% produce beta-lactamase' }
+    ],
+    reviews: []
+  },
+  {
+    id: 58,
+    name: 'Klebsiella pneumoniae',
+    sci: 'Klebsiella pneumoniae',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Klebsiella_pneumoniae_Bacterium_%2813383468143%29.jpg/960px-Klebsiella_pneumoniae_Bacterium_%2813383468143%29.jpg',
+    emoji: '🍇',
+    desc: "A Gram-negative, facultatively anaerobic, encapsulated rod belonging to the Enterobacteriaceae family. It is a major opportunistic pathogen responsible for severe community-acquired and nosocomial infections, notably a destructive lobar pneumonia characterized by mucoid, 'currant-jelly' sputum due to its massive, protective polysaccharide capsule. It is a notorious driver of healthcare-associated multi-drug resistance, frequently harboring extended-spectrum beta-lactamases (ESBL) and carbapenemases (KPC).",
+    facts: [
+      { l: 'Shape', v: 'Plump Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Feature', v: 'Large Polysaccharide Capsule (Mucoid colonies)' },
+      { l: 'Sputum Type', v: '"Currant-jelly" (Bloody/Mucoid)' },
+      { l: 'Biochemicals', v: 'Lactose-fermenter, Urease-positive, Indole-negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 59,
+    name: 'Klebsiella oxytoca',
+    sci: 'Klebsiella oxytoca',
+    severity: 'varies',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Klebsiella_oxytoca.jpg/960px-Klebsiella_oxytoca.jpg',
+    emoji: '💊',
+    desc: 'A Gram-negative, encapsulated rod closely related to Klebsiella pneumoniae but distinguished biochemically by its ability to produce indole. It is an opportunistic nosocomial pathogen capable of causing urinary tract infections, septicemia, and severe antibiotic-associated hemorrhagic colitis (AAHC). This specific colitis is driven by its production of tilivalline, a cytotoxin that disrupts intestinal epithelial barriers following disruption of the normal gut microbiota by beta-lactam antibiotics.',
+    facts: [
+      { l: 'Shape', v: 'Encapsulated Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Indole Test', v: 'Positive (Crucial differentiator from K. pneumoniae)' },
+      { l: 'Key Disease', v: 'Antibiotic-Associated Hemorrhagic Colitis (AAHC)' },
+      { l: 'Biochemicals', v: 'Lactose-fermenter, VP-positive, Citrate-positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 60,
+    name: 'Salmonella typhi',
+    sci: 'Salmonella enterica serovar Typhi',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/10995/10995_lores.jpg',
+    emoji: '🌡️',
+    desc: "A Gram-negative, motile, facultatively anaerobic rod that acts as an obligate human pathogen. It is the causative agent of typhoid fever, a severe systemic illness characterized by prolonged high fever, abdominal pain, bradycardia, and classic 'rose spots' on the chest or abdomen. Unlike non-typhoidal Salmonella, it expresses a unique Vi capsular polysaccharide that masks its pathogen-associated molecular patterns, preventing an early neutrophil response and allowing it to replicate safely within macrophages as it disseminates through the reticuloendothelial system.",
+    facts: [
+      { l: 'Shape', v: 'Flagellated Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Antigen', v: 'Vi capsular antigen (Virulence factor)' },
+      { l: 'Carrier Site', v: 'Gallbladder (Chronic carrier state)' },
+      { l: 'Biochemicals', v: 'H2S-producer, Glucose-fermenter, Lactose-negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 61,
+    name: 'Shigella dysenteriae',
+    sci: 'Shigella dysenteriae',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Dark_field_microscopy_revealing_Shigella_dysenteriae_bacteria.jpg/960px-Dark_field_microscopy_revealing_Shigella_dysenteriae_bacteria.jpg',
+    emoji: '🩸',
+    desc: 'A Gram-negative, non-motile, facultatively anaerobic rod that stands as the most virulent species of the Shigella genus. It is a primary driver of bacillary dysentery (shigellosis), capable of causing severe epidemics. It secretes the potent Shiga toxin (Stx), which irreversibly halts host cellular protein synthesis by cleaving the 28S rRNA of the 60S ribosomal subunit, commonly leading to microangiopathic hemolytic anemia, thrombocytopenia, and acute kidney failure (Hemolytic Uremic Syndrome).',
+    facts: [
+      { l: 'Shape', v: 'Non-encapsulated Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Major Toxin', v: 'Shiga toxin (Inhibits protein synthesis)' },
+      { l: 'Infectious Dose', v: 'Extremely low (As few as 10-100 organisms)' },
+      { l: 'Biochemicals', v: 'Non-motile, Lactose-negative, H2S-negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 62,
+    name: 'Shigella sonnei',
+    sci: 'Shigella sonnei',
+    severity: 'generally mild',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/ShIgella_sonnei_Gram_negative_rods.jpg/960px-ShIgella_sonnei_Gram_negative_rods.jpg',
+    emoji: '🏫',
+    desc: 'A Gram-negative, non-motile, facultatively anaerobic rod that is the most common cause of shigellosis (bacillary dysentery) in developed countries. Unlike S. dysenteriae, it generally causes a milder, self-limiting diarrheal illness characterized by watery stools that can progress to blood and mucus. It is highly contagious due to a very low infectious dose and frequently drives outbreaks in daycare centers and schools through person-to-person fecal-oral transmission.',
+    facts: [
+      { l: 'Shape', v: 'Non-motile Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Epidemiology', v: 'Dominant Shigella species in developed nations' },
+      { l: 'Unique Feature', v: 'Slow lactose fermenter (ONPG positive at 48h)' },
+      { l: 'Biochemicals', v: 'Ornithine decarboxylase (ODC) positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 63,
+    name: 'Shigella flexneri',
+    sci: 'Shigella flexneri',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Shigella_flexneri_Gram_Stain_on_Microscope_Slide.jpg/960px-Shigella_flexneri_Gram_Stain_on_Microscope_Slide.jpg',
+    emoji: '💧',
+    desc: 'A Gram-negative, non-motile rod that is the primary cause of endemic bacillary dysentery (shigellosis) in developing nations. It specializes in invading M cells within the colonic epithelium, escaping the phagosome, and polymerizing host actin filaments to propel itself directly into adjacent cells. This intracellular lifecycle triggers intense mucosal inflammation, leading to widespread tissue necrosis, severe ulceration, and classic bloody, mucus-filled stools.',
+    facts: [
+      { l: 'Shape', v: 'Non-motile Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Epidemiology', v: 'Dominant Shigella species in developing nations' },
+      { l: 'Motility Trick', v: 'Actin-based motility (IcsA/VirG protein)' },
+      { l: 'Biochemicals', v: 'Lactose-negative, Indole-variable, ODC-negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 64,
+    name: 'Enterobacter cloacae',
+    sci: 'Enterobacter cloacae',
+    severity: 'varies',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/20041222/5d37dfc568a24b26ba000f4066e53625/6550_lores.jpg',
+    emoji: '🧬',
+    desc: 'A Gram-negative, facultatively anaerobic, rod-shaped bacterium that belongs to the Enterobacteriaceae family. It is a ubiquitous commensal of the human gastrointestinal tract but serves as a major opportunistic nosocomial pathogen, frequently causing bacteremia, lower respiratory tract infections, and urinary tract infections. It is notorious in intensive care units for its high level of intrinsic and acquired antibiotic resistance, driven primarily by inducible chromosomal AmpC beta-lactamases and plasmid-mediated carbapenemases.',
+    facts: [
+      { l: 'Shape', v: 'Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Resistance Mechanism', v: 'Inducible AmpC Beta-Lactamase (Space/Enterobacter group)' },
+      { l: 'Key Niche', v: 'Opportunistic / ICU Nosocomial Infections' },
+      { l: 'Biochemicals', v: 'Lactose-fermenter, Motile, Citrate-positive, Indole-negative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 65,
+    name: 'Cronobacter sakazakii',
+    sci: 'Cronobacter sakazakii',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/29950/29950_lores.jpg',
+    emoji: '🍼',
+    desc: 'A Gram-negative, motile, facultatively anaerobic rod formerly known as Enterobacter sakazakii. It is an opportunistic pathogen heavily associated with contaminated powdered infant formula. It can survive in extremely dry environments for long periods due to a protective extracellular polysaccharide capsule. In neonates and infants, it causes rare but devastating outbreaks of necrotizing enterocolitis (NEC), bacteremia, and infant meningitis, which frequently results in severe neurological sequelae like brain abscesses or hydrocephalus.',
+    facts: [
+      { l: 'Shape', v: 'Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'High Risk Vehicle', v: 'Powdered Infant Formula (PIF)' },
+      { l: 'Key Conditions', v: 'Neonatal Meningitis, Necrotizing Enterocolitis' },
+      { l: 'Biochemicals', v: 'Yellow-pigmented colonies, Alpha-glucosidase positive' }
+    ],
+    reviews: []
+  },
+  {
+    id: 66,
+    name: 'Serratia marcescens',
+    sci: 'Serratia marcescens',
+    severity: 'varies',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/12462/12462_lores.jpg',
+    emoji: '🔴',
+    desc: 'A Gram-negative, motile, opportunistic rod-shaped bacterium belonging to the Enterobacteriaceae family. It is distinct for producing a characteristic red/pink pigment called prodigiosin when grown at room temperature, which historically led to its mistaken identification as blood on bread or hosts. In clinical environments, it is an opportunistic pathogen notorious for causing catheter-associated urinary tract infections (UTIs), wound infections, and bacteremia, particularly in intensive care units due to its intrinsic resistance to many common antibiotics.',
+    facts: [
+      { l: 'Shape', v: 'Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Pigment Factor', v: 'Prodigiosin (Bright red/pink at room temp)' },
+      { l: 'Key Enzymes', v: 'DNase positive, Gelatinase positive, Lipase positive' },
+      { l: 'Resistance', v: 'Intrinsic resistance to Colistin, Polymyxin B, and Ampicillin' }
+    ],
+    reviews: []
+  },
+  {
+    id: 67,
+    name: 'Yersinia enterocolitica',
+    sci: 'Yersinia enterocolitica',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Yersinia_enterocolitica_flagella_CDC_2154.jpg/960px-Yersinia_enterocolitica_flagella_CDC_2154.jpg',
+    emoji: '🐖',
+    desc: 'A Gram-negative, facultatively anaerobic, coccobacillus-shaped bacterium that causes yersiniosis, a zoonotic foodborne illness typically acquired by consuming undercooked pork products. It is famous for displaying a "safety-pin" appearance under bipolar staining and exhibiting temperature-dependent motility (motile at 25°C via peritrichous flagella, but non-motile at 37°C). It is a classic cause of pseudoappendicitis, where tissue invasion of Peyer\'s patches and mesenteric lymph nodes mimics acute appendicitis.',
+    facts: [
+      { l: 'Shape', v: 'Bipolar-staining Coccobacillus ("Safety-pin")' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Clinical Vibe', v: 'Pseudoappendicitis (Right lower quadrant pain)' },
+      { l: 'Unique Growth', v: 'Psychrotrophic (Can multiply in cold environments/refrigeration)' },
+      { l: 'Biochemicals', v: 'Urease-positive, Oxidase-negative, Sucrose-fermenter' }
+    ],
+    reviews: []
+  },
+  {
+    id: 68,
+    name: 'Acinetobacter baumannii',
+    sci: 'Acinetobacter baumannii',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://microbiologyinpictures.com/bacteria-micrographs/gram-stain/gram-negative/acinetobacter-baumannii.jpg',
+    emoji: '🪖',
+    desc: 'A Gram-negative, strictly aerobic, non-motile coccobacillus that has emerged as a formidable, multi-drug resistant (MDR) opportunistic pathogen in hospital settings. Nicknamed "Iraqibacter" due to its sudden prevalence in military treatment facilities during the Iraq War, it primarily targets critically ill patients in intensive care units, causing severe ventilator-associated pneumonia, bloodstream infections, and wound infections. It thrives on abiotic hospital surfaces due to its ability to form robust biofilms and resist desiccation.',
+    facts: [
+      { l: 'Shape', v: 'Coccobacillus (Plump rod/diplococcus paste)' },
+      { l: 'Gram', v: 'Negative (Often retains crystal violet, mimicking Gram-positive)' },
+      { l: 'Key Nickname', v: '"Iraqibacter" (Associated with combat-wound trauma)' },
+      { l: 'Survival Trick', v: 'Desiccation tolerance & extreme biofilm production' },
+      { l: 'Biochemicals', v: 'Oxidase-negative, Catalase-positive, Non-fermentative' }
+    ],
+    reviews: []
+  },
+  {
+    id: 69,
+    name: 'S. maltophilia',
+    sci: 'Stenotrophomonas maltophilia',
+    severity: 'varies',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/23362/23362_lores.jpg',
+    emoji: '🚰',
+    desc: 'A Gram-negative, strictly aerobic, motile bacillus that acts as an opportunistic nosocomial pathogen, particularly in immunocompromised and intensive care unit patients. It frequently colonizes aqueous environments in hospitals, such as respiratory therapy equipment, indwelling catheters, and tap water faucets. It is globally recognized for its exceptional high-level intrinsic multidrug resistance to a vast array of broad-spectrum antibiotics, including nearly all carbapenems, due to its production of chromosomal metallo-beta-lactamases.',
+    facts: [
+      { l: 'Shape', v: 'Straight or Slightly Curved Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Resistance Feat', v: 'Intrinsic Carbapenem resistance (L1 and L2 beta-lactamases)' },
+      { l: 'Drug of Choice', v: 'Trimethoprim-sulfamethoxazole (TMP-SMX)' },
+      { l: 'Biochemicals', v: 'Oxidase-negative, Catalase-positive, Maltose-oxidizer' }
+    ],
+    reviews: []
+  },
+  {
+    id: 70,
+    name: 'Haemophilus influenzae',
+    sci: 'Haemophilus influenzae',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/29200/29200_lores.jpg',
+    emoji: '🧠',
+    desc: 'A Gram-negative, fastidious, coccobacillus-shaped bacterium that requires specific blood factors to grow. Despite its name, it does not cause influenza. Encapsulated strains, particularly serotype b (Hib), are highly virulent opportunistic pathogens responsible for severe systemic infections in young children, including epiglottitis (a medical emergency presenting with the "thumbprint sign" on X-ray and a cherry-red epiglottis), septic arthritis, and bacterial meningitis. Non-encapsulated (nontypable) strains commonly cause localized upper respiratory infections like otitis media and sinusitis.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Coccobacillus (Small rod/oval)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Growth Requirements', v: 'Factor X (Xemin) & Factor V (NAD) on Chocolate Agar' },
+      { l: 'Phenomenon', v: 'Satellitism around Staphylococcus aureus on Blood Agar' },
+      { l: 'Key Diseases', v: 'Epiglottitis, Neonatal Meningitis, Otitis Media' }
+    ],
+    reviews: []
+  },
+  {
+    id: 71,
+    name: 'Haemophilus ducreyi',
+    sci: 'Haemophilus ducreyi',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/15255/15255_lores.jpg',
+    emoji: '💔',
+    desc: 'A fastidious, Gram-negative coccobacillus that is the causative agent of chancroid, a sexually transmitted infection common in developing nations. It is characterized by the sudden appearance of painful genital ulcers with a ragged, erythematous border and base, frequently accompanied by painful, suppurative inguinal lymphadenopathy (buboes). Under microscopy, the bacteria characteristically arrange themselves in parallel rows or chains, creating a classic "school of fish" or "railroad track" appearance.',
+    facts: [
+      { l: 'Shape', v: 'Coccobacillus ("School of fish" / "Railroad tracks" alignment)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Chancroid (Painful genital ulcers + Buboes)' },
+      { l: 'Growth Media', v: 'Requires Factor X (Hemin) but NOT Factor V on special chocolate agar' },
+      { l: 'Differentiator', v: 'Ulcers are painful (unlike the painless chancre of Syphilis)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 72,
+    name: 'Bordetella pertussis',
+    sci: 'Bordetella pertussis',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Bordetella_bronchiseptica.jpg/960px-Bordetella_bronchiseptica.jpg',
+    emoji: '😮‍💨',
+    desc: 'A Gram-negative, strictly aerobic, encapsulated coccobacillus that is the causative agent of pertussis, commonly known as whooping cough. It selectively colonizes the ciliated respiratory epithelial cells of the human respiratory tract. It produces a variety of virulence factors, including pertussis toxin (which increases cAMP via Gi protein inhibition, leading to lymphocytosis) and tracheal cytotoxin, which paralyzes and destroys the ciliated cells, preventing normal mucus clearance and triggering violent paroxysmal coughing fits.',
+    facts: [
+      { l: 'Shape', v: 'Encapsulated Coccobacillus (Small oval rod)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Pertussis / Whooping Cough (Paroxysmal coughing + inspiratory whoop)' },
+      { l: 'Growth Media', v: 'Bordet-Gengou (Potato-infusion agar) or Regan-Lowe (Charcoal-horse blood)' },
+      { l: 'Hematology Clue', v: 'Striking Leukocytosis with absolute Lymphocytosis' }
+    ],
+    reviews: []
+  },
+  {
+    id: 73,
+    name: 'Legionella pneumophila',
+    sci: 'Legionella pneumophila',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/11108_lores.jpg/960px-11108_lores.jpg',
+    emoji: '🚰',
+    desc: 'A thin, aerobic, pleomorphic Gram-negative rod that stains poorly with standard Gram stain and is typically visualized using silver stain. It thrives in man-made aquatic environments like cooling towers, hot tubs, and air conditioning systems, replicating intracellularly within environmental amoebae. In humans, it acts as an intracellular pathogen of alveolar macrophages, causing Legionnaires\' disease—a severe, atypical pneumonia characterized by high fever, confusion (neurological symptoms), and diarrhea, often accompanied by hyponatremia.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic Bacillus (Rod)' },
+      { l: 'Gram', v: 'Negative (Stains poorly; requires Silver stain or DFA)' },
+      { l: 'Growth Media', v: 'Buffered Charcoal Yeast Extract (BCYE) agar supplemented with L-cysteine and Iron' },
+      { l: 'Diagnostic Clue', v: 'Hyponatremia (Low blood sodium) + Urinary Antigen Test' },
+      { l: 'Transmission', v: 'Aerosolization from contaminated water systems (No person-to-person spread)' }
+    ],
+    reviews: []
+  },
+  {
+    id: 74, 
+    name: 'Brucella abortus',
+    sci: 'Brucella abortus',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Brucella.jpg/960px-Brucella.jpg',
+    emoji: '🐄',
+    desc: 'A small, fastidious, Gram-negative coccobacillus primarily associated with cattle, serving as a major causative agent of brucellosis (undulant fever) in humans. Transmission typically occurs via the consumption of unpasteurized dairy products or direct occupational contact with infected animal tissues. In humans, it presents as a chronic, systemic infection characterized by a fluctuating fever, profound fatigue, night sweats, and granulomatous lesions in various organs. In pregnant cattle, it characteristically causes abortion due to its tropism for erythritol in the placenta.',
+    facts: [
+      { l: 'Shape', v: 'Small Coccobacillus' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Brucellosis / Undulant Fever (Fluctuating fever, drenching sweats)' },
+      { l: 'Growth Media', v: 'Requires enriched media (e.g., blood agar); often enhanced by 5-10% CO2' },
+      { l: 'Differentiator', v: 'Zoonotic pathogen with a distinct "undulant" (wave-like) fever pattern and animal reservoir' }
+    ],
+    reviews: []
+},
+  {
+    id: 75, 
+    name: 'Brucella melitensis',
+    sci: 'Brucella melitensis',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/03272002/00006/PHIL_1937_lores.jpg', 
+    emoji: '🐐',
+    desc: 'A small, intracellular, Gram-negative coccobacillus primarily associated with sheep and goats. It is considered the most pathogenic, invasive, and severe species of Brucella in humans, serving as a primary cause of human brucellosis (Malta fever / Mediterranean fever). Transmission occurs predominantly through the consumption of unpasteurized goat or sheep dairy products, or direct contact with infected livestock. It manifests as an acute or chronic systemic illness featuring a classic undulating fever, severe arthralgia/osteoarticular complications, drenching sweats, and splenomegaly.',
+    facts: [
+      { l: 'Shape', v: 'Small Coccobacillus' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Brucellosis / Malta Fever (Severe undulant fever and joint pain)' },
+      { l: 'Growth Media', v: 'Enriched media (Serum or blood agar); does NOT require CO2 for growth (unlike B. abortus)' },
+      { l: 'Differentiator', v: 'Most virulent Brucella species in humans; primarily associated with caprine/ovine reservoirs' }
+    ],
+    reviews: []
+},
+  {
+    id: 76, 
+    name: 'Pasteurella multocida',
+    sci: 'Pasteurella multocida',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D1%8F_%D1%83%D0%BB%D1%8C%D1%82%D1%80%D0%B0%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D1%85_%D1%81%D1%80%D0%B5%D0%B7%D0%BE%D0%B2_%D0%B1%D0%B0%D0%BA%D1%82%D0%B5%D1%80%D0%B8%D0%B9_P._multocida_8_%D1%87%D0%B0%D1%81%D0%BE%D0%B2_%D0%BA%D1%83%D0%BB%D1%8C%D1%82%D0%B8%D0%B2%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.jpg/960px-%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D1%8F_%D1%83%D0%BB%D1%8C%D1%82%D1%80%D0%B0%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D1%85_%D1%81%D1%80%D0%B5%D0%B7%D0%BE%D0%B2_%D0%B1%D0%B0%D0%BA%D1%82%D0%B5%D1%80%D0%B8%D0%B9_P._multocida_8_%D1%87%D0%B0%D1%81%D0%BE%D0%B2_%D0%BA%D1%83%D0%BB%D1%8C%D1%82%D0%B8%D0%B2%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.jpg',
+    emoji: '🐱',
+    desc: 'A small, Gram-negative, facultatively anaerobic coccobacillus that is part of the normal oral flora of many domestic and wild animals, particularly cats and dogs. It is notorious for causing rapid-onset soft tissue infections following animal bites or scratches, often presenting within 24 hours with intense pain, erythema, and swelling. If left untreated, it can quickly progress to tenosynovitis, osteomyelitis, or systemic bacteremia. It exhibits characteristic bipolar staining ("safety pin" appearance) under microscopy.',
+    facts: [
+      { l: 'Shape', v: 'Coccobacillus (Shows bipolar "safety pin" staining with Wayson/Giemsa stains)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Cellulitis/Soft tissue infection (Following cat or dog bites)' },
+      { l: 'Growth Media', v: 'Grows well on blood and chocolate agar, but notably FAILS to grow on MacConkey agar' },
+      { l: 'Differentiator', v: 'Oxidase-positive and indole-positive; exhibits a distinct musty odor due to indole production' }
+    ],
+    reviews: []
+},
+   {
+    id: 77, 
+    name: 'B. henselae',
+    sci: 'Bartonella henselae',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/PMC3294597_10-0647-F.png/960px-PMC3294597_10-0647-F.png',
+    emoji: '🐈',
+    desc: 'A fastidious, facultative intracellular, Gram-negative bacterium that is the primary causative agent of Cat Scratch Disease (CSD) and bacillary angiomatosis. Transmission typically occurs through a bite or scratch from an infected domestic cat (especially kittens) or via flea feces. In immunocompetent patients, it manifests as a benign local papule followed by painful regional lymphadenopathy. In immunocompromised individuals (e.g., HIV/AIDS patients), it can lead to bacillary angiomatosis, characterized by proliferation of blood vessels forming tumor-like skin lesions that can be mistaken for Kaposi sarcoma.',
+    facts: [
+      { l: 'Shape', v: 'Slightly curved, pleomorphic rod / coccobacillus' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized using Warthin-Starry silver stain)' },
+      { l: 'Key Disease', v: 'Cat Scratch Disease (Immunocompetent) / Bacillary Angiomatosis (Immunocompromised)' },
+      { l: 'Growth Media', v: 'Extremely slow-growing on enriched blood agar (requires up to 2–6 weeks)' },
+      { l: 'Differentiator', v: 'Causes vascular proliferation (bacillary angiomatosis) in immunocompromised hosts, driven by VEGF induction' }
+    ],
+    reviews: []
+},
+    {
+    id: 78,
+    name: 'Vibrio vulnificus',
+    sci: 'Vibrio vulnificus',
+    severity: 'lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/7815/7815_lores.jpg',
+    emoji: '🦪',
+    desc: 'A virulent, motile, curved rod-shaped, Gram-negative bacterium found in warm, brackish marine environments. It can cause highly aggressive, life-threatening infections through two primary routes: ingestion of contaminated raw seafood (especially oysters), which leads to rapid septicemia with hemorrhagic bullae, or wound exposure to contaminated seawater, causing fulminant necrotizing fasciitis. It is notoriously opportunistic, with exceptionally high mortality rates in patients who are immunocompromised or have chronic liver disease (e.g., cirrhosis, hemochromatosis) due to its dependency on free iron.',
+    facts: [
+      { l: 'Shape', v: 'Curved, comma-shaped rod (highly motile with a single polar flagellum)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Necrotizing fasciitis (wound infection) / Primary septicemia with hemorrhagic bullae' },
+      { l: 'Growth Media', v: 'Halophilic (requires NaCl); turns green/blue-green on TCBS agar (sucrose-negative)' },
+      { l: 'Differentiator', v: 'Extremely aggressive "flesh-eating" progression in patients with high serum iron levels or liver disease' }
+    ],
+    reviews: []
+},
+    {
+    id: 79, 
+    name: 'Vibrio parahaemolyticus',
+    sci: 'Vibrio parahaemolyticus',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vibrio_parahaemolyticus_01.jpg/960px-Vibrio_parahaemolyticus_01.jpg',
+    emoji: '🍤',
+    desc: 'A motile, curved, rod-shaped, Gram-negative bacterium that naturally inhabits warm coastal and estuarine waters globally. It is a leading cause of seafood-borne bacterial gastroenteritis worldwide, typically contracted via the consumption of raw or undercooked shellfish, particularly oysters and shrimp. Unlike its highly lethal relative V. vulnificus, it generally causes a self-limiting, watery diarrhea accompanied by abdominal cramps, nausea, vomiting, and fever. Its pathogenicity is primarily driven by the production of a thermostable direct hemolysin (TDH).',
+    facts: [
+      { l: 'Shape', v: 'Curved, comma-shaped rod' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Acute gastroenteritis (Watery diarrhea, cramps, vomiting)' },
+      { l: 'Growth Media', v: 'Halophilic (requires NaCl); forms green to blue-green colonies on TCBS agar (sucrose-negative)' },
+      { l: 'Differentiator', v: 'Distinguished by the Kanagawa phenomenon (beta-hemolysis on high-salt Wagatsuma agar via TDH production)' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 78, 
+    name: 'Campylobacter jejuni',
+    sci: 'Campylobacter jejuni',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ARS_Campylobacter_jejuni.jpg/960px-ARS_Campylobacter_jejuni.jpg',
+    emoji: '🐓',
+    desc: 'A helical, comma, or "gull-wing" shaped, Gram-negative, microaerophilic bacterium that is one of the most common causes of bacterial gastroenteritis worldwide. Transmission typically occurs through the consumption of undercooked poultry, unpasteurized milk, or contaminated water. The infection causes acute, often bloody diarrhea, severe abdominal pain, and fever. A critical clinical association is its role as a major antecedent trigger for Guillain-Barré syndrome (an acute demyelinating polyneuropathy) and reactive arthritis, driven by molecular mimicry between bacterial lipooligosaccharides and human nerve gangliosides.',
+    facts: [
+      { l: 'Shape', v: 'Spiral, curved, or "gull-wing" shaped rods (highly motile with a characteristic "darting" motility)' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Campylobacteriosis (Bloody diarrhea, mimicking acute appendicitis) / Guillain-Barré syndrome link' },
+      { l: 'Growth Media', v: 'Microaerophilic (requires reduced O2, increased CO2); grows best at 42°C on selective media like Skirrow or Campy-BAP agar' },
+      { l: 'Differentiator', v: 'Oxidase and catalase positive; thermophilic (42°C growth helps differentiate it from other enteric pathogens)' }
+    ],
+    reviews: []
+},
+
+{
+    id: 79, 
+    name: 'Bacteroides fragilis',
+    sci: 'Bacteroides fragilis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/10806/10806_lores.jpg',
+    emoji: '💥',
+    desc: 'An obligate anaerobic, Gram-negative, pleomorphic rod-shaped bacterium that constitutes a major component of the normal human colonic microbiota. While generally commensal, it becomes a highly significant opportunistic pathogen when the mucosal barrier is breached due to trauma, surgery, or disease. It is the most common anaerobe isolated from intra-abdominal abscesses, peritonitis, and pelvic inflammatory infections. Its pathogenicity is heavily driven by a prominent capsular polysaccharide that directly induces abscess formation, and it is notoriously resistant to many standard antibiotics, including penicillin, due to beta-lactamase production.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic rods / Coccobacillus' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Intra-abdominal abscesses, peritonitis, and bacteremia' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows well on Bacteroides Bile Esculin (BBE) agar, forming dark colonies with black halos via esculin hydrolysis' },
+      { l: 'Differentiator', v: 'Bile-resistant (unlike many other anaerobes); possesses a unique capsular polysaccharide that triggers host T-cell responses to form abscesses' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 80, 
+    name: 'Fusobacterium nucleatum',
+    sci: 'Fusobacterium nucleatum',
+    severity: 'mild to moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/2967/2967_lores.jpg',
+    emoji: '🦷',
+    desc: 'An obligate anaerobic, Gram-negative, spindle-shaped rod that is a prominent member of the normal human oral microbiota. It plays a critical structural role in dental plaque biofilm development by acting as a bridge organism, co-aggregating with early and late colonizers. Beyond periodontal disease and gingivitis, it is highly associated with extra-oral pathologies, including intra-abdominal infections, aspiration pneumonia, and adverse pregnancy outcomes like preterm birth. Emerging clinical research also strongly links its overabundance in the gut biofilm to the progression and chemoresistance of colorectal cancer.',
+    facts: [
+      { l: 'Shape', v: 'Elongated, needle-like or spindle-shaped (fusiform) rods with sharply pointed ends' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Periodontal disease, Vincent angina (trench mouth), and colorectal cancer progression' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows well on enriched media (e.g., blood agar) supplemented with crystal violet and erythromycin' },
+      { l: 'Differentiator', v: 'Distinctive thin, spindle morphology; produces butyric acid as a major metabolic end product and lacks the potent hemolytic activity of F. necrophorum' }
+    ],
+    reviews: []
+},
+{
+    id: 81, 
+    name: 'Fusobacterium necrophorum',
+    sci: 'Fusobacterium necrophorum',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/23047/23047_lores.jpg',
+    emoji: '🫁',
+    desc: 'An obligate anaerobic, pleomorphic, Gram-negative rod that is considered a highly virulent and aggressive species within its genus. While it can inhabit the human oral cavity and gastrointestinal tract, it is notoriously known as the primary causative agent of Lemierre syndrome. This life-threatening condition typically begins as an acute peritonsillar abscess or pharyngitis that progresses to invade the parapharyngeal space, leading to septic thrombophlebitis of the internal jugular vein and subsequent septic embolization, most frequently to the lungs.',
+    facts: [
+      { l: 'Shape', v: 'Pleomorphic, irregular rods that can vary from short rods to long, filamentous forms' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Lemierre syndrome (Jugular vein septic thrombophlebitis + metastatic lung abscesses)' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows on anaerobic blood agar, often producing distinct beta-hemolysis' },
+      { l: 'Differentiator', v: 'Strongly hemolytic and lipase-positive; possesses potent endotoxins and a hemagglutinin factor that drives its extreme tissue invasiveness' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 82, 
+    name: 'Chlamydia trachomatis',
+    sci: 'Chlamydia trachomatis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Chlamydia_trachomatis.tif/lossy-page1-960px-Chlamydia_trachomatis.tif.jpg',
+    emoji: '👁️',
+    desc: 'An obligate intracellular, Gram-negative bacterium that is a leading cause of bacterial sexually transmitted infections (STIs) and preventable blindness globally. It operates through a unique biphasic life cycle consisting of infectious, metabolically inactive elementary bodies (EBs) and non-infectious, metabolically active reticulate bodies (RBs). Serovars A-C cause trachoma (chronic keratoconjunctivitis); serovars D-K cause urogenital infections, pelvic inflammatory disease (PID), and neonatal conjunctivitis/pneumonia; while serovars L1-L3 cause lymphogranuloma venereum (LGV), characterized by painful inguinal lymphadenopathy and proctitis.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic spherical bacterium (lacks a peptidoglycan cell wall, despite a Gram-negative outer membrane)' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized using Giemsa stain or direct fluorescent antibody testing)' },
+      { l: 'Key Disease', v: 'Chlamydia (Urogenital infections/PID), Trachoma (Blindness), and Lymphogranuloma venereum (LGV)' },
+      { l: 'Growth Media', v: 'Cannot grow on artificial agar; requires living cell cultures (e.g., McCoy cells) for isolation' },
+      { l: 'Differentiator', v: 'Unique biphasic life cycle; diagnoses typically utilize Nucleic Acid Amplification Tests (NAAT) and microscopy shows glycogen-rich inclusion bodies' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 83, 
+    name: 'Chlamydia pneumoniae',
+    sci: 'Chlamydia pneumoniae',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Chlamydia_pneumoniae.jpg?_=20100115070009',
+    emoji: '🫁',
+    desc: 'An obligate intracellular, Gram-negative bacterium that is a major respiratory pathogen in humans, responsible for atypical pneumonia ("walking pneumonia"), bronchitis, and sinusitis. Like other Chlamydia species, it undergoes a strict biphasic life cycle shifting between infectious elementary bodies (EBs) and replicating reticulate bodies (RBs). It is transmitted person-to-person via respiratory droplets and is particularly prevalent among school-aged children and young adults living in crowded environments. Beyond acute respiratory illness, chronic infection has been epidemiologically linked to inflammatory vascular diseases, such as atherosclerosis.',
+    facts: [
+      { l: 'Shape', v: 'Small, pear-shaped or spherical bacterium utilizing a unique biphasic life cycle' },
+      { l: 'Gram', v: 'Negative (Possesses a lipopolysaccharide outer membrane but lacks a classic peptidoglycan layer; stains poorly)' },
+      { l: 'Key Disease', v: 'Atypical pneumonia (Gradual onset of non-productive cough, fever, and pharyngitis)' },
+      { l: 'Growth Media', v: 'Cannot replicate on synthetic agar; requires tissue culture systems (such as HEp-2 or HL cells)' },
+      { l: 'Differentiator', v: 'Differentiated from C. trachomatis by its characteristic pear-shaped elementary bodies and inclusion bodies that do not stain with iodine' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 84, // Or whichever sequential ID fits your dataset
+    name: 'Rickettsia rickettsii',
+    sci: 'Rickettsia rickettsii',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Rickettsia_rickettsii.jpg/960px-Rickettsia_rickettsii.jpg',
+    emoji: '🪵',
+    desc: 'An obligate intracellular, small, Gram-negative coccobacillus that is the causative agent of Rocky Mountain spotted fever (RMSF), the most severe tick-borne rickettsial illness in the United States. It is transmitted to humans via the bite of infected dermacentor ticks. The bacterium preferentially infects and replicates within endothelial cells lining small blood vessels, causing widespread vasculitis. This leads to a characteristic petechial rash that classically begins on the wrists and ankles before spreading centripetally to the trunk, palms, and soles. Without prompt treatment, it can rapidly progress to multi-organ failure and death.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic coccobacillus' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized with Giemsa or Gimenez stains)' },
+      { l: 'Key Disease', v: 'Rocky Mountain spotted fever (RMSF) (Triad of fever, headache, and centripetal rash)' },
+      { l: 'Growth Media', v: 'Obligate intracellular pathogen; cannot grow on cell-free agar, requires living host cells or embryonated eggs' },
+      { l: 'Differentiator', v: 'Rash spreads from extremities to the trunk (centripetal), and diagnosed historically via the Weil-Felix reaction' }
+    ],
+    reviews: []
+},
+{
+    id: 85, 
+    name: 'Rickettsia prowazekii',
+    sci: 'Rickettsia prowazekii',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://www.creative-biolabs.com/vaccine/images/Vaccines-for-Rickettsia-prowazekii-1.png',
+    emoji: '🪰',
+    desc: 'An obligate intracellular, Gram-negative coccobacillus that is the causative agent of epidemic typhus, a severe and historically devastating disease associated with war, famine, and poor sanitation. It is transmitted from person to person via the feces of the human body louse (Pediculus humanus humanus) when scratch entry occurs. The pathogen causes systemic vasculitis by invading endothelial cells, manifesting as a high fever, severe headache, delirium, and a maculopapular rash that starts on the trunk and spreads centrifugally to the extremities, notably sparing the palms, soles, and face. A recrudescent form of the disease can occur years later, known as Brill-Zinsser disease.',
+    facts: [
+      { l: 'Shape', v: 'Small coccobacillus' },
+      { l: 'Gram', v: 'Negative (Stains poorly; requires Giemsa or special immunofluorescent staining)' },
+      { l: 'Key Disease', v: 'Epidemic typhus (Fever, stupor, and centrifugal rash) / Brill-Zinsser disease (recrudescence)' },
+      { l: 'Growth Media', v: 'Obligate intracellular pathogen; requires cell culture or animal models for propagation' },
+      { l: 'Differentiator', v: 'Rash spreads from the trunk outward to the extremities (centrifugal) and explicitly spares the palms, soles, and face' }
+    ],
+    reviews: []
+}
+ ,
+{
+    id: 87, 
+    name: 'Leptospira interrogans',
+    sci: 'Leptospira interrogans',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Leptospira_interrogans_strain_RGA_01.png/960px-Leptospira_interrogans_strain_RGA_01.png',
+    emoji: '💧',
+    desc: 'A pathogenic, obligate aerobic spirochete with distinctive hooked ends that causes leptospirosis, a widespread zoonotic disease. Transmission typically occurs through mucosal or broken skin contact with water, soil, or food contaminated by the urine of chronically infected animal reservoirs, particularly rodents. The infection can progress from a mild flu-like illness to severe, systemic Weil disease, characterized by hepatic failure, jaundice, acute kidney injury, and severe hemorrhaging.',
+    facts: [
+      { l: 'Shape', v: 'Tightly coiled spirochete with characteristic hooked ends' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized using dark-field microscopy or silver stains)' },
+      { l: 'Key Disease', v: 'Leptospirosis / Weil disease (Jaundice, renal failure, and bleeding tendencies)' },
+      { l: 'Growth Media', v: 'Requires specialized lipid-rich media such as EMJH or Fletcher medium' },
+      { l: 'Differentiator', v: 'Distinguished by its morphology under dark-field microscopy and its zoonotic link to rodent urine contamination' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 88, 
+    name: 'Campylobacter fetus',
+    sci: 'Campylobacter fetus',
+    severity: 'moderate to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Campylobacter_fetus_01.jpg/960px-Campylobacter_fetus_01.jpg', 
+    emoji: '🌾',
+    desc: 'A motile, microaerophilic, Gram-negative rod with a characteristic comma or "gull-wing" shape. Unlike C. jejuni, which is primarily an enteric pathogen, this species possesses a specialized surface capsule (the S-layer protein) that renders it resistant to complement-mediated killing and phagocytosis. Consequently, it acts as an opportunistic systemic pathogen, causing bacteremia, endocarditis, thrombophlebitis, and deep-tissue abscesses. It is a well-known veterinary pathogen responsible for spontaneous abortions in sheep and cattle, and causes severe systemic disease in immunocompromised or elderly humans.',
+    facts: [
+      { l: 'Shape', v: 'Spiral, curved, or "gull-wing" shaped rods' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Systemic bacteremia, endocarditis, and septic arthritis (and enzootic abortion in livestock)' },
+      { l: 'Growth Media', v: 'Microaerophilic; unlike C. jejuni, it is sensitive to cephalothin and grows well at 25°C and 37°C, but fails to grow at 42°C' },
+      { l: 'Differentiator', v: 'Possesses a heat-labile surface capsule (S-layer protein) that prevents complement activation, predisposing it to systemic vascular invasion rather than localized gastroenteritis' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 89, 
+    name: 'Burkholderia pseudomallei',
+    sci: 'Burkholderia pseudomallei',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/27654/27654_lores.jpg',
+    emoji: '🌱',
+    desc: 'An aerobic, motile, Gram-negative rod-shaped bacterium found commonly in tropical soils and surface water, particularly in Southeast Asia and Northern Australia. It is the causative agent of melioidosis (also known as Whitmore disease), an infection that can present as an acute localized abscess, severe pneumonia, or overwhelming septicemia with a high mortality rate. The organism is highly opportunistic, especially dangerous to individuals with underlying conditions like diabetes or chronic kidney disease, and is noted for its intrinsic resistance to many first-line antibiotics.',
+    facts: [
+      { l: 'Shape', v: 'Small, motile, straight or slightly curved rods with characteristic bipolar "safety pin" staining' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Melioidosis (manifesting as localized abscesses, acute pulmonary infection, or severe septicemia)' },
+      { l: 'Growth Media', v: 'Aerobic; grows well on standard media (blood/chocolate agar) and forms wrinkled, metallic colonies on Ashdown\'s selective medium' },
+      { l: 'Differentiator', v: 'Distinguished by its distinct wrinkled colony morphology, earthy odor, resistance to polymyxins/colistin, and positive oxidase reaction' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 90,  
+    name: 'Aeromonas hydrophila',
+    sci: 'Aeromonas hydrophila',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/1255/1255_lores.jpg',
+    emoji: '🦎',
+    desc: 'A heterotrophic, motile, Gram-negative, rod-shaped bacterium that naturally thrives in fresh and brackish aquatic environments. It is a highly opportunistic pathogen capable of causing disease in both humans and aquatic animals, such as fish and amphibians. In humans, infection typically occurs via exposure of open wounds to contaminated water or consumption of tainted seafood and water, resulting in gastroenteritis, severe soft-tissue infections (including aggressive cellulitis and necrotizing fasciitis), and septicemia in immunocompromised hosts. It produces multiple virulence factors, including aerolysin, hemolysins, and enterotoxins.',
+    facts: [
+      { l: 'Shape', v: 'Straight, motile rod with single polar flagella' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Gastroenteritis (watery or dysenteric), wound infections/cellulitis, and septicemia' },
+      { l: 'Growth Media', v: 'Grows readily on standard media like blood agar (frequently showing beta-hemolysis) and selective media like Cefsulodin-Irgasan-Novobiocin (CIN) agar' },
+      { l: 'Differentiator', v: 'Oxidase-positive and ferments glucose, which distinguishes it from the Enterobacteriaceae; resistant to the vibriostatic agent O/129, differentiating it from Vibrio species' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 91, 
+    name: 'Prevotella melaninogenica',
+    sci: 'Prevotella melaninogenica',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/15232_lores.jpg/960px-15232_lores.jpg', 
+    emoji: '🦷',
+    desc: 'An obligate anaerobic, Gram-negative, coccobacillary rod that is a prominent member of the normal human oral cavity, upper respiratory tract, and gut microbiota. While primarily a commensal organism, it acts as an opportunistic pathogen when mucosal barriers are disrupted, playing a major role in periodontal disease, aspiration pneumonia, lung abscesses, and chronic sinusitis. It is well known for its characteristic production of a dark brown to black protoporphyrin pigment when cultured over time, which causes colonies to darken significantly under ambient light.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic coccobacillus or short rod' },
+      { l: 'Gram', v: 'Negative' },
+      { l: 'Key Disease', v: 'Periodontal disease, aspiration pneumonia, lung abscesses, and deep neck space infections' },
+      { l: 'Growth Media', v: 'Strict anaerobe; grows well on enriched anaerobic blood agar, developing characteristic dark brown to shiny black colonies after several days of incubation' },
+      { l: 'Differentiator', v: 'Saccharolytic and bile-sensitive (unlike Bacteroides fragilis); exhibits a brick-red fluorescence under ultraviolet (UV) light before the dark pigment completely develops' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 92, 
+    name: 'Mobiluncus curtisii',
+    sci: 'Mobiluncus curtisii',
+    severity: 'moderate',
+    type: 'gram-negative', // Classically stains Gram-negative/variable but has a Gram-positive cell wall structure
+    gramLabel: 'Gram - / Var',
+    gramClass: 'gram-neg',
+    img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780124158474000070-f07-01-9780124158474.jpg', // Morphologically representative anaerobic image
+    emoji: '🦠',
+    desc: 'An obligate anaerobic, motile, curved rod-shaped bacterium that is part of the human genitourinary tract microbiota. It is highly associated with bacterial vaginosis (BV), where it acts synergistically within a polymicrobial biofilm alongside Gardnerella vaginalis and Atopobium vaginae. Though it possesses a Gram-positive type cell wall structure lacking an outer membrane, its thin peptidoglycan layer typically causes it to stain Gram-negative or Gram-variable in clinical smears. It moves via a distinctive cluster of subpolar flagella.',
+    facts: [
+      { l: 'Shape', v: 'Curved, crescent or comma-shaped rod with tapered ends; motile via subpolar flagella' },
+      { l: 'Gram', v: 'Gram-variable to Gram-negative (Taxonomically phylogenetic with Gram-positive Actinobacteria, but stains poorly/negative)' },
+      { l: 'Key Disease', v: 'Bacterial vaginosis (BV) (Characterized by malodorous discharge, elevated vaginal pH, and synergistic biofilm pathology)' },
+      { l: 'Growth Media', v: 'Fastidious anaerobe; requires enriched media like Columbia horse blood agar or brain-heart infusion agar, growing very slowly over 3 to 5 days' },
+      { l: 'Differentiator', v: 'Distinguished by its distinct curved morphology and corkscrew-like motility under dark-field or phase-contrast microscopy, and resistance to colistin' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 93, 
+    name: 'Anaplasma phagocytophilum',
+    sci: 'Anaplasma phagocytophilum',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Anaplasma_phagocytophilum_cultured_in_human_promyelocytic_cell_line_HL-60.jpg/960px-Anaplasma_phagocytophilum_cultured_in_human_promyelocytic_cell_line_HL-60.jpg',
+    emoji: '🦌',
+    desc: 'An obligate intracellular, Gram-negative bacterium that is the causative agent of human granulocytic anaplasmosis (HGA). It is transmitted to humans primarily through the bite of infected Ixodes ticks. The bacterium uniquely targets and survives within eukaryotic host cells—specifically neutrophils—where it multiplies within membrane-bound vacuoles to form characteristic microcolonies known as morulae. Infection typically manifests as an acute febrile illness accompanied by leukopenia, thrombocytopenia, and elevated serum transaminases, which can progress to severe systemic complications if untreated.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic coccobacillus living obligately within host cytoplasmic vacuoles' },
+      { l: 'Gram', v: 'Negative (Stains poorly; best visualized inside neutrophils using Wright or Giemsa stains)' },
+      { l: 'Key Disease', v: 'Human granulocytic anaplasmosis (HGA) (Fever, chills, myalgia, leukopenia, and thrombocytopenia)' },
+      { l: 'Growth Media', v: 'Obligate intracellular; cannot be cultured on cell-free agar. Requires specialized cell lines (like HL-60) or animal models' },
+      { l: 'Differentiator', v: 'Characterized by the presence of diagnostic intracytoplasmic inclusion bodies (morulae) specifically inside neutrophils/granulocytes' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 94, 
+    name: 'Ehrlichia chaffeensis',
+    sci: 'Ehrlichia chaffeensis',
+    severity: 'severe',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Ehrlichia%2BBabesia-dog.jpg/960px-Ehrlichia%2BBabesia-dog.jpg', 
+    emoji: '🪵',
+    desc: 'An obligate intracellular, Gram-negative bacterium that acts as the primary causative agent of human monocytic ehrlichiosis (HME). It is primarily transmitted via the bite of the lone star tick (Amblyomma americanum). Similar to Anaplasma, it multiplies within membrane-bound cytoplasmic vacuoles of host immune cells, but it specifically targets monocytes and macrophages rather than granulocytes. It forms distinctive microcolonies called morulae, leading to a systemic febrile illness that frequently features leukopenia, thrombocytopenia, and elevated liver enzymes.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic coccobacillus residing intracellularly within host vacuoles' },
+      { l: 'Gram', v: 'Negative (Stains poorly with standard Gram stains; diagnosed via Giemsa or Wright stains of blood smears)' },
+      { l: 'Key Disease', v: 'Human monocytic ehrlichiosis (HME) (Fever, headache, malaise, leukopenia, and thrombocytopenia)' },
+      { l: 'Growth Media', v: 'Obligate intracellular; cannot grow on cell-free bacteriological media. Cultured using specific tissue cell lines (e.g., DH82 or human monocyte lines)' },
+      { l: 'Differentiator', v: 'Identified by the formation of characteristic intracytoplasmic morulae clusters specifically inside monocytes and macrophages' }
+    ],
+    reviews: []
+},
+{
+    id: 95,
+    name: 'Chlamydia psittaci',
+    sci: 'Chlamydia psittaci',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Chlamydophila_psittaci_FA_stain.jpg/960px-Chlamydophila_psittaci_FA_stain.jpg',
+    emoji: '🦜',
+    desc: 'An obligate intracellular, Gram-negative bacterium that causes psittacosis (parrot fever), a zoonotic respiratory disease transmitted primarily through inhalation of aerosolized secretions, feathers, or dried feces from infected birds such as parrots, parakeets, pigeons, and poultry. Like other Chlamydia species, it exhibits a unique biphasic developmental cycle consisting of infectious elementary bodies (EBs) and metabolically active reticulate bodies (RBs) that replicate within membrane-bound inclusions inside host epithelial cells.',
+    facts: [
+      { l: 'Shape', v: 'Small, pleomorphic obligate intracellular coccobacillus with a biphasic life cycle (elementary and reticulate bodies)' },
+      { l: 'Gram', v: 'Negative (Gram stains poorly; better visualized using Giemsa stain, immunofluorescence, or PCR)' },
+      { l: 'Key Disease', v: 'Psittacosis (Parrot fever) – atypical pneumonia with fever, headache, dry cough, and systemic symptoms' },
+      { l: 'Growth Media', v: 'Obligate intracellular; cannot grow on artificial media. Cultured only in tissue cell cultures or embryonated eggs under specialized laboratory conditions' },
+      { l: 'Differentiator', v: 'Transmitted from birds to humans and characterized by intracellular inclusions containing elementary and reticulate bodies within host cells' }
+    ],
+    reviews: []
+},
+{
+    id: 96, 
+    name: 'Thermus aquaticus',
+    sci: 'Thermus aquaticus',
+    severity: 'none', 
+    type: 'gram-negative', 
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Thermus_aquaticus.JPG/960px-Thermus_aquaticus.JPG', 
+    emoji: '🌋',
+    desc: 'A hyperthermophilic, aerobic, Gram-negative bacterium famous for thriving in extreme thermal environments such as hot springs and hydrothermal vents. It is the original source of the revolutionary Taq DNA polymerase, an enzyme capable of withstanding the high denaturation temperatures required during the polymerase chain reaction (PCR). Its discovery transformed molecular biology, biotechnology, and genetic research by enabling automated DNA amplification.',
+    facts: [
+      { l: 'Shape', v: 'Rod-shaped or filamentous; non-motile but can aggregate into large clusters or rosettes' },
+      { l: 'Gram', v: 'Negative (Possesses a cell wall structure characteristic of Gram-negative bacteria, containing an outer membrane)' },
+      { l: 'Key Disease', v: 'Non-pathogenic (Completely harmless to humans; highly valued exclusively for its biotechnological utility)' },
+      { l: 'Growth Media', v: 'Thermophilic obligate aerobe; requires specialized minimal mineral medium (e.g., Castenholz TYE) and optimal incubation temperatures of 70°C to 75°C' },
+      { l: 'Differentiator', v: 'Distinguished by its extreme thermostability and production of Taq polymerase, allowing it to survive at temperatures where most other bacterial proteins denature' }
+    ],
+    reviews: []
+},
+{
+    id: 97, 
+    name: 'Rhizobium leguminosarum',
+    sci: 'Rhizobium leguminosarum',
+    severity: 'none', 
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Root_nodules_of_Fabaceae.png/960px-Root_nodules_of_Fabaceae.png', 
+    emoji: '🌱',
+    desc: 'An aerobic, Gram-negative, rod-shaped soil bacterium renowned for its mutualistic symbiotic relationship with leguminous plants (such as peas, clover, and lentils). It colonizes the root hairs of host plants, inducing the formation of specialized root nodules where it differentiates into nitrogen-fixing bacteroids. Inside these nodules, the bacterium utilizes the nitrogenase enzyme complex to convert atmospheric nitrogen into bioavailable ammonia, providing crucial nutrients to the plant in exchange for carbohydrates.',
+    facts: [
+      { l: 'Shape', v: 'Regular rod-shaped cell when free-living in soil; pleomorphic or Y-shaped (bacteroid) inside root nodules' },
+      { l: 'Gram', v: 'Negative (Stains pink/red; non-spore-forming and typically motile via peritrichous or polar flagella)' },
+      { l: 'Key Disease', v: 'Non-pathogenic (Eco-friendly biofertilizer that enhances soil fertility and reduces the need for chemical nitrogen fertilizers)' },
+      { l: 'Growth Media', v: 'Aerobic heterotroph; grown routinely on Yeast Extract Mannitol (YEM) agar, typically forming characteristic mucoid, translucent colonies due to exopolysaccharide production' },
+      { l: 'Differentiator', v: 'Identified by its specific ability to induce nodulation on compatible legume roots and its oxygen-sensitive nitrogenase activity, protected by plant leghemoglobin' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 98,  
+    name: 'Aggregatibacter actinomycetemcomitans',
+    sci: 'Aggregatibacter actinomycetemcomitans',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://www.cellimagelibrary.org/pic/thumbnail_display/38942/Gram-negative+bacteria.jpg',  
+    emoji: '🦷',
+    desc: 'A fastidious, facultatively anaerobic, Gram-negative coccobacillus that is a prominent oral pathogen. It is heavily implicated in severe, aggressive forms of periodontitis (particularly in younger individuals) and can cause systemic infections like infective endocarditis via hematogenous spread. It expresses potent virulence factors, notably a leukotoxin (LtxA) that selectively destroys human white blood cells, allowing it to evade the host immune response within periodontal pockets. It frequently co-aggregates with other oral microbiota.',
+    facts: [
+      { l: 'Shape', v: 'Small, non-motile, pleomorphic Gram-negative coccobacillus or short rod' },
+      { l: 'Gram', v: 'Negative (Stains pink/red; often exhibits irregular staining or a bipolar appearance)' },
+      { l: 'Key Disease', v: 'Aggressive periodontitis (severe bone and tooth loss) and HACEK-associated infective endocarditis' },
+      { l: 'Growth Media', v: 'Capnophilic; requires 5% to 10% CO2. Grown on enriched media like chocolate agar or selective TSBV agar, forming distinctive star-like or cigar-wheel internal colony structures after 48-72 hours' },
+      { l: 'Differentiator', v: 'Catalase-positive, oxidase-variable, and distinguished by its characteristic star-shaped inner colony morphology on clear media and production of human-specific leukotoxin' }
+    ],
+    reviews: []
+}
+  ,
+{
+    id: 99, 
+    name: 'Cardiobacterium hominis',
+    sci: 'Cardiobacterium hominis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780128175767000031-f03-18-9780128175767.jpg', 
+    emoji: '🫀',
+    desc: 'A fastidious, pleomorphic, Gram-negative rod that is a normal inhabitant of the human upper respiratory tract and oral cavity. It is a well-known member of the HACEK group of fastidious organisms, which are notorious for causing culture-negative or slow-growing infective endocarditis. Characteristically, infections typically present subacutely, often involving native or prosthetic heart valves damaged by prior disease, and can lead to large, destructive vegetations despite the bacterium\'s low inherent virulence.',
+    facts: [
+      { l: 'Shape', v: 'Straight rods with rounded ends, but highly pleomorphic; often shows swelling, clubbing, or a characteristic rosette arrangement in clusters' },
+      { l: 'Gram', v: 'Negative (Stains pink/red, but cells can retain crystal violet in central areas or poles, occasionally mimicking Gram-positive or bipolar staining)' },
+      { l: 'Key Disease', v: 'Subacute infective endocarditis (HACEK-associated), typically following dental procedures or oral trauma' },
+      { l: 'Growth Media', v: 'Capnophilic (requires 5% CO2) and highly fastidious. Grows slowly on blood or chocolate agar, often requiring 48 to 72 hours or more to form small, smooth, glistening colonies' },
+      { l: 'Differentiator', v: 'Oxidase-positive, catalase-negative, and indole-positive (a key differentiator from other HACEK organisms like Eikenella or H. aphrophilus)' }
+    ],
+    reviews: []
+},
+{
+    id: 100, 
+    name: 'Eikenella corrodens',
+    sci: 'Eikenella corrodens',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/10775/10775_lores.jpg', 
+    emoji: '👊',
+    desc: 'A fastidious, facultatively anaerobic, Gram-negative rod that is part of the normal microbiota of the human oral cavity and upper respiratory tract. It is a well-known member of the HACEK group and is classically associated with "clenched fist injuries" (human bite wounds resulting from striking someone in the teeth). Notably, it causes characteristic "pitting" or corroding of the agar surface during growth and gives off a distinct, sharp odor reminiscent of bleach or hypochlorite.',
+    facts: [
+      { l: 'Shape', v: 'Small, straight, non-motile Gram-negative rod with rounded ends' },
+      { l: 'Gram', v: 'Negative (Stains pink/red uniformly)' },
+      { l: 'Key Disease', v: 'Human bite wound infections (clenched fist injuries), periodontitis, and subacute infective endocarditis (HACEK group)' },
+      { l: 'Growth Media', v: 'Capnophilic (requires 5% to 10% CO2) and fastidious. Grows well on blood or chocolate agar, typically requiring 48 hours to manifest its characteristic colony depression into the agar' },
+      { l: 'Differentiator', v: 'Oxidase-positive, catalase-negative, urease-negative, indole-negative, and easily recognized by its bleach-like odor and ability to pit/corrode agar' }
+    ],
+    reviews: []
+},
+{
+    id: 101,  
+    name: 'Kingella kingae',
+    sci: 'Kingella kingae',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://ars.els-cdn.com/content/image/1-s2.0-S1473309904010461-gr1.jpg', 
+    emoji: '🦴',
+    desc: 'A fastidious, facultatively anaerobic, Gram-negative coccobacillus that colonizes the human oropharynx. It is a recognized member of the HACEK group but is especially notorious as a primary pediatric pathogen, acting as a leading cause of osteomyelitis, septic arthritis, and tenosynovitis in children under four years old. It spreads hematogenously from the respiratory tract to bones and joints, frequently showing low-grade symptoms that delay diagnosis. It expresses a potent RTX toxin that damages host epithelial and immune cells.',
+    facts: [
+      { l: 'Shape', v: 'Plump, short Gram-negative rod or coccobacillus with squared ends; often occurs in pairs or short chains' },
+      { l: 'Gram', v: 'Negative (Stains pink/red; can resist decolorization slightly, occasionally appearing Gram-variable)' },
+      { l: 'Key Disease', v: 'Pediatric septic arthritis, osteomyelitis, occult bacteremia, and subacute endocarditis (HACEK group)' },
+      { l: 'Growth Media', v: 'Capnophilic (enhanced by 5% CO2). Grows slowly on blood or chocolate agar; may produce a zone of beta-hemolysis under colonies and can exhibit agar pitting' },
+      { l: 'Differentiator', v: 'Oxidase-positive, catalase-negative, indole-negative, highly associated with bone/joint infections in toddlers, and distinctively beta-hemolytic on sheep blood agar' }
+    ],
+    reviews: []
+},
+{
+    id: 102, 
+    name: 'Alcaligenes faecalis',
+    sci: 'Alcaligenes faecalis',
+    severity: 'mild', 
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Alcaligenes_faecalis.png/960px-Alcaligenes_faecalis.png', 
+    emoji: '💧',
+    desc: 'An obligately aerobic, Gram-negative, rod-shaped bacterium commonly found in environmental water sources, soil, and hospital equipment (like respirators and dialysis systems). While it was originally isolated from feces, it is not a normal inhabitant of the human gut. It is typically non-pathogenic to healthy individuals but functions as an opportunistic pathogen in clinical settings, causing healthcare-associated infections like bacteremia, UTIs, and peritonitis in immunocompromised individuals. It is highly valued in industry for producing bioactive metabolites and alkaline compounds.',
+    facts: [
+      { l: 'Shape', v: 'Straight or slightly curved rods, occurring singly or in pairs; motile via peritrichous flagella' },
+      { l: 'Gram', v: 'Negative (Stains pink/red uniformly; non-spore-forming)' },
+      { l: 'Key Disease', v: 'Opportunistic nosocomial infections (bacteremia, urinary tract infections, and medical device-associated peritonitis)' },
+      { l: 'Growth Media', v: 'Strict aerobe; grows well on standard media like nutrient agar and MacConkey agar (appearing as a clear, colorless lactose non-fermenter). Optimal incubation at 20°C to 37°C' },
+      { l: 'Differentiator', v: 'Oxidase-positive, catalase-positive, asaccharolytic (does not ferment carbohydrates), and characteristically increases medium pH by degrading urea/peptones to create an alkaline reaction' }
+    ],
+    reviews: []
+},
+{
+    id: 103, 
+    name: 'Citrobacter freundii',
+    sci: 'Citrobacter freundii',
+    severity: 'moderate to lethal', 
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Citrobacter_freundii.jpg/960px-Citrobacter_freundii.jpg', 
+    emoji: '🍋',
+    desc: 'A facultatively anaerobic, Gram-negative, rod-shaped bacterium belonging to the Enterobacteriaceae family. It is commonly found as a commensal organism in the intestinal tract of humans and animals, as well as in soil and water environments. In clinical settings, it acts as a notorious opportunistic pathogen responsible for healthcare-associated infections like complicated urinary tract infections, neonatal meningitis, and sepsis. Notably, many strains possess an inducible AmpC beta-lactamase gene, rendering them intrinsically resistant to many common beta-lactam antibiotics.',
+    facts: [
+      { l: 'Shape', v: 'Straight, rod-shaped bacillus; typically motile via peritrichous flagella' },
+      { l: 'Gram', v: 'Negative (Stains pink/red; non-spore-forming)' },
+      { l: 'Key Disease', v: 'Nosocomial urinary tract infections (UTIs), neonatal meningitis, brain abscesses, and septicemia' },
+      { l: 'Growth Media', v: 'Grows readily on standard media like MacConkey agar; most strains are lactose fermenters (forming pink colonies), though some are slow or non-fermenters' },
+      { l: 'Differentiator', v: 'Citrate-utilization positive, ONPG positive, and crucially produces hydrogen sulfide (H2S positive on TSI agar), distinguishing it from Escherichia coli' }
+    ],
+    reviews: []
+},
+{
+    id: 104,  
+    name: 'Kocuria rosea',
+    sci: 'Kocuria rosea (formerly Micrococcus roseus)',
+    severity: 'none',  
+    type: 'gram-positive',
+    gramLabel: 'Gram +',
+    gramClass: 'gram-pos',
+    img: 'https://media.springernature.com/m685/springer-static/image/art%3A10.1186%2Fs12348-018-0163-6/MediaObjects/12348_2018_163_Fig1_HTML.png', 
+    emoji: '🌸',
+    desc: 'A strictly aerobic, Gram-positive, spherical bacterium found widely in dust, water, soil, and as a natural commensal on human skin. Formerly classified as Micrococcus roseus, it was formally reclassified into the genus Kocuria based on modern 16S rRNA gene sequencing and cell wall analysis. It is universally recognized for producing vibrant, endogenous pink-to-orange-red carotenoid pigments that serve as strong antioxidants to protect the cell against ultraviolet light and environmental oxidative stress.',
+    facts: [
+      { l: 'Shape', v: 'Spherical coccus occurring characteristically in tetrads (groups of four), pairs, or small clusters due to division in multiple perpendicular planes' },
+      { l: 'Gram', v: 'Positive (Stains dark purple; possesses a thick peptidoglycan cell wall structure characteristic of the high G+C Actinomycetota phylum)' },
+      { l: 'Key Disease', v: 'Generally non-pathogenic (Regarded as an environmental organism or skin commensal, though exceptionally rare opportunistic infections can occur in profoundly immunocompromised individuals)' },
+      { l: 'Growth Media', v: 'Strict aerobe; grows readily on standard nutrient agar or Tryptic Soy Agar (TSA) at 25°C to 37°C, forming circular, smooth, opaque colonies with a signature rose-pink or coral pigmentation' },
+      { l: 'Differentiator', v: 'Catalase-positive, oxidase-positive, strictly aerobic, and clearly distinguished by its updated taxonomic classification as Kocuria rosea alongside its distinctive pink colony appearance and tetrad arrangement' }
+    ],
+    reviews: []
 },
 {
     id: 105, 
@@ -18,85 +2464,273 @@
       { l: 'Differentiator', v: 'Distinguished from spirochetes by its rigid cell wall and polar flagella, and from Streptobacillus moniliformis by its spiral morphology, unculturable nature, and the local reactivation of the healing wound site' }
     ],
     reviews: []
-},
-  {
-    id: 106, 
-    name: 'Streptobacillus moniliformis',
-    sci: 'Streptobacillus moniliformis',
-    severity: 'moderate to lethal',
-    type: 'gram-negative',
-    gramLabel: 'Gram -',
-    gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Streptobacillus_moniliformis.png/960px-Streptobacillus_moniliformis.jpg', 
-    emoji: '🐀',
-    desc: 'A fastidious, facultatively anaerobic, Gram-negative bacterium that is a normal inhabitant of the nasopharynx of wild and laboratory rats. It is the primary cause of streptobacillary rat-bite fever (RBF) in the Western hemisphere, typically transmitted via rodent bites, scratches, or handling. When contracted through contaminated milk or water, the resulting severe systemic illness is known as Haverhill fever. The organism is highly pleomorphic, varying from rods to long, tangled filaments that develop characteristic bead-like swellings.',
-    facts: [
-      { l: 'Shape', v: 'Highly pleomorphic; ranges from straight or slightly curved rods to long, unbranched filaments that develop distinctive "string-of-beads" (moniliform) swellings as the culture ages' },
-      { l: 'Gram', v: 'Negative (Stains pink/red, but extremely poorly and irregularly; can show Gram-variable tendencies in older cultures)' },
-      { l: 'Key Disease', v: 'Streptobacillary rat-bite fever (characterized by abrupt fever, chills, migratory polyarthralgia/arthritis, and a maculopapular rash on extremities), and Haverhill fever' },
-      { l: 'Growth Media', v: 'Highly fastidious and capnophilic. Requires media heavily enriched with 10% to 20% blood, serum, or ascitic fluid. Grows slowly, producing small, smooth, grayish colonies, and frequently transitions into cell wall-deficient "L-forms" on penicillin-containing media' },
-      { l: 'Differentiator', v: 'Oxidase-negative, catalase-negative, indole-negative, and easily distinguished from Spirillum minus by its ability to grow on enriched artificial media and its striking filament-and-bead morphology' }
-    ],
-    reviews: []
-},
-  {
-    id: 107,
-    name: 'Cutibacterium acnes',
-    sci: 'Cutibacterium acnes',
-    severity: 'mild',
-    type: 'gram-positive',
-    gramLabel: 'Gram +',
-    gramClass: 'gram-pos',
-    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/25943/25943_lores.jpg',
-    emoji: '🧼',
-    desc: 'A ubiquitous commensal bacterium residing deep within human sebaceous glands, hair follicles, and mucosal surfaces. It thrives on sebum, secreting lipases that break down lipids into free fatty acids. While essential for maintaining skin health by keeping the pH acidic, an overgrowth triggered by excess sebum production and follicular plugging induces localized inflammation, driving the pathogenesis of Acne vulgaris. It is also an opportunistic pathogen in surgical site infections, particularly involving orthopedic hardware and cardiac implants.',
-    facts: [
-      { l: 'Shape', v: 'Pleomorphic, slighly curved Rod (often seen in "Chinese letter" arrangements or small clumps)' },
-      { l: 'Gram', v: 'Positive' },
-      { l: 'Metabolism', v: 'Aerotolerant anaerobe; produces propionic acid as a primary fermentation byproduct' },
-      { l: 'Niche', v: 'Sebaceous follicles (high lipid areas like the face, chest, and upper back)' },
-      { l: 'Catalase', v: 'Positive (distinguishes it from many other anaerobic Gram-positive rods)' }
-    ],
-    reviews: []
-  },
-  {
-    id: 108,
-    name: 'P. anaerobius',
-    sci: 'Peptostreptococcus anaerobius',
-    severity: 'moderate to lethal',
-    type: 'gram-positive',
-    gramLabel: 'Gram +',
-    gramClass: 'gram-pos',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/0/02/4347_lores.jpg?_=20230824203942.jpg',
-    emoji: '🦠',
-    desc: 'An obligate anaerobic, Gram-positive coccus that forms a significant component of the normal human microbiota of the mouth, gut, and vagina. As an opportunistic pathogen, it is frequently recovered from polymicrobial abscesses, deep wound infections, pelvic inflammatory disease, and aspiration pneumonia. It is notorious for producing volatile fatty acids that cause a characteristically foul odor in infected tissues. In the laboratory, it is slow-growing and highly sensitive to oxygen, requiring specialized anaerobic transport and culture media.',
-    facts: [
-      { l: 'Shape', v: 'Spherical or ovoid cocci occurring in pairs, short chains, or irregular clumps' },
-      { l: 'Gram', v: 'Positive' },
-      { l: 'Metabolism', v: 'Obligate anaerobe (ferments amino acids and carbohydrates)' },
-      { l: 'Key Marker', v: 'SPS sensitive (Sodium polyanethol sulfonate susceptibility distinguishes P. anaerobius from other anaerobic cocci)' },
-      { l: 'Clinical Tell', v: 'Foul-smelling exudates/pus in mixed anaerobic infections' }
-    ],
-    reviews: []
-  },
-  {
-    id: 109,
-    name: 'Veillonella parvula',
-    sci: 'Veillonella parvula',
-    severity: 'mild to moderate',
-    type: 'gram-negative',
-    gramLabel: 'Gram -',
-    gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/Veillonella_spp._under_1125X_magnification.jpg?_=20220417194831',
-    emoji: '🦷',
-    desc: 'A small, obligate anaerobic, Gram-negative coccus that is a prominent resident of the human oral cavity and gut. It plays a fascinating metabolic role in dental plaque biofilms: it cannot ferment carbohydrates itself, so it consumes the lactic acid produced by Streptococcus mutans as an energy source. By converting this strong acid into weaker acids, it helps buffer the mouth\'s pH, structurally mitigating tooth decay. However, it acts as an opportunistic pathogen in mixed anaerobic infections like periodontal abscesses, sinobronchial infections, and rare cases of endocarditis.',
-    facts: [
-      { l: 'Shape', v: 'Tiny, spherical cocci (~0.3–0.5 µm) appearing in pairs (diplococci), short chains, or clusters' },
-      { l: 'Gram', v: 'Negative (stains pink/red, though can sometimes resist decolorization in thick smears)' },
-      { l: 'Metabolism', v: 'Obligate anaerobe; metabolizes lactate/pyruvate into acetate and propionate' },
-      { l: 'Dental Synergy', v: 'Metabolic partner to Streptococcus mutans in early dental plaque formation' },
-      { l: 'Biochemicals', v: 'Oxidase-negative, Catalase-negative (usually), Nitrate reduction positive' }
-    ],
-    reviews: []
-  }
+}
 ];
+
+let currentFilter = 'all';
+let currentMicrobe = null;
+let currentStar = 0;
+let logged = new Set();
+let userReviews = [];
+let pendingPhotos = [];
+
+const dynamicEncounters = [
+  'User "lab_rat99" just logged an E. coli sample in Beijing, China',
+  'Dr. Maria isolated a lethal strain of M. tuberculosis in Nairobi, Kenya',
+  'User "ClinMicro" flagged a Moderate Staph aureus strain from a surface swab',
+  'An unknown user just cataloged a Benign Lactobacillus acidophilus colony',
+  'BioTech_Alpha reported a Spore-positive Bacillus anthracis sample in London',
+  'GastroDoc detected a Moderate Helicobacter pylori isolate via breath test',
+  'User "LabQueen" added a Lancet-shaped Strep pneumoniae from Abu Dhabi'
+];
+
+function runLiveFeed() {
+  const feedEl = document.getElementById('liveFeedText');
+  let index = 0;
+  setInterval(() => {
+    feedEl.style.opacity = 0;
+    setTimeout(() => {
+      feedEl.textContent = dynamicEncounters[index];
+      feedEl.style.opacity = 1;
+      index = (index + 1) % dynamicEncounters.length;
+    }, 300);
+  }, 4500);
+  feedEl.textContent = dynamicEncounters[0];
+}
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active-view'));
+  
+  el.classList.add('active');
+  const targetView = document.getElementById(tabId + 'View');
+  if (targetView) targetView.classList.add('active-view');
+  
+  if (tabId === 'log') {
+    renderLoggedGrid();
+  }
+}
+
+function renderGrid() {
+  if (typeof bacteria === 'undefined') return;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('microGrid');
+  const filtered = bacteria.filter(b => {
+    const matchType = currentFilter === 'all' || b.type === currentFilter;
+    const matchQ = !q || b.name.toLowerCase().includes(q) || b.sci.toLowerCase().includes(q) || b.type.toLowerCase().includes(q);
+    return matchType && matchQ;
+  });
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted);font-size:13px;">No bacteria found matching "${document.getElementById('searchInput').value}"</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(b => generateCardHtml(b)).join('');
+}
+
+function renderLoggedGrid() {
+  if (typeof bacteria === 'undefined') return;
+  const grid = document.getElementById('loggedGrid');
+  const placeholder = document.getElementById('emptyLogPlaceholder');
+  const loggedItems = bacteria.filter(b => logged.has(b.id));
+  
+  if (loggedItems.length === 0) {
+    grid.innerHTML = '';
+    placeholder.style.display = 'block';
+  } else {
+    placeholder.style.display = 'none';
+    grid.innerHTML = loggedItems.map(b => generateCardHtml(b)).join('');
+  }
+}
+
+function generateCardHtml(b) {
+  return `
+    <div class="micro-card" onclick="openDetail(${b.id})">
+      <div class="card-img-wrap">
+        <img class="card-img" src="${b.img}" alt="${b.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="card-placeholder">
+          <span class="emoji">${b.emoji || '🦠'}</span>
+          <span class="label">No image</span>
+        </div>
+        <div class="gram-badge ${b.gramClass}">${b.gramLabel}</div>
+        <div class="severity-badge sev-${b.severity}">${b.severity}</div>
+        ${logged.has(b.id) ? '<div class="logged-check">✓</div>' : ''}
+      </div>
+      <div class="card-info">
+        <h3>${b.name}</h3>
+        <div class="sci">${b.sci}</div>
+        <div class="card-stars">
+          ${'★'.repeat(4)}${'☆'.repeat(1)}
+          <span>${b.reviews.length + userReviews.filter(r=>r.id===b.id).length} reviews</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.pill').forEach(pill => pill.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function openDetail(id) {
+  if (typeof bacteria === 'undefined') return;
+  currentMicrobe = bacteria.find(b => b.id === id);
+  document.getElementById('sheetName').textContent = currentMicrobe.name;
+  document.getElementById('sheetSci').textContent = currentMicrobe.sci;
+  document.getElementById('sheetDesc').textContent = currentMicrobe.desc;
+  
+  const hero = document.getElementById('sheetHero');
+  hero.innerHTML = `<img src="${currentMicrobe.img}" alt="${currentMicrobe.name}" onerror="this.style.display='none';" /><div class="gradient"></div>`;
+  
+  const factsRow = document.getElementById('sheetFacts');
+  factsRow.innerHTML = currentMicrobe.facts.map(f => `<div class="fact"><strong>${f.l}</strong>${f.v}</div>`).join('');
+  
+  const logBtn = document.getElementById('logBtn');
+  if (logged.has(currentMicrobe.id)) {
+    logBtn.textContent = '✓ Encounter Logged';
+    logBtn.classList.add('logged');
+  } else {
+    logBtn.textContent = '+ Log encounter';
+    logBtn.classList.remove('logged');
+  }
+  
+  renderReviews();
+  setStar(0);
+  document.getElementById('reviewText').value = '';
+  document.getElementById('photoPreviews').innerHTML = '';
+  pendingPhotos = [];
+  document.getElementById('photoCount').textContent = '';
+  
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  currentMicrobe = null;
+}
+
+function toggleLog() {
+  if (!currentMicrobe) return;
+  if (logged.has(currentMicrobe.id)) {
+    logged.delete(currentMicrobe.id);
+  } else {
+    logged.add(currentMicrobe.id);
+  }
+  openDetail(currentMicrobe.id);
+  renderGrid();
+  renderLoggedGrid();
+  updateProfile();
+}
+
+function renderReviews() {
+  if (!currentMicrobe) return;
+  const list = document.getElementById('reviewsList');
+  const allReviews = [...currentMicrobe.reviews, ...userReviews.filter(r => r.id === currentMicrobe.id)];
+  
+  if (allReviews.length === 0) {
+    list.innerHTML = `<div style="padding:16px 0;color:var(--muted);font-size:12px;">No community reviews yet. Be the first to note your findings!</div>`;
+    return;
+  }
+  
+  list.innerHTML = allReviews.map(r => `
+    <div class="review">
+      <div class="review-top">
+        <div class="rev-avatar">${r.user.substring(0,2).toUpperCase()}</div>
+        <div class="rev-name">${r.user}</div>
+        <div class="rev-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+      </div>
+      <div class="rev-text">${r.text}</div>
+      ${r.photo ? `<img src="${r.photo}" class="rev-photo" alt="Microscope view" />` : ''}
+    </div>
+  `).join('');
+}
+
+function setStar(s) {
+  currentStar = s;
+  const stars = document.querySelectorAll('.star-btn');
+  stars.forEach((btn, idx) => {
+    if (idx < s) btn.classList.add('lit');
+    else btn.classList.remove('lit');
+  });
+}
+
+function handlePhotos(e) {
+  const files = Array.from(e.target.files);
+  const previewContainer = document.getElementById('photoPreviews');
+  
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      pendingPhotos.push(evt.target.result);
+      const img = document.createElement('img');
+      img.src = evt.target.result;
+      img.className = 'photo-thumb';
+      previewContainer.appendChild(img);
+      document.getElementById('photoCount').textContent = `${pendingPhotos.length} photo(s) attached`;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function submitReview() {
+  if (!currentMicrobe) return;
+  const text = document.getElementById('reviewText').value.trim();
+  if (!text && currentStar === 0) return;
+  
+  userReviews.push({
+    id: currentMicrobe.id,
+    user: 'You',
+    stars: currentStar || 5,
+    text: text || 'Encountered and cataloged successfully.',
+    photo: pendingPhotos[0] || null
+  });
+  
+  renderReviews();
+  renderGrid();
+  updateProfile();
+  
+  setStar(0);
+  document.getElementById('reviewText').value = '';
+  document.getElementById('photoPreviews').innerHTML = '';
+  pendingPhotos = [];
+  document.getElementById('photoCount').textContent = '';
+}
+
+function updateProfile() {
+  const total = logged.size;
+  const totalBact = typeof bacteria !== 'undefined' ? bacteria.length : 0;
+  document.getElementById('loggedCount').textContent = `${total} logged`;
+  const stats = document.getElementById('profileStats');
+  const rank = document.getElementById('rankPill');
+  
+  if (total === 0) {
+    stats.textContent = 'Start logging bacteria to build your profile';
+    rank.textContent = 'Novice';
+  } else {
+    stats.textContent = `You have cataloged ${total} species out of ${totalBact}.`;
+    if (total <= 3) rank.textContent = 'Lab Assistant';
+    else if (total <= 8) rank.textContent = 'Microbiologist';
+    else rank.textContent = 'Chief Pathologist';
+  }
+}
+
+window.onload = function() {
+
+  const saved = localStorage.getItem('myLoggedBacteria');
+  if (saved) {
+    logged = new Set(JSON.parse(saved));
+  }
+
+  renderGrid();
+  runLiveFeed();
+  updateProfile();
+  if (typeof renderLoggedGrid === 'function') {
+    renderLoggedGrid();
+  }
+};
+</script>
+  
+</body>
+</html>
