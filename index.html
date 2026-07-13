@@ -2471,12 +2471,18 @@ let currentSubCategory = "all";
 let currentMicrobe = null;
 
 function generateCard(m) {
-    // This logic determines which badge to show based on category
     let badge = "";
-    if (m.category === 'gram-positive') badge = '<span style="font-size:9px; background:#333; padding:2px 6px; border-radius:4px; color:#fff;">Gram +</span>';
-    else if (m.category === 'gram-negative') badge = '<span style="font-size:9px; background:#333; padding:2px 6px; border-radius:4px; color:#fff;">Gram −</span>';
-    else if (m.category === 'virus') badge = '<span style="font-size:9px; background:#555; padding:2px 6px; border-radius:4px; color:#fff;">Virus</span>';
-    else if (m.category === 'parasite') badge = '<span style="font-size:9px; background:#555; padding:2px 6px; border-radius:4px; color:#fff;">Parasite</span>';
+    const cat = (m.category || "").toLowerCase();
+
+    if (cat.includes('gram-positive')) {
+        badge = '<span style="display:inline-block; font-size:9px; background:#444; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">GRAM +</span>';
+    } else if (cat.includes('gram-negative')) {
+        badge = '<span style="display:inline-block; font-size:9px; background:#444; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">GRAM −</span>';
+    } else if (cat.includes('virus')) {
+        badge = '<span style="display:inline-block; font-size:9px; background:#8a2be2; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">VIRUS</span>';
+    } else if (cat.includes('parasite')) {
+        badge = '<span style="display:inline-block; font-size:9px; background:#2e8b57; padding:2px 8px; border-radius:4px; color:#fff; font-weight:bold; margin-bottom:5px;">PARASITE</span>';
+    }
 
     return `
     <div class="micro-card" onclick="openDetail('${m.id}')">
@@ -2485,7 +2491,7 @@ function generateCard(m) {
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
         </div>
         <div class="card-info">
-            <div style="margin-bottom:4px;">${badge}</div>
+            <div style="min-height: 15px;">${badge}</div>
             <h3>${m.name}</h3>
             <div class="sci"><em>${m.sci}</em></div>
         </div>
