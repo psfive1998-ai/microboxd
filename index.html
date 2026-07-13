@@ -2391,13 +2391,6 @@ const bacteria = [
     reviews: []
   }
 ];
-
-<script>
-
-  const bacteria = [
-    { id: 1, name: 'E. coli', category: 'bacteria', subCategory: 'gram-negative', img: '', severity: 'moderate', facts: [], reviews: [], desc: '...' }
-  ];
-
   let currentCategory = 'all';
   let currentSubCategory = 'all';
   let logged = new Set();
@@ -2422,7 +2415,6 @@ const bacteria = [
     if (!b) return;
     const nameEl = document.getElementById('sheetName');
     if (nameEl) nameEl.textContent = b.name;
-    
     const overlay = document.getElementById('detailOverlay');
     if (overlay) overlay.classList.add('open');
   }
@@ -2440,9 +2432,6 @@ const bacteria = [
   }
 
   window.onload = () => { renderGrid(); };
-
-};
 </script>
-  
 </body>
 </html>
