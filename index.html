@@ -2443,26 +2443,6 @@ const bacteria = [
     ],
     reviews: []
 },
-{
-    id: 105, 
-    name: 'Spirillum minus',
-    sci: 'Spirillum minus',
-    severity: 'moderate',
-    type: 'gram-negative',
-    gramLabel: 'Gram -',
-    gramClass: 'gram-neg',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Spirillen.jpg/960px-Spirillen.jpg',
-    emoji: '🐀',
-    desc: 'A rigid, spiral-shaped, Gram-negative bacterium that acts as one of the two primary causative agents of rat-bite fever (specifically the form known as sodoku, prevalent in Asia). It is an obligate aerobe that cannot be cultured on artificial, cell-free laboratory media. Transmission occurs via the bite or scratch of infected rodents. Unlike Streptobacillus moniliformis (the other rat-bite fever agent), infections with Spirillum minus feature a re-ulceration at the original bite site, distinctive dark purple plaques, and a prolonged, relapsing febrile course.',
-    facts: [
-      { l: 'Shape', v: 'Short, thick, rigid spiral with 2 to 3 regular helical turns and bipolar tufts of flagella driving rapid, darting motility' },
-      { l: 'Gram', v: 'Negative (Stains very poorly with standard Gram stains; far better visualized in clinical blood or tissue specimens using Giemsa, Wright, or silver stains, or via dark-field microscopy)' },
-      { l: 'Key Disease', v: 'Sodoku (spirillary rat-bite fever) – characterized by recurrent fever, lymphadenopathy, rash, and induration/ulceration at the initial bite site' },
-      { l: 'Growth Media', v: 'Obligate intracellular/fastidious in vivo; completely unculturable on standard agar or cell-free broth. Diagnosis relies on direct microscopic observation or animal inoculation' },
-      { l: 'Differentiator', v: 'Distinguished from spirochetes by its rigid cell wall and polar flagella, and from Streptobacillus moniliformis by its spiral morphology, unculturable nature, and the local reactivation of the healing wound site' }
-    ],
-    reviews: []
-},
   {
     id: 110,
     name: 'Mycobacterium ulcerans',
@@ -2720,6 +2700,66 @@ const bacteria = [
       { l: 'Growth', v: 'Fastidious aerobe; requires Buffered Charcoal Yeast Extract (BCYE) agar supplemented with L-cysteine and iron' },
       { l: 'Metabolism', v: 'Gelatinase positive, Oxidase negative, Catalase weakly positive, Beta-lactamase positive' },
       { l: 'Co-Culture', v: 'Replicates intracellularly within free-living amoebae like Acanthamoeba in nature, and alveolar macrophages in hosts' }
+    ],
+    reviews: []
+  },
+  {
+    id: 119,
+    name: 'Proteus mirabilis',
+    sci: 'Proteus mirabilis',
+    severity: 'moderate',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/17495/17495_lores.jpg',
+    emoji: '💧',
+    desc: 'A facultatively anaerobic, rod-shaped Gram-negative bacterium widely distributed in soil, water, and the intestinal tracts of humans and animals. It is a major opportunistic pathogen notorious for causing complicated urinary tract infections (UTIs), particularly in catheterized patients. It exhibits flagella-driven swarming motility across solid agar faces, forming distinctive concentric rings, and produces large amounts of urease, leading to the formation of staghorn kidney stones.',
+    facts: [
+      { l: 'Shape', v: 'Straight, uniform rods in normal growth phase; elongates into highly flagellated filaments during swarming' },
+      { l: 'Stain', v: 'Gram-negative (stains pink/red with standard counterstain, lacking an acid-fast lipid wall architecture)' },
+      { l: 'Motility', v: 'Peritrichous flagella; capable of rapid swarming motility on non-inhibitory solid culture media' },
+      { l: 'Metabolism', v: 'Urease positive, Indole negative, Oxidase negative, Hydrogen sulfide (H2S) producer' },
+      { l: 'Virulence Factor', v: 'Urease splits urea into ammonia, raising urinary pH and precipitating struvite or carbonate apatite crystals' }
+    ],
+    reviews: []
+  },
+  {
+    id: 120,
+    name: 'Burkholderia cepacia',
+    sci: 'Burkholderia cepacia',
+    severity: 'severe to lethal',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/10608/10608_lores.jpg',
+    emoji: '🧅',
+    desc: 'A group of complex, catalase-producing, obligate aerobic Gram-negative bacilli found commonly in soil and moist environments. It serves as a formidable opportunistic pathogen, particularly causing cepacia syndrome in individuals with cystic fibrosis or chronic granulomatous disease. This syndrome manifests as a rapid, necrotizing pneumonia accompanied by bacteremia and multi-organ failure. The organism possesses exceptional intrinsic resistance to multiple classes of antibiotics and disinfectants.',
+    facts: [
+      { l: 'Shape', v: 'Straight or slightly curved rods utilizing single or multiple polar flagella for motility' },
+      { l: 'Stain', v: 'Gram-negative (stains pink/red with standard counterstain; lacks mycolic acids or acid-fast properties)' },
+      { l: 'Growth', v: 'Grows on standard media; selectively isolated using specialized media like BCSA, producing pink-yellow colonies' },
+      { l: 'Metabolism', v: 'Oxidase positive, Catalase positive, Lysine decarboxylase positive, non-lactose fermenter' },
+      { l: 'Resistance', v: 'Highly resistant to polymyxins/colistin, aminoglycosides, and many beta-lactams due to efflux pumps and altered lipopolysaccharides' }
+    ],
+    reviews: []
+  },
+  {
+    id: 121,
+    name: 'P. gingivalis',
+    sci: 'Porphyromonas gingivalis',
+    severity: 'moderate to chronic',
+    type: 'gram-negative',
+    gramLabel: 'Gram -',
+    gramClass: 'gram-neg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/9/96/190124_thk_p_gingivalis_geassocieerd_met_alzheimer_web.jpg?_=20190410165028',
+    emoji: '🦷',
+    desc: 'An obligately anaerobic, non-motile Gram-negative rod that acts as a keystone pathogen in severe chronic periodontitis. It populates the subgingival plaque environment, where it disrupts host immune homeostasis to cause inflammatory destruction of the periodontal tissues and alveolar bone. It produces dark, black-pigmented colonies on blood agar due to accumulation of hemin and relies heavily on destructive cysteine proteases known as gingipains to degrade host proteins and evade immune responses.',
+    facts: [
+      { l: 'Shape', v: 'Short, pleomorphic rods or coccobacilli occurring singly, in pairs, or short chains' },
+      { l: 'Stain', v: 'Gram-negative (stains pink/red; lacks an acid-fast lipid wall architecture)' },
+      { l: 'Colony Morph', v: 'Produces smooth, shiny colonies on blood agar that develop a distinctive dark brown to shiny black pigment after 4 to 7 days' },
+      { l: 'Metabolism', v: 'Obligate anaerobe; asaccharolytic, utilizing amino acids and peptides for energy rather than carbohydrates' },
+      { l: 'Virulence Factor', v: 'Secretes Arg-gingipain and Lys-gingipain proteases, fimbriae for tissue attachment, and a non-toxic lipid A lipopolysaccharide structure' }
     ],
     reviews: []
   }
