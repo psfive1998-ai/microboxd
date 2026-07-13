@@ -80,6 +80,53 @@
     .sci-name { font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
     .close-btn { width: 32px; height: 32px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .desc-text { font-size: 13px; color: #b5b5be; line-height: 1.6; margin-top: 16px; }
+    .live-ticker {
+      background: var(--surface2);
+      border-bottom: 0.5px solid var(--border);
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      width: 100%;
+    }
+    .ticker-track {
+      display: inline-block;
+      white-space: nowrap;
+      animation: tickerScroll 25s linear infinite;
+    }
+    .live-ticker:hover .ticker-track {
+      animation-play-state: paused;
+    }
+    .ticker-item {
+      display: inline-block;
+      padding: 0 24px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+    .ticker-item strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .ticker-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: var(--lethal);
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes tickerScroll {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
