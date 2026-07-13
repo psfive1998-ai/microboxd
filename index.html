@@ -14,11 +14,13 @@
     .micro-card { background: #18181b; padding: 15px; border-radius: 8px; cursor: pointer; }
     .app-view { display: none; }
     .app-view.active-view { display: block; }
+    .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; padding: 20px; }
+    .detail-overlay.open { display: block; }
   </style>
 </head>
 <body>
 
-<div class="topbar">Microboxd</div>
+<div class="topbar">Microboxd <span id="loggedCount">0 logged</span></div>
 
 <div id="discoverView" class="app-view active-view">
   <div class="filters" id="filterBar">
@@ -27,41 +29,16 @@
   <div class="micro-grid" id="microGrid"></div>
 </div>
 
-<script>
-  const bacteria = [
-    { id: 1, name: 'E. coli', category: 'bacteria', subCategory: 'gram-negative', desc: 'A common gut bacterium.' },
-    { id: 2, name: 'Toxoplasma', category: 'parasite', subCategory: 'protozoa', desc: 'A parasitic organism.' }
-  ];
-
-  let currentCategory = 'all';
-  let currentSubCategory = 'all';
-
-  function renderGrid() {
-    const grid = document.getElementById('microGrid');
-    const filtered = bacteria.filter(b => {
-      const matchCat = currentCategory === 'all' || b.category === currentCategory;
-      const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
-      return matchCat && matchSub;
-    });
-    grid.innerHTML = filtered.map(b => `
-      <div class="micro-card">
-        <h3>${b.name}</h3>
-        <p>${b.category} / ${b.subCategory}</p>
-      </div>`).join('');
-  }
-
-  function setFilter(cat, sub, el) {
-    currentCategory = cat;
-    currentSubCategory = sub;
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    renderGrid();
-  }
-
-  renderGrid();
-</script>
-</body>
-</html>
+<div id="detailOverlay" class="detail-overlay">
+  <h2 id="sheetName"></h2>
+  <div id="sheetHero"></div>
+  <div id="sheetSci"></div>
+  <p id="sheetDesc"></p>
+  <div id="sheetFacts"></div>
+  <button id="logBtn" onclick="toggleLog()">Log</button>
+  <div id="reviewsList"></div>
+  <button onclick="closeDetail()">Close</button>
+</div>
 
 const bacteria = [
   {
@@ -2398,244 +2375,55 @@ const bacteria = [
   }
 ];
 
-let currentCategory = 'all';
-let currentSubCategory = 'all';
-let currentMicrobe = null;
-let currentStar = 0;
-let logged = new Set();
-let userReviews = [];
-let pendingPhotos = [];
+<script>
 
-const dynamicEncounters = [
-  'User "lab_rat99" just logged an E. coli sample in Beijing, China',
-  'Dr. Maria isolated a lethal strain of M. tuberculosis in Nairobi, Kenya',
-  'User "ClinMicro" flagged a Moderate Staph aureus strain from a surface swab',
-  'An unknown user just cataloged a Benign Lactobacillus acidophilus colony',
-  'BioTech_Alpha reported a Spore-positive Bacillus anthracis sample in London',
-  'GastroDoc detected a Moderate Helicobacter pylori isolate via breath test',
-  'User "LabQueen" added a Lancet-shaped Strep pneumoniae from Abu Dhabi'
-];
+  const bacteria = [
+    { id: 1, name: 'E. coli', category: 'bacteria', subCategory: 'gram-negative', img: '', severity: 'moderate', facts: [], reviews: [], desc: '...' }
+  ];
 
-function runLiveFeed() {
-  const feedEl = document.getElementById('liveFeedText');
-  let index = 0;
-  setInterval(() => {
-    feedEl.style.opacity = 0;
-    setTimeout(() => {
-      feedEl.textContent = dynamicEncounters[index];
-      feedEl.style.opacity = 1;
-      index = (index + 1) % dynamicEncounters.length;
-    }, 300);
-  }, 4500);
-  feedEl.textContent = dynamicEncounters[0];
-}
+  let currentCategory = 'all';
+  let currentSubCategory = 'all';
+  let logged = new Set();
 
-function switchTab(tabId, el) {
-  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-  document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active-view'));
-  
-  el.classList.add('active');
-  const targetView = document.getElementById(tabId + 'View');
-  if (targetView) targetView.classList.add('active-view');
-  
-  if (tabId === 'log') {
-    renderLoggedGrid();
-  }
-}
-
-function renderGrid() {
-  if (typeof bacteria === 'undefined') return;
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const grid = document.getElementById('microGrid');
-  const filtered = bacteria.filter(b => {
-    const matchCat = currentCategory === 'all' || b.category === currentCategory;
-    const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
-    const matchQ = !q || b.name.toLowerCase().includes(q) || b.sci.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.subCategory.toLowerCase().includes(q);
-    return matchCat && matchSub && matchQ;
-  });
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted);font-size:13px;">No items found matching your search.</div>`;
-    return;
-  }
-  grid.innerHTML = filtered.map(b => generateCardHtml(b)).join('');
-}
-
-function renderLoggedGrid() {
-  if (typeof bacteria === 'undefined') return;
-  const grid = document.getElementById('loggedGrid');
-  const placeholder = document.getElementById('emptyLogPlaceholder');
-  const loggedItems = bacteria.filter(b => logged.has(b.id));
-  
-  if (loggedItems.length === 0) {
-    grid.innerHTML = '';
-    placeholder.style.display = 'block';
-  } else {
-    placeholder.style.display = 'none';
-    grid.innerHTML = loggedItems.map(b => generateCardHtml(b)).join('');
-  }
-}
-
-function generateCardHtml(b) {
-  return `
-    <div class="micro-card" onclick="openDetail(${b.id})">
-      <div class="card-img-wrap">
-        <img class="card-img" src="${b.img}" alt="${b.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-        <div class="card-placeholder">
-          <span class="emoji">${b.emoji || '🦠'}</span>
-          <span class="label">No image</span>
-        </div>
-        <div class="gram-badge" style="background:rgba(255,255,255,0.1)">${b.category}</div>
-        <div class="severity-badge sev-${b.severity}">${b.severity}</div>
-        ${logged.has(b.id) ? '<div class="logged-check">✓</div>' : ''}
-      </div>
-      <div class="card-info">
+  function renderGrid() {
+    const grid = document.getElementById('microGrid');
+    if (!grid) return;
+    const filtered = bacteria.filter(b => {
+      const matchCat = currentCategory === 'all' || b.category === currentCategory;
+      const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
+      return matchCat && matchSub;
+    });
+    grid.innerHTML = filtered.map(b => `
+      <div class="micro-card" onclick="openDetail(${b.id})">
         <h3>${b.name}</h3>
-        <div class="sci">${b.subCategory}</div>
-        <div class="card-stars">
-          ${'★'.repeat(4)}${'☆'.repeat(1)}
-          <span>${b.reviews.length + userReviews.filter(r=>r.id===b.id).length} reviews</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function setFilter(cat, sub, el) {
-  currentCategory = cat;
-  currentSubCategory = sub;
-  document.querySelectorAll('.pill').forEach(pill => pill.classList.remove('active'));
-  el.classList.add('active');
-  renderGrid();
-}
-
-function openDetail(id) {
-  if (typeof bacteria === 'undefined') return;
-  currentMicrobe = bacteria.find(b => b.id === id);
-  document.getElementById('sheetName').textContent = currentMicrobe.name;
-  document.getElementById('sheetSci').textContent = `${currentMicrobe.category} | ${currentMicrobe.subCategory}`;
-  document.getElementById('sheetDesc').textContent = currentMicrobe.desc;
-  
-  const hero = document.getElementById('sheetHero');
-  hero.innerHTML = `<img src="${currentMicrobe.img}" alt="${currentMicrobe.name}" onerror="this.style.display='none';" /><div class="gradient"></div>`;
-  
-  const factsRow = document.getElementById('sheetFacts');
-  factsRow.innerHTML = currentMicrobe.facts.map(f => `<div class="fact"><strong>${f.l}</strong>${f.v}</div>`).join('');
-  
-  const logBtn = document.getElementById('logBtn');
-  if (logged.has(currentMicrobe.id)) {
-    logBtn.textContent = '✓ Encounter Logged';
-    logBtn.classList.add('logged');
-  } else {
-    logBtn.textContent = '+ Log encounter';
-    logBtn.classList.remove('logged');
+        <p>${b.category} / ${b.subCategory}</p>
+      </div>`).join('');
   }
-  
-  renderReviews();
-  setStar(0);
-  document.getElementById('reviewText').value = '';
-  document.getElementById('photoPreviews').innerHTML = '';
-  pendingPhotos = [];
-  document.getElementById('photoCount').textContent = '';
-  document.getElementById('detailOverlay').classList.add('open');
-}
 
-function closeDetail() {
-  document.getElementById('detailOverlay').classList.remove('open');
-  currentMicrobe = null;
-}
-
-function toggleLog() {
-  if (!currentMicrobe) return;
-  if (logged.has(currentMicrobe.id)) logged.delete(currentMicrobe.id);
-  else logged.add(currentMicrobe.id);
-  openDetail(currentMicrobe.id);
-  renderGrid();
-  renderLoggedGrid();
-  updateProfile();
-}
-
-function renderReviews() {
-  if (!currentMicrobe) return;
-  const list = document.getElementById('reviewsList');
-  const allReviews = [...currentMicrobe.reviews, ...userReviews.filter(r => r.id === currentMicrobe.id)];
-  
-  if (allReviews.length === 0) {
-    list.innerHTML = `<div style="padding:16px 0;color:var(--muted);font-size:12px;">No community reviews yet.</div>`;
-    return;
+  function openDetail(id) {
+    const b = bacteria.find(x => x.id === id);
+    if (!b) return;
+    const nameEl = document.getElementById('sheetName');
+    if (nameEl) nameEl.textContent = b.name;
+    
+    const overlay = document.getElementById('detailOverlay');
+    if (overlay) overlay.classList.add('open');
   }
-  
-  list.innerHTML = allReviews.map(r => `
-    <div class="review">
-      <div class="review-top">
-        <div class="rev-avatar">${r.user.substring(0,2).toUpperCase()}</div>
-        <div class="rev-name">${r.user}</div>
-        <div class="rev-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
-      </div>
-      <div class="rev-text">${r.text}</div>
-    </div>
-  `).join('');
-}
 
-function setStar(s) {
-  currentStar = s;
-  const stars = document.querySelectorAll('.star-btn');
-  stars.forEach((btn, idx) => {
-    if (idx < s) btn.classList.add('lit');
-    else btn.classList.remove('lit');
-  });
-}
-
-function handlePhotos(e) {
-  const files = Array.from(e.target.files);
-  const previewContainer = document.getElementById('photoPreviews');
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      pendingPhotos.push(evt.target.result);
-      const img = document.createElement('img');
-      img.src = evt.target.result;
-      img.className = 'photo-thumb';
-      previewContainer.appendChild(img);
-      document.getElementById('photoCount').textContent = `${pendingPhotos.length} photo(s)`;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function submitReview() {
-  if (!currentMicrobe) return;
-  const text = document.getElementById('reviewText').value.trim();
-  userReviews.push({ id: currentMicrobe.id, user: 'You', stars: currentStar || 5, text: text || 'Cataloged.', photo: pendingPhotos[0] || null });
-  renderReviews();
-  renderGrid();
-  updateProfile();
-  setStar(0);
-  document.getElementById('reviewText').value = '';
-}
-
-function updateProfile() {
-  const total = logged.size;
-  const totalBact = typeof bacteria !== 'undefined' ? bacteria.length : 0;
-  document.getElementById('loggedCount').textContent = `${total} logged`;
-  const stats = document.getElementById('profileStats');
-  const rank = document.getElementById('rankPill');
-  
-  if (total === 0) {
-    stats.textContent = 'Start logging specimens to build your profile';
-    rank.textContent = 'Novice';
-  } else {
-    stats.textContent = `Cataloged ${total} of ${totalBact} specimens.`;
-    rank.textContent = total > 5 ? 'Pathologist' : 'Researcher';
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
   }
-}
 
-window.onload = function() {
-  const saved = localStorage.getItem('myLoggedBacteria');
-  if (saved) logged = new Set(JSON.parse(saved));
-  renderGrid();
-  runLiveFeed();
-  updateProfile();
+  function setFilter(cat, sub, el) {
+    currentCategory = cat;
+    currentSubCategory = sub;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderGrid();
+  }
+
+  window.onload = () => { renderGrid(); };
+
 };
 </script>
   
