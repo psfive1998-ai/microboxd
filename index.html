@@ -2472,17 +2472,22 @@ let currentMicrobe = null;
 
 function generateCard(m) {
     let badge = "";
+    let subBadge = "";
     const cat = (m.category || "").toLowerCase();
+    const sub = (m.subCategory || "").toLowerCase();
 
-    // Muted, high-end color palette for the badges
+    // Main Category Badges (Gram + / Gram -)
     if (cat.includes('gram-positive')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#4a5568; padding:2px 8px; border-radius:4px; color:#f7fafc; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">GRAM +</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#4a5568; padding:2px 8px; border-radius:4px; color:#f7fafc; font-weight:700; margin-bottom:5px; margin-right:5px;">GRAM +</span>';
     } else if (cat.includes('gram-negative')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#a0aec0; padding:2px 8px; border-radius:4px; color:#2d3748; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">GRAM −</span>';
-    } else if (cat.includes('virus')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#cbd5e0; padding:2px 8px; border-radius:4px; color:#4a5568; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">VIRUS</span>';
-    } else if (cat.includes('parasite')) {
-        badge = '<span style="display:inline-block; font-size:9px; background:#e2e8f0; padding:2px 8px; border-radius:4px; color:#4a5568; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">PARASITE</span>';
+        badge = '<span style="display:inline-block; font-size:9px; background:#a0aec0; padding:2px 8px; border-radius:4px; color:#2d3748; font-weight:700; margin-bottom:5px; margin-right:5px;">GRAM −</span>';
+    }
+
+    // Specialized Subcategory Badges (Acid-fast / Spirochete)
+    if (sub.includes('acid-fast')) {
+        subBadge = '<span style="display:inline-block; font-size:9px; border: 1px solid #718096; padding:1px 7px; border-radius:4px; color:#4a5568; font-weight:600; margin-bottom:5px; margin-right:5px;">ACID-FAST</span>';
+    } else if (sub.includes('spirochete')) {
+        subBadge = '<span style="display:inline-block; font-size:9px; border: 1px solid #718096; padding:1px 7px; border-radius:4px; color:#4a5568; font-weight:600; margin-bottom:5px; margin-right:5px;">SPIROCHETE</span>';
     }
 
     return `
@@ -2492,7 +2497,7 @@ function generateCard(m) {
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
         </div>
         <div class="card-info">
-            <div style="min-height: 15px;">${badge}</div>
+            <div style="min-height: 15px;">${badge}${subBadge}</div>
             <h3>${m.name}</h3>
             <div class="sci"><em>${m.sci}</em></div>
         </div>
