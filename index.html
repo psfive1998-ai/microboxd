@@ -103,9 +103,23 @@
 <div id="microGrid" class="micro-grid"></div>
 <div id="detailOverlay" class="detail-overlay">
   <div class="detail-sheet">
+    <div id="sheetImgContainer" style="width: 100%; height: 200px; background: #000; overflow: hidden; display: none;">
+      <img id="sheetImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"
+           onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
+    </div>
     <div class="sheet-body">
       <div class="sheet-top">
         <div>
+          <h2 id="sheetName"></h2>
+          <div class="sci-name" id="sheetSci"></div>
+        </div>
+        <div class="close-btn" onclick="closeDetail()">✕</div>
+      </div>
+      <div id="sheetFacts"></div>
+      <p class="desc-text" id="sheetDesc"></p>
+    </div>
+  </div>
+</div>
           <h2 id="sheetName"></h2>
           <div class="sci-name" id="sheetSci"></div>
         </div>
@@ -2496,13 +2510,22 @@ function renderGrid() {
 
     grid.innerHTML = filtered.map(generateCard).join("");
 }
-
 function openDetail(id) {
     currentMicrobe = bacteria.find(x => x.id == Number(id));
     if (!currentMicrobe) return;
 
     document.getElementById("sheetName").textContent = currentMicrobe.name;
     document.getElementById("sheetSci").innerHTML = `<em>${currentMicrobe.sci}</em>`;
+
+    const imgContainer = document.getElementById("sheetImgContainer");
+    const imgEl = document.getElementById("sheetImg");
+    if (currentMicrobe.img) {
+        imgEl.src = currentMicrobe.img;
+        imgEl.alt = currentMicrobe.name;
+        imgContainer.style.display = "block";
+    } else {
+        imgContainer.style.display = "none";
+    }
     
     let factsHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; background:var(--surface); padding:12px; border-radius:8px; font-size:12px;">';
     if (currentMicrobe.facts) {
@@ -2512,11 +2535,11 @@ function openDetail(id) {
     }
     factsHtml += '</div>';
 
-    document.getElementById("sheetDesc").innerHTML = factsHtml + `<p>${currentMicrobe.desc}</p>`;
+    document.getElementById("sheetFacts").innerHTML = factsHtml;
+    document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
     
     document.getElementById("detailOverlay").classList.add("open");
 }
-
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
 }
