@@ -2468,7 +2468,6 @@ function renderGrid() {
         if (currentCategory === "all") {
             categoryMatch = true;
         } else if (currentCategory === "bacteria") {
-            // Bulletproof: If it's not a virus or parasite, it's a bacteria
             categoryMatch = cat !== "virus" && cat !== "parasite";
         } else {
             categoryMatch = cat === currentCategory;
@@ -2516,10 +2515,11 @@ function setCategory(category) {
     currentCategory = category.toLowerCase();
     currentSubCategory = "all";
 
-    // Make the clicked pill highlight visually
-    document.querySelectorAll('.pill').forEach(pill => {
+    const pills = document.querySelectorAll('.pill');
+    pills.forEach(pill => {
         pill.classList.remove('active');
-        if (pill.getAttribute('onclick').includes(category)) {
+        const clickAttr = pill.getAttribute('onclick') || '';
+        if (clickAttr.toLowerCase().includes(category.toLowerCase())) {
             pill.classList.add('active');
         }
     });
