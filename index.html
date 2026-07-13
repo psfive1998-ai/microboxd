@@ -1,55 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Microboxd</title>
-  <style>
-    body { background: #111113; color: #e8e6e0; font-family: sans-serif; margin: 0; }
-    .topbar { padding: 20px; border-bottom: 1px solid #2a2a32; }
-    .micro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 20px; }
-    .micro-card { background: #18181b; padding: 15px; border-radius: 8px; cursor: pointer; }
-    .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; padding: 20px; color: #e8e6e0; }
-    .detail-overlay.open { display: block; }
-  </style>
-</head>
-<body>
-
-<div class="topbar">Microboxd</div>
-<div id="microGrid" class="micro-grid"></div>
-
-<div id="detailOverlay" class="detail-overlay">
-  <h2 id="sheetName"></h2>
-  <div id="sheetSci"></div>
-  <p id="sheetDesc"></p>
-  <button onclick="closeDetail()">Close</button>
-</div>
-
-<script>
-  const bacteria = [
-    { id: 7, name: 'Treponema pallidum', category: 'spirochete', subCategory: 'Spirochete', desc: 'The causative agent of syphilis.' },
-    { id: 17, name: 'Lyme Disease', category: 'spirochete', subCategory: 'Spirochete', desc: 'A tick-borne spirochete.' }
-  ];
+let currentCategory = 'all';
+  let currentSubCategory = 'all';
+  let logged = new Set();
 
   function renderGrid() {
     const grid = document.getElementById('microGrid');
-    grid.innerHTML = bacteria.map(b => `
+    if (!grid) return;
+    const filtered = bacteria.filter(b => {
+      const matchCat = currentCategory === 'all' || b.category === currentCategory;
+      const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
+      return matchCat && matchSub;
+    });
+    grid.innerHTML = filtered.map(b => `
       <div class="micro-card" onclick="openDetail(${b.id})">
         <h3>${b.name}</h3>
-        <p>${b.category} | ${b.subCategory}</p>
+        <p>${b.category} / ${b.subCategory}</p>
       </div>`).join('');
   }
 
   function openDetail(id) {
     const b = bacteria.find(x => x.id === id);
+    if (!b) return;
+    const nameEl = document.getElementById('sheetName');
+    if (nameEl) nameEl.textContent = b.name;
+    const overlay = document.getElementById('detailOverlay');
+    if (overlay) overlay.classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+
+  function setFilter(cat, sub, el) {
+    currentCategory = cat;
+    currentSubCategory = sub;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderGrid();
+  }
+
+  window.onload = () => { renderGrid(); };
+</script>
+</body>
+</html>
+  
+  const bacteria = [
+    { id: 7, name: 'Treponema pallidum', category: 'spirochete', subCategory: 'Spirochete', desc: 'The causative agent of syphilis.', sci: 'T. pallidum' },
+    { id: 17, name: 'Lyme Disease', category: 'spirochete', subCategory: 'Spirochete', desc: 'A tick-borne spirochete.', sci: 'Borrelia burgdorferi' }
+  ];
+
+  let currentCategory = 'all';
+  let currentSubCategory = 'all';
+  let logged = new Set();
+
+  function renderGrid() {
+    const grid = document.getElementById('microGrid');
+    if (!grid) return;
+    const filtered = bacteria.filter(b => {
+      const matchCat = currentCategory === 'all' || b.category === currentCategory;
+      const matchSub = currentSubCategory === 'all' || b.subCategory === currentSubCategory;
+      return matchCat && matchSub;
+    });
+    grid.innerHTML = filtered.map(b => `
+      <div class="micro-card" onclick="openDetail(${b.id})">
+        <h3>${b.name}</h3>
+        <p>${b.category} / ${b.subCategory}</p>
+      </div>`).join('');
+  }
+
+  function openDetail(id) {
+    const b = bacteria.find(x => x.id === id);
+    if (!b) return;
     document.getElementById('sheetName').textContent = b.name;
-    document.getElementById('sheetSci').textContent = `${b.category} | ${b.subCategory}`;
-    document.getElementById('sheetDesc').textContent = b.desc;
+    document.getElementById('sheetSci').textContent = b.sci || '';
+    document.getElementById('sheetDesc').textContent = b.desc || '';
     document.getElementById('detailOverlay').classList.add('open');
   }
 
   function closeDetail() {
     document.getElementById('detailOverlay').classList.remove('open');
+  }
+
+  function setFilter(cat, sub, el) {
+    currentCategory = cat;
+    currentSubCategory = sub;
+    renderGrid();
   }
 
   window.onload = renderGrid;
@@ -2391,7 +2425,7 @@ const bacteria = [
     reviews: []
   }
 ];
- let currentCategory = 'all';
+let currentCategory = 'all';
   let currentSubCategory = 'all';
   let logged = new Set();
 
@@ -2433,5 +2467,5 @@ const bacteria = [
 
   window.onload = () => { renderGrid(); };
 </script>
-      </body>
+</body>
 </html>
