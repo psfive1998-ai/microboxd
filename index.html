@@ -2484,24 +2484,38 @@ function generateCard(m) {
         </div>
     </div>
     `;
+let currentMicrobe = null; 
+
+function openDetail(id) {
+    currentMicrobe = bacteria.find(m => m.id === id);
+    
+  
+    if (!currentMicrobe) {
+        console.error("Microbe not found with ID:", id);
+        return;
+    }
+
+    const nameEl = document.getElementById("sheetName");
+    const sciEl = document.getElementById("sheetSci");
+    const descEl = document.getElementById("sheetDesc");
+
+    if (nameEl) nameEl.textContent = currentMicrobe.name;
+    if (sciEl) sciEl.textContent = currentMicrobe.sci;
+    if (descEl) descEl.textContent = currentMicrobe.desc;
+
+    // 4. Open the overlay
+    const overlay = document.getElementById("detailOverlay");
+    if (overlay) {
+        overlay.classList.add("open");
+    }
 }
-function openDetail(id){
-    currentMicrobe = bacteria.find(m => m.id == id);
-    if(!currentMicrobe) return;
-    document.getElementById("sheetName").textContent =
-        currentMicrobe.name;
-    document.getElementById("sheetSci").textContent =
-        currentMicrobe.sci;
-    document.getElementById("sheetDesc").textContent =
-        currentMicrobe.desc;
-    document
-        .getElementById("detailOverlay")
-        .classList.add("open");
-}
-function closeDetail(){
-    document
-        .getElementById("detailOverlay")
-        .classList.remove("open");
+
+function closeDetail() {
+    const overlay = document.getElementById("detailOverlay");
+    if (overlay) {
+        overlay.classList.remove("open");
+    }
+    currentMicrobe = null; // Clear selection
 }
 function setCategory(category){
     currentCategory = category;
