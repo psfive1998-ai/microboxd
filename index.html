@@ -2452,15 +2452,13 @@ const bacteria = [
   }
 ];
 <script>
-// Keep track of the current filter states
 let currentCategory = "all";
 let currentSubCategory = "all";
 
 function renderGrid() {
     const grid = document.getElementById("microGrid");
-    if (!grid) return; // Prevents errors if the element isn't on the page yet
+    if (!grid) return;
 
-    // Filter the bacteria array based on selected categories
     let filtered = bacteria.filter(m => {
         const categoryMatch = currentCategory === "all" || m.category === currentCategory;
         const subCategoryMatch = currentSubCategory === "all" || m.subCategory === currentSubCategory;
@@ -2471,7 +2469,6 @@ function renderGrid() {
 }
 
 function generateCard(m) {
-    // FIXED: Added single quotes around ${m.id} to prevent syntax errors if IDs are strings
     return `
     <div class="micro-card" onclick="openDetail('${m.id}')">
         <div style="width: 100%; height: 150px; background: #000; overflow: hidden;">
@@ -2512,8 +2509,7 @@ function setSubCategory(sub) {
     renderGrid();
 }
 
-// FIXED: Using DOMContentLoaded instead of window.onload to prevent breaking other scripts
-document.addEventListener("DOMContentLoaded", renderGrid);
+window.onload = renderGrid;
 </script>
 </body>
 </html>
