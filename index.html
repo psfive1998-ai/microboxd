@@ -2454,13 +2454,9 @@ const bacteria = [
 <script>
 let currentCategory = "all";
 let currentSubCategory = "all";
-let currentMicrobe = null;
-let logged = new Set();
 
 function renderGrid() {
     const grid = document.getElementById("microGrid");
-    if (!grid) return;
-    
     let filtered = bacteria.filter(m => {
         const categoryMatch = currentCategory === "all" || m.category === currentCategory;
         const subCategoryMatch = currentSubCategory === "all" || m.subCategory === currentSubCategory;
@@ -2482,32 +2478,25 @@ function generateCard(m) {
             <p>${m.category}</p>
             <small>${m.subCategory}</small>
         </div>
-    </div>`;
+    </div>
+    `;
 }
 
 function openDetail(id) {
-    currentMicrobe = bacteria.find(m => m.id == id);
-    if (!currentMicrobe) return;
-
-    const nameEl = document.getElementById("sheetName");
-    const sciEl = document.getElementById("sheetSci");
-    const descEl = document.getElementById("sheetDesc");
-
-    if (nameEl) nameEl.textContent = currentMicrobe.name;
-    if (sciEl) sciEl.textContent = currentMicrobe.sci;
-    if (descEl) descEl.textContent = currentMicrobe.desc;
-
+    let m = bacteria.find(x => x.id == id);
+    if (!m) return;
+    document.getElementById("sheetName").textContent = m.name;
+    document.getElementById("sheetSci").textContent = m.sci;
+    document.getElementById("sheetDesc").textContent = m.desc;
     document.getElementById("detailOverlay").classList.add("open");
 }
 
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
-    currentMicrobe = null;
 }
 
-function setCategory(category) {
-    currentCategory = category;
-    currentSubCategory = "all";
+function setCategory(cat) {
+    currentCategory = cat;
     renderGrid();
 }
 
@@ -2516,24 +2505,7 @@ function setSubCategory(sub) {
     renderGrid();
 }
 
-function searchMicrobes(text) {
-    text = text.toLowerCase();
-    const grid = document.getElementById("microGrid");
-    const filtered = bacteria.filter(m => {
-        const matchesSearch = m.name.toLowerCase().includes(text) || 
-                              m.sci.toLowerCase().includes(text) || 
-                              m.category.toLowerCase().includes(text) || 
-                              m.subCategory.toLowerCase().includes(text);
-        const matchesCategory = currentCategory == "all" || m.category == currentCategory;
-        const matchesSub = currentSubCategory == "all" || m.subCategory == currentSubCategory;
-        return matchesSearch && matchesCategory && matchesSub;
-    });
-    grid.innerHTML = filtered.map(generateCard).join("");
-}
-
-window.onload = function () {
-    renderGrid();
-};
+window.onload = renderGrid;
 </script>
 </body>
 </html>
