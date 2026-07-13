@@ -2451,6 +2451,7 @@ const bacteria = [
     reviews: []
   }
 ];
+<script>
 let currentCategory = "all";
 let currentSubCategory = "all";
 let currentMicrobe = null;
@@ -2458,6 +2459,8 @@ let logged = new Set();
 
 function renderGrid() {
     const grid = document.getElementById("microGrid");
+    if (!grid) return;
+    
     let filtered = bacteria.filter(m => {
         const categoryMatch = currentCategory === "all" || m.category === currentCategory;
         const subCategoryMatch = currentSubCategory === "all" || m.subCategory === currentSubCategory;
@@ -2479,28 +2482,12 @@ function generateCard(m) {
             <p>${m.category}</p>
             <small>${m.subCategory}</small>
         </div>
-    </div>
-    `;
+    </div>`;
 }
 
 function openDetail(id) {
-    currentMicrobe = bacteria.find(m => m.id === id);
-    
-    if (!currentMicrobe) {
-        console.error("Microbe not found with ID:", id);
-        return;
-    }
-
-    document.getElementById("sheetName").textContent = currentMicrobe.name;
-    document.getElementById("sheetSci").textContent = currentMicrobe.sci;
-    document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
-    
-    document.getElementById("detailOverlay").classList.add("open");
-}
-
-function closeDetail() {
-    document.getElementById("detailOverlay").classList.remove("open");
-}
+    currentMicrobe = bacteria.find(m => m.id == id);
+    if (!currentMicrobe) return;
 
     const nameEl = document.getElementById("sheetName");
     const sciEl = document.getElementById("sheetSci");
@@ -2510,54 +2497,41 @@ function closeDetail() {
     if (sciEl) sciEl.textContent = currentMicrobe.sci;
     if (descEl) descEl.textContent = currentMicrobe.desc;
 
-    // 4. Open the overlay
-    const overlay = document.getElementById("detailOverlay");
-    if (overlay) {
-        overlay.classList.add("open");
-    }
+    document.getElementById("detailOverlay").classList.add("open");
 }
 
 function closeDetail() {
-    const overlay = document.getElementById("detailOverlay");
-    if (overlay) {
-        overlay.classList.remove("open");
-    }
-    currentMicrobe = null; // Clear selection
+    document.getElementById("detailOverlay").classList.remove("open");
+    currentMicrobe = null;
 }
-function setCategory(category){
+
+function setCategory(category) {
     currentCategory = category;
     currentSubCategory = "all";
     renderGrid();
 }
-function setSubCategory(sub){
+
+function setSubCategory(sub) {
     currentSubCategory = sub;
     renderGrid();
 }
-function searchMicrobes(text){
+
+function searchMicrobes(text) {
     text = text.toLowerCase();
     const grid = document.getElementById("microGrid");
-    const filtered = bacteria.filter(m=>{
-        const matchesSearch =
-            m.name.toLowerCase().includes(text) ||
-            m.sci.toLowerCase().includes(text) ||
-            m.category.toLowerCase().includes(text) ||
-            m.subCategory.toLowerCase().includes(text);
-        const matchesCategory =
-            currentCategory=="all" ||
-            m.category==currentCategory;
-        const matchesSub =
-            currentSubCategory=="all" ||
-            m.subCategory==currentSubCategory;
-        return matchesSearch &&
-               matchesCategory &&
-               matchesSub;
+    const filtered = bacteria.filter(m => {
+        const matchesSearch = m.name.toLowerCase().includes(text) || 
+                              m.sci.toLowerCase().includes(text) || 
+                              m.category.toLowerCase().includes(text) || 
+                              m.subCategory.toLowerCase().includes(text);
+        const matchesCategory = currentCategory == "all" || m.category == currentCategory;
+        const matchesSub = currentSubCategory == "all" || m.subCategory == currentSubCategory;
+        return matchesSearch && matchesCategory && matchesSub;
     });
-    grid.innerHTML =
-        filtered.map(generateCard).join("");
+    grid.innerHTML = filtered.map(generateCard).join("");
 }
+
 window.onload = function () {
     renderGrid();
 };
 </script>
-</body>
-</html>
