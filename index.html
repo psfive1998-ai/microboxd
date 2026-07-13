@@ -8,6 +8,54 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
+    /* ── CNN-STYLE SCROLLING TICKER ── */
+    .live-ticker {
+      background: var(--surface2);
+      border-bottom: 0.5px solid var(--border);
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      width: 100%;
+    }
+    .ticker-track {
+      display: inline-block;
+      white-space: nowrap;
+      animation: tickerScroll 25s linear infinite;
+    }
+    .live-ticker:hover .ticker-track {
+      animation-play-state: paused;
+    }
+    .ticker-item {
+      display: inline-block;
+      padding: 0 24px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+    .ticker-item strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .ticker-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: var(--lethal);
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes tickerScroll {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg:        #111113;
@@ -37,12 +85,9 @@
     .app-view.active-view { display: block !important; }
     .placeholder-view { padding: 60px 24px; text-align: center; color: var(--muted); }
     .topbar {
-      position: sticky; top: 0; z-index: 50;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px; height: 56px;
-      background: rgba(17,17,19,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 0.5px solid var(--border);
+      <div class="live-ticker">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
     }
     .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.3px; color: var(--accent); }
     .logo span { color: var(--text); font-style: italic; }
