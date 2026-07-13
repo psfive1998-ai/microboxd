@@ -2451,9 +2451,10 @@ const bacteria = [
     reviews: []
   }
 ];
-<script>
+
 let currentCategory = "all";
 let currentSubCategory = "all";
+let currentMicrobe = null;
 
 function renderGrid() {
     const grid = document.getElementById("microGrid");
@@ -2465,8 +2466,8 @@ function renderGrid() {
         if (currentCategory === "all") {
             categoryMatch = true;
         } else if (currentCategory === "bacteria") {
-            // Matches any of your bacterial classifications
-            categoryMatch = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe"].includes(m.category);
+            // Matches all your specific bacterial categories
+            categoryMatch = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe", "atypical", "gram-variable"].includes(m.category);
         } else {
             categoryMatch = m.category === currentCategory;
         }
@@ -2496,12 +2497,12 @@ function generateCard(m) {
 }
 
 function openDetail(id) {
-    let m = bacteria.find(x => x.id == id);
-    if (!m) return;
+    currentMicrobe = bacteria.find(x => x.id == id);
+    if (!currentMicrobe) return;
     
-    document.getElementById("sheetName").textContent = m.name;
-    document.getElementById("sheetSci").textContent = m.sci;
-    document.getElementById("sheetDesc").textContent = m.desc;
+    document.getElementById("sheetName").textContent = currentMicrobe.name;
+    document.getElementById("sheetSci").textContent = currentMicrobe.sci;
+    document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
     document.getElementById("detailOverlay").classList.add("open");
 }
 
@@ -2509,8 +2510,8 @@ function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
 }
 
-function setCategory(cat) {
-    currentCategory = cat;
+function setCategory(category) {
+    currentCategory = category;
     currentSubCategory = "all";
     renderGrid();
 }
@@ -2536,12 +2537,12 @@ function searchMicrobes(text) {
         if (currentCategory === "all") {
             matchesCategory = true;
         } else if (currentCategory === "bacteria") {
-            matchesCategory = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe"].includes(m.category);
+            matchesCategory = ["gram-positive", "gram-negative", "acid-fast", "spirochete", "anaerobe", "atypical", "gram-variable"].includes(m.category);
         } else {
             matchesCategory = m.category === currentCategory;
         }
         
-        const matchesSub = currentSubCategory == "all" || m.subCategory == currentSubCategory;
+        const matchesSub = currentSubCategory === "all" || m.subCategory === currentSubCategory;
         return matchesSearch && matchesCategory && matchesSub;
     });
     grid.innerHTML = filtered.map(generateCard).join("");
