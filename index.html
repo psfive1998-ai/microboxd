@@ -178,12 +178,6 @@
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
 </div>
-<div class="live-ticker">
-  <div class="live-ticker-label"><span class="ticker-dot"></span>LIVE</div>
-  <div class="ticker-viewport">
-    <div class="ticker-track" id="tickerTrack"></div>
-  </div>
-</div>
 <div class="hero">
   <div class="hero-eyebrow">🦠 Pathogen Edition</div>
   <h1>What have you <em>encountered?</em></h1>
@@ -228,39 +222,7 @@
   </div>
 </div>
 <script>
-const firstNames = ["Alex","Sam","Jordan","Priya","Wei","Noah","Fatima","Leo","Maya","Diego"];
-const verbs = ["logged an encounter with", "added", "reviewed", "flagged"];
 
-function randomFeedItem() {
-  const m = MICROBES[Math.floor(Math.random() * MICROBES.length)];
-  const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-  const verb = verbs[Math.floor(Math.random() * verbs.length)];
-  return { m, name, verb };
-}
-
-function buildTicker() {
-  const track = document.getElementById("tickerTrack");
-  const items = Array.from({ length: 16 }, randomFeedItem);
-  const sequence = [...items, ...items]; // duplicate for seamless loop
-  track.innerHTML = sequence.map(({ m, name, verb }) => `
-    <span class="ticker-item">
-      <strong>${name}</strong> ${verb} <strong>${m.name}</strong> · ${m.cat}
-    </span>
-  `).join("");
-}
-
-function pushLiveUpdate() {
-  const track = document.getElementById("tickerTrack");
-  const { m, name, verb } = randomFeedItem();
-  const item = document.createElement("span");
-  item.className = "ticker-item";
-  item.innerHTML = `<strong>${name}</strong> ${verb} <strong>${m.name}</strong> · ${m.cat}`;
-  track.prepend(item);
-}
-
-buildTicker();
-setInterval(pushLiveUpdate, 6000);
-</script>
 const bacteria = [
   {
     id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'mild to lethal',
@@ -366,7 +328,7 @@ const bacteria = [
     category: 'gram-positive', subCategory: 'Gram +', gramClass: 'gram-pos',
     img: 'https://www.rki.de/SharedDocs/Bilder/InfAZ/Anthrax/EM_Leo_P-08_B_anthracis_REM_vegetativ_en.jpg?__blob=normal&v=4',
     emoji: '⚠️',
-    desc: 'Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. It primarily affects livestock and wild animals, but humans can be infected through skin contact, inhalation, or ingestion of contaminated materials.',
+    desc: 'The anthrax bacterium. Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. A significant bioterrorism concern.',
     facts: [{ l: 'Shape', v: 'Large rod' }, { l: 'Gram', v: 'Positive' }, { l: 'Spore', v: 'Central' }, { l: 'Rating', v: 'Lethal' }, { l: 'Capsule', v: 'Poly-D-glutamate' }],
     reviews: []
   }, 
