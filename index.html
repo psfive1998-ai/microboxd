@@ -2562,7 +2562,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Dermatophyte',
     gramClass: 'n/a',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Tinea_pedis_-_dermoscopy.jpg/960px-Tinea_pedis_-_dermoscopy.jpg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Trichophyton_rubrum_var_rodhaini.jpg/960px-Trichophyton_rubrum_var_rodhaini.jpg',
     emoji: '👣',
     desc: 'A dermatophyte fungus that thrives in warm, damp environments like locker rooms and shared showers. It infects the outer layer of skin, causing itching, cracking, and peeling, and is usually treated with topical antifungal medication.',
     facts: [
@@ -2582,7 +2582,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Yeast',
     gramClass: 'n/a',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Candida_albicans.jpg/960px-Candida_albicans.jpg',
+    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/26757/26757_lores.jpg',
     emoji: '🍄',
     desc: 'A yeast that lives harmlessly on skin and mucous membranes in most people but can overgrow when the immune system is weakened or the microbiome is disrupted, causing oral thrush, vaginal infections, or in severe cases bloodstream infections.',
     facts: [
@@ -2602,7 +2602,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Mold',
     gramClass: 'n/a',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Aspergillus_fumigatus.jpg/960px-Aspergillus_fumigatus.jpg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Aspergillus.jpg',
     emoji: '🫁',
     desc: 'A common environmental mold found in soil and decaying organic matter. Inhaled spores are usually cleared by a healthy immune system, but in people who are immunocompromised or have underlying lung disease, it can cause serious lung infections.',
     facts: [
@@ -3091,6 +3091,66 @@ const bacteria = [
     { l: 'At-Risk Groups', v: 'Children, individuals with iron overload, immunocompromised patients' },
     { l: 'Clinical Significance', v: 'Mesenteric lymphadenitis (pseudoappendicitis), terminal ileitis, gastroenteritis, and rarely septicemia' },
     { l: 'Treatment', v: 'Usually self-limiting in healthy patients; antibiotics (e.g., fluoroquinolones or TMP-SMX) reserved for severe or systemic cases' }
+  ],
+  reviews: []
+},
+  {
+  id: 151,
+  name: 'Vibrio alginolyticus',
+  sci: 'Vibrio alginolyticus',
+  severity: 'moderate-to-lethal',
+  category: 'bacteria',
+  subCategory: 'Vibrionaceae',
+  gramClass: 'Gram-negative rod',
+  img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Motility_as_a_biosignature.jpg/960px-Motility_as_a_biosignature.jpg',
+  emoji: '🦠',
+  desc: 'A halophilic (salt-loving) marine bacterium commonly found in coastal waters. While often considered less virulent than V. vulnificus, it is a significant opportunistic pathogen. It can cause serious soft tissue infections, particularly in wounds exposed to seawater, and possesses the potential to cause life-threatening systemic infections and sepsis in vulnerable hosts.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved rod (bacillus)' },
+    { l: 'Transmission', v: 'Exposure of open wounds to contaminated seawater or ingestion of contaminated seafood' },
+    { l: 'At-Risk Groups', v: 'Individuals with preexisting liver disease, diabetes, or compromised immune systems' },
+    { l: 'Clinical Significance', v: 'Wound infections, otitis externa (swimmer\'s ear), conjunctivitis, and severe septicemia' },
+    { l: 'Treatment', v: 'Antibiotic therapy (e.g., tetracyclines or fluoroquinolones) and aggressive surgical debridement for wound infections' }
+  ],
+  reviews: []
+},
+  {
+  id: 152,
+  name: 'Vibrio mimicus',
+  sci: 'Vibrio mimicus',
+  severity: 'moderate-to-lethal',
+  category: 'bacteria',
+  subCategory: 'Vibrionaceae',
+  gramClass: 'Gram-negative rod',
+  img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW_qmG8sst8P7fMMrDAQaqybMriwPr6c1azuiDrgy0OXI3jEpouUwWOWA&s=10',
+  emoji: '🦠',
+  desc: 'A halophilic, marine bacterium that is physiologically similar to Vibrio cholerae. It is an opportunistic pathogen capable of causing severe gastroenteritis following the ingestion of contaminated raw seafood, particularly oysters. While often self-limiting in healthy hosts, it carries a potential for rapid systemic progression and lethality in immunocompromised individuals or those with underlying liver conditions.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved rod (bacillus)' },
+    { l: 'Transmission', v: 'Ingestion of raw or undercooked contaminated seafood; exposure of wounds to contaminated seawater' },
+    { l: 'At-Risk Groups', v: 'Individuals with preexisting liver disease, diabetes, or compromised immune systems' },
+    { l: 'Clinical Significance', v: 'Gastroenteritis (cholera-like diarrhea), ear infections (otitis externa), wound infections, and rare but severe septicemia' },
+    { l: 'Treatment', v: 'Aggressive fluid resuscitation; antibiotic therapy (e.g., doxycycline or fluoroquinolones) is critical for severe or systemic cases' }
+  ],
+  reviews: []
+},
+  {
+  id: 153,
+  name: 'Vibrio fluvialis',
+  sci: 'Vibrio fluvialis',
+  severity: 'moderate-to-lethal',
+  category: 'bacteria',
+  subCategory: 'Vibrionaceae',
+  gramClass: 'Gram-negative rod',
+  img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780323954341000590-f59-12-9780323954341.jpg',
+  emoji: '🦠',
+  desc: 'A halophilic, Gram-negative, curved bacterium that inhabits aquatic environments. It is an emerging enteric pathogen associated with sporadic cases and outbreaks of cholera-like diarrhea, particularly in coastal regions. Due to its potential to produce enterotoxins and cause significant dehydration or systemic infection in susceptible hosts, it is considered a serious clinical threat.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved rod (bacillus)' },
+    { l: 'Transmission', v: 'Consumption of contaminated seafood or water; contact with contaminated aquatic environments' },
+    { l: 'At-Risk Groups', v: 'Young children, the elderly, individuals with malnutrition, or underlying health conditions' },
+    { l: 'Clinical Significance', v: 'Severe, watery, cholera-like diarrhea, vomiting, abdominal cramps, and potential for bacteremia' },
+    { l: 'Treatment', v: 'Primary management involves aggressive fluid and electrolyte replacement; antibiotics (e.g., fluoroquinolones or tetracyclines) may be required for severe cases' }
   ],
   reviews: []
 }
