@@ -3138,7 +3138,7 @@ const bacteria = [
   id: 153,
   name: 'Vibrio fluvialis',
   sci: 'Vibrio fluvialis',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate',
   category: 'bacteria',
   subCategory: 'Vibrionaceae',
   gramClass: 'Gram-negative rod',
@@ -3151,6 +3151,146 @@ const bacteria = [
     { l: 'At-Risk Groups', v: 'Young children, the elderly, individuals with malnutrition, or underlying health conditions' },
     { l: 'Clinical Significance', v: 'Severe, watery, cholera-like diarrhea, vomiting, abdominal cramps, and potential for bacteremia' },
     { l: 'Treatment', v: 'Primary management involves aggressive fluid and electrolyte replacement; antibiotics (e.g., fluoroquinolones or tetracyclines) may be required for severe cases' }
+  ],
+  reviews: []
+},
+  {
+  id: 154,
+  name: 'Campylobacter coli',
+  sci: 'Campylobacter coli',
+  severity: 'moderate',
+  category: 'bacteria',
+  subCategory: 'Campylobacteraceae',
+  gramClass: 'Gram-negative, curved/spiral rod',
+  img: 'https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcSfhmksjEsSP7Y-cyPkEkToBxGcC5WmamrLA6NzvuorCyCPpgVpnlcsfOmFzahJ3P1qFc1GRyEq25t9Tfk',
+  emoji: '🦠',
+  desc: 'A spiral-shaped, microaerophilic bacterium and a major cause of bacterial gastroenteritis worldwide. It is primarily transmitted through the consumption of undercooked contaminated meat, particularly pork and poultry. While infections are often self-limiting, the risk of severe complications—such as Guillain-Barré syndrome (an autoimmune disorder) or systemic bacteremia in immunocompromised individuals—renders it a significant, potentially lethal threat.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved/spiral rod' },
+    { l: 'Transmission', v: 'Consumption of contaminated food (poultry/pork), raw milk, or contaminated water' },
+    { l: 'At-Risk Groups', v: 'Children, the elderly, and immunocompromised individuals' },
+    { l: 'Clinical Significance', v: 'Acute gastroenteritis (diarrhea, fever, abdominal pain), Guillain-Barré syndrome (post-infection), and reactive arthritis' },
+    { l: 'Treatment', v: 'Fluid/electrolyte replacement; antibiotics (e.g., macrolides or fluoroquinolones) for severe or persistent systemic infection' }
+  ],
+  reviews: []
+},
+  {
+  id: 155,
+  name: 'Campylobacter lari',
+  sci: 'Campylobacter lari',
+  severity: 'moderate',
+  category: 'bacteria',
+  subCategory: 'Campylobacteraceae',
+  gramClass: 'Gram-negative, curved/spiral rod',
+  img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780128149560000135-f13-01-9780128149560.jpg',
+  emoji: '🦠',
+  desc: 'A thermophilic, Gram-negative, curved bacterium typically associated with seabirds (especially gulls) and marine environments. While often under-reported compared to other Campylobacter species, it is a recognized human pathogen. It can cause acute gastroenteritis and is increasingly identified in severe, systemic infections, including bacteremia, particularly in vulnerable or immunocompromised hosts.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved/spiral rod' },
+    { l: 'Transmission', v: 'Fecal-oral route, consumption of contaminated water or shellfish, exposure to bird droppings' },
+    { l: 'At-Risk Groups', v: 'Immunocompromised patients, the elderly, and individuals with underlying health conditions' },
+    { l: 'Clinical Significance', v: 'Gastroenteritis, bacteremia, and rare extra-intestinal infections (e.g., meningitis or endocarditis)' },
+    { l: 'Treatment', v: 'Supportive care; antibiotics (e.g., macrolides or fluoroquinolones) are required for severe or persistent systemic infections' }
+  ],
+  reviews: []
+},
+  {
+  id: 156,
+  name: 'Campylobacter upsaliensis',
+  sci: 'Campylobacter upsaliensis',
+  severity: 'moderate-to-lethal',
+  category: 'bacteria',
+  subCategory: 'Campylobacteraceae',
+  gramClass: 'Gram-negative, curved/spiral rod',
+  img: 'https://www.researchgate.net/profile/Benjamin-Gold/publication/14281230/figure/fig1/AS:282436773662726@1444349582235/Ultrastructure-of-C-upsaliensis-isolate-CT-11691-as-observed-by-scanning-electron.png',
+  emoji: '🦠',
+  desc: 'A thermophilic, spiral-shaped bacterium and an emerging zoonotic pathogen. It is frequently transmitted to humans through close contact with domestic pets, particularly dogs and cats. While it commonly manifests as self-limiting gastroenteritis, it has a significant capacity for systemic invasion and bacteremia, posing a lethal risk to immunocompromised or vulnerable individuals.',
+  facts: [
+    { l: 'Type', v: 'Gram-negative, curved/spiral rod' },
+    { l: 'Transmission', v: 'Zoonotic; contact with infected domestic pets (dogs/cats), contaminated food or water' },
+    { l: 'At-Risk Groups', v: 'Children, immunocompromised individuals, patients with underlying health conditions' },
+    { l: 'Clinical Significance', v: 'Gastroenteritis, bacteremia, septicemia, and potential association with post-infectious complications' },
+    { l: 'Treatment', v: 'Supportive care; antibiotic therapy (e.g., macrolides) is necessary for severe or invasive systemic infections' }
+  ],
+  reviews: []
+},
+  {
+  id: 157,
+  name: 'Clostridium septicum',
+  sci: 'Clostridium septicum',
+  severity: 'lethal',
+  category: 'bacteria',
+  subCategory: 'Clostridiaceae',
+  gramClass: 'Gram-positive rod',
+  img: 'https://wwwn.cdc.gov/phil///PHIL_Images/14347/14347_lores.jpg',
+  emoji: '🦠',
+  desc: 'A soil-dwelling, anaerobic, spore-forming bacillus notorious for causing "spontaneous" gas gangrene (myonecrosis) in the absence of traumatic injury. It is a highly dangerous pathogen with a strong clinical association with underlying gastrointestinal malignancies, particularly colorectal cancer. Infections progress with extreme rapidity, often leading to septic shock and death within hours.',
+  facts: [
+    { l: 'Type', v: 'Gram-positive, spore-forming anaerobic bacillus' },
+    { l: 'Transmission', v: 'Endogenous (translocation from the gastrointestinal tract into the bloodstream) or via contamination of wounds' },
+    { l: 'At-Risk Groups', v: 'Patients with colorectal cancer, hematologic malignancies, neutropenia, or diabetes' },
+    { l: 'Clinical Significance', v: 'Spontaneous gas gangrene (myonecrosis), rapid-onset sepsis, profound tissue necrosis' },
+    { l: 'Treatment', v: 'Requires immediate emergency surgical intervention (debridement/amputation), high-dose intravenous antibiotics (penicillin + clindamycin), and aggressive supportive care' }
+  ],
+  reviews: []
+},
+  {
+  id: 158,
+  name: 'Clostridium sordellii',
+  sci: 'Clostridium sordellii',
+  severity: 'lethal',
+  category: 'bacteria',
+  subCategory: 'Clostridiaceae',
+  gramClass: 'Gram-positive rod',
+  img: 'https://ars.els-cdn.com/content/image/3-s2.0-B9780121617752500232-f19-05b-9780121617752.jpg',
+  emoji: '🦠',
+  desc: 'A rare but exceptionally lethal, anaerobic, spore-forming bacterium. It is distinguished by its ability to cause a unique, rapidly progressive toxic shock syndrome characterized by profound hypotension, massive capillary leak (edema), and the absence of a fever, often masking the severity of the infection. It can enter the body through trauma, surgical procedures, or during the postpartum period.',
+  facts: [
+    { l: 'Type', v: 'Gram-positive, spore-forming anaerobic bacillus' },
+    { l: 'Transmission', v: 'Infection of wounds, soft tissues, or the reproductive tract (often postpartum or post-gynecological procedures)' },
+    { l: 'At-Risk Groups', v: 'Postpartum women, post-surgical patients, and individuals with traumatic soft tissue injuries' },
+    { l: 'Clinical Significance', v: 'Clostridial toxic shock syndrome, profound refractory hypotension, massive fluid sequestration, and high mortality rate' },
+    { l: 'Treatment', v: 'Requires urgent surgical intervention, aggressive fluid resuscitation, and intravenous antibiotics; often refractory to conventional treatment' }
+  ],
+  reviews: []
+},
+  {
+  id: 159,
+  name: 'Clostridium novyi',
+  sci: 'Clostridium novyi',
+  severity: 'lethal',
+  category: 'bacteria',
+  subCategory: 'Clostridiaceae',
+  gramClass: 'Gram-positive rod',
+  img: 'https://wwwn.cdc.gov/phil///PHIL_Images/12054/12054_lores.jpg',
+  emoji: '🦠',
+  desc: 'A strictly anaerobic, spore-forming bacterium responsible for one of the most fulminant forms of gas gangrene. It produces powerful alpha-toxins that cause extensive tissue necrosis and vascular damage. Infection often occurs following penetrating trauma or within necrotic tissue where oxygen tension is low, leading to rapid systemic intoxication and high mortality.',
+  facts: [
+    { l: 'Type', v: 'Gram-positive, spore-forming anaerobic bacillus' },
+    { l: 'Transmission', v: 'Inoculation of spores into deep wounds, contaminated injections, or surgical sites' },
+    { l: 'At-Risk Groups', v: 'Individuals with penetrating trauma, compound fractures, or deep tissue necrosis' },
+    { l: 'Clinical Significance', v: 'Classic gas gangrene (myonecrosis), rapid toxin-mediated tissue destruction, and profound systemic toxemia' },
+    { l: 'Treatment', v: 'Emergency surgical debridement or amputation is mandatory; aggressive antibiotic therapy (e.g., penicillin, clindamycin) and hyperbaric oxygen therapy may be utilized as adjuncts' }
+  ],
+  reviews: []
+},
+  {
+  id: 160,
+  name: 'Clostridium sporogenes',
+  sci: 'Clostridium sporogenes',
+  severity: 'lethal',
+  category: 'bacteria',
+  subCategory: 'Clostridiaceae',
+  gramClass: 'Gram-positive rod',
+  img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Clostridium_sporogenes_CDC_15884.jpg/960px-Clostridium_sporogenes_CDC_15884.jpg',
+  emoji: '🦠',
+  desc: 'A widely distributed, anaerobic, spore-forming soil bacterium. While historically considered to have low pathogenicity, it is increasingly recognized as a significant opportunistic pathogen in humans. It can cause severe deep-tissue infections and gas gangrene, particularly when it acts in synergy with other Clostridia or in immunocompromised hosts, leading to rapidly progressive, life-threatening tissue destruction.',
+  facts: [
+    { l: 'Type', v: 'Gram-positive, spore-forming anaerobic bacillus' },
+    { l: 'Transmission', v: 'Inoculation of spores into wounds, surgical sites, or compromised tissue' },
+    { l: 'At-Risk Groups', v: 'Immunocompromised individuals, patients with deep, anaerobic wounds or chronic ulcers' },
+    { l: 'Clinical Significance', v: 'Gas gangrene (myonecrosis), deep-seated abscesses, and synergistic infections with other anaerobic bacteria' },
+    { l: 'Treatment', v: 'Aggressive surgical debridement is the cornerstone of treatment; intensive intravenous antibiotic therapy and specialized wound care are required' }
   ],
   reviews: []
 }
