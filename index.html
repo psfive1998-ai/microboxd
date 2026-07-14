@@ -187,6 +187,7 @@
   <div class="pill" onclick="setCategory('bacteria')">Bacteria</div>
   <div class="pill" onclick="setCategory('virus')">Viruses</div>
   <div class="pill" onclick="setCategory('parasite')">Parasites</div>
+  <div class="pill" onclick="setCategory('fungi')">Fungi</div>
 </div>
 <div class="live-ticker">
   <span class="ticker-dot"></span>
@@ -2556,6 +2557,66 @@ const bacteria = [
       { l: 'Clinical Link', v: 'Bacteremia or endocarditis mandates an immediate colonoscopy to screen for colorectal cancer' }
     ],
     reviews: []
+  },
+  {
+    id: 201,
+    name: 'Athlete\'s Foot',
+    sci: 'Trichophyton rubrum',
+    severity: 'mild',
+    category: 'fungi',
+    subCategory: 'Dermatophyte',
+    gramClass: 'n/a',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Tinea_pedis_-_dermoscopy.jpg/960px-Tinea_pedis_-_dermoscopy.jpg',
+    emoji: '👣',
+    desc: 'A dermatophyte fungus that thrives in warm, damp environments like locker rooms and shared showers. It infects the outer layer of skin, causing itching, cracking, and peeling, and is usually treated with topical antifungal medication.',
+    facts: [
+      { l: 'Type', v: 'Dermatophyte mold, keratinophilic (feeds on keratin in skin/nails)' },
+      { l: 'Transmission', v: 'Direct contact with infected skin or contaminated surfaces (floors, towels)' },
+      { l: 'Typical Site', v: 'Interdigital spaces of the feet, occasionally spreading to nails' },
+      { l: 'Diagnosis', v: 'KOH prep of skin scraping reveals branching septate hyphae' },
+      { l: 'Treatment', v: 'Topical azole or allylamine antifungals; oral therapy for resistant cases' }
+    ],
+    reviews: []
+  },
+  {
+    id: 202,
+    name: 'Candidiasis',
+    sci: 'Candida albicans',
+    severity: 'mild to severe',
+    category: 'fungi',
+    subCategory: 'Yeast',
+    gramClass: 'n/a',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Candida_albicans.jpg/960px-Candida_albicans.jpg',
+    emoji: '🍄',
+    desc: 'A yeast that lives harmlessly on skin and mucous membranes in most people but can overgrow when the immune system is weakened or the microbiome is disrupted, causing oral thrush, vaginal infections, or in severe cases bloodstream infections.',
+    facts: [
+      { l: 'Type', v: 'Dimorphic yeast, part of normal human flora in low numbers' },
+      { l: 'Colony Morph', v: 'Smooth, cream-colored colonies on Sabouraud agar' },
+      { l: 'Risk Factors', v: 'Antibiotic use, immunosuppression, diabetes, indwelling catheters' },
+      { l: 'Clinical Forms', v: 'Oral thrush, vulvovaginal candidiasis, invasive candidemia' },
+      { l: 'Treatment', v: 'Topical or oral azoles; echinocandins for invasive disease' }
+    ],
+    reviews: []
+  },
+  {
+    id: 203,
+    name: 'Aspergillosis',
+    sci: 'Aspergillus fumigatus',
+    severity: 'severe',
+    category: 'fungi',
+    subCategory: 'Mold',
+    gramClass: 'n/a',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Aspergillus_fumigatus.jpg/960px-Aspergillus_fumigatus.jpg',
+    emoji: '🫁',
+    desc: 'A common environmental mold found in soil and decaying organic matter. Inhaled spores are usually cleared by a healthy immune system, but in people who are immunocompromised or have underlying lung disease, it can cause serious lung infections.',
+    facts: [
+      { l: 'Type', v: 'Filamentous mold, ubiquitous in soil, compost, and dust' },
+      { l: 'Transmission', v: 'Inhalation of airborne spores (conidia)' },
+      { l: 'At-Risk Groups', v: 'Immunocompromised patients, those with chronic lung disease or asthma' },
+      { l: 'Clinical Forms', v: 'Allergic bronchopulmonary aspergillosis, aspergilloma, invasive aspergillosis' },
+      { l: 'Treatment', v: 'Voriconazole is first-line for invasive disease' }
+    ],
+    reviews: []
   }
 ];
 
@@ -2576,6 +2637,8 @@ function generateCard(m) {
         badge = '<span style="display:inline-block; font-size:9px; background:#cbd5e0; padding:2px 8px; border-radius:4px; color:#4a5568; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">VIRUS</span>';
     } else if (cat.includes('parasite')) {
         badge = '<span style="display:inline-block; font-size:9px; background:#e2e8f0; padding:2px 8px; border-radius:4px; color:#4a5568; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">PARASITE</span>';
+    } else if (cat.includes('fungi')) {
+        badge = '<span style="display:inline-block; font-size:9px; background:#9f7aea; padding:2px 8px; border-radius:4px; color:#f7fafc; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">FUNGI</span>';
     }
 
     return `
