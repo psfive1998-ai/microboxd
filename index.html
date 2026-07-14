@@ -178,6 +178,12 @@
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
 </div>
+<div class="live-ticker">
+  <div class="live-ticker-label"><span class="ticker-dot"></span>LIVE</div>
+  <div class="ticker-viewport">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</div>
 <div class="hero">
   <div class="hero-eyebrow">🦠 Pathogen Edition</div>
   <h1>What have you <em>encountered?</em></h1>
@@ -222,7 +228,39 @@
   </div>
 </div>
 <script>
+const firstNames = ["Alex","Sam","Jordan","Priya","Wei","Noah","Fatima","Leo","Maya","Diego"];
+const verbs = ["logged an encounter with", "added", "reviewed", "flagged"];
 
+function randomFeedItem() {
+  const m = MICROBES[Math.floor(Math.random() * MICROBES.length)];
+  const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  return { m, name, verb };
+}
+
+function buildTicker() {
+  const track = document.getElementById("tickerTrack");
+  const items = Array.from({ length: 16 }, randomFeedItem);
+  const sequence = [...items, ...items]; // duplicate for seamless loop
+  track.innerHTML = sequence.map(({ m, name, verb }) => `
+    <span class="ticker-item">
+      <strong>${name}</strong> ${verb} <strong>${m.name}</strong> · ${m.cat}
+    </span>
+  `).join("");
+}
+
+function pushLiveUpdate() {
+  const track = document.getElementById("tickerTrack");
+  const { m, name, verb } = randomFeedItem();
+  const item = document.createElement("span");
+  item.className = "ticker-item";
+  item.innerHTML = `<strong>${name}</strong> ${verb} <strong>${m.name}</strong> · ${m.cat}`;
+  track.prepend(item);
+}
+
+buildTicker();
+setInterval(pushLiveUpdate, 6000);
+</script>
 const bacteria = [
   {
     id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'mild to lethal',
