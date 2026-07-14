@@ -336,10 +336,10 @@ const bacteria = [
   {
     id: 12, name: 'Bacillus anthracis', sci: 'Bacillus anthracis', severity: 'lethal',
     category: 'gram-positive', subCategory: 'Gram +', gramClass: 'gram-pos',
-    img: 'https://www.rki.de/SharedDocs/Bilder/InfAZ/Anthrax/EM_Leo_P-08_B_anthracis_REM_vegetativ_en.jpg?__blob=normal&v=4',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Neutrophil_with_anthrax_copy.jpg/960px-Neutrophil_with_anthrax_copy.jpg',
     emoji: '⚠️',
     desc: 'The anthrax bacterium. Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. A significant bioterrorism concern.',
-    facts: [{ l: 'Shape', v: 'Large rod' }, { l: 'Gram', v: 'Positive' }, { l: 'Spore', v: 'Central' }, { l: 'Rating', v: 'Lethal' }, { l: 'Capsule', v: 'Poly-D-glutamate' }],
+    facts: [{ l: 'Shape', v: 'Large rod' }, { l: 'Gram', v: 'Positive' }, { l: 'Spore', v: 'Central' }, { l: 'Rating', v: 'Lethal' }, { l: 'Capsule', v: 'Poly-D-glutamate', { l: 'Motility', v: 'Non-Motile' } }],
     reviews: []
   }, 
   {
@@ -679,26 +679,7 @@ const bacteria = [
     reviews: []
   },
   {
-    id: 31,
-    name: 'Bacillus anthracis',
-    sci: 'Bacillus anthracis',
-    severity: 'Lethal',
-    category: 'gram-positive',
-    subCategory: 'Gram +',
-    gramClass: 'gram-pos',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Neutrophil_with_anthrax_copy.jpg/960px-Neutrophil_with_anthrax_copy.jpg',
-    emoji: '⚠️',
-    desc: 'Spore-forming, gram-positive bacterium that causes anthrax. Found naturally in soil worldwide, it primarily infects livestock and wildlife. Humans contract the disease through cutaneous contact, inhalation, or ingestion of spores.',
-    facts: [
-      { l: 'Shape', v: 'Rod-shaped (Bacillus)' },
-      { l: 'Gram', v: 'Positive' },
-      { l: 'Motility', v: 'Non-Motile' },
-      { l: 'Oxidase', v: 'Negative' }
-    ],
-    reviews: []
-  },
-  {
-    id: 32, // Adjusted from 31 to 32 to fill the empty sequence gap
+    id: 31, // Adjusted from 31 to 32 to fill the empty sequence gap
     name: 'Bacillus cereus',
     sci: 'Bacillus cereus',
     severity: 'Mild to Moderate',
@@ -717,7 +698,7 @@ const bacteria = [
     reviews: []
   },
   {
-    id: 33,
+    id: 32,
     name: 'Clostridium tetani',
     sci: 'Clostridium tetani',
     severity: 'Lethal',
