@@ -85,9 +85,6 @@
     .app-view.active-view { display: block !important; }
     .placeholder-view { padding: 60px 24px; text-align: center; color: var(--muted); }
     .topbar {
-      <div class="live-ticker">
-  <div class="ticker-track" id="tickerTrack"></div>
-</div>
     }
     .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.3px; color: var(--accent); }
     .logo span { color: var(--text); font-style: italic; }
@@ -177,6 +174,10 @@
 <body>
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
+</div>
+<div class="live-ticker">
+  <span class="ticker-dot"></span>
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 <div class="hero">
   <div class="hero-eyebrow">🦠 Pathogen Edition</div>
@@ -2693,8 +2694,42 @@ function searchMicrobes(text) {
     grid.innerHTML = filtered.map(generateCard).join("");
 }
 
+const firstNames = ["Alex","Sam","Jordan","Priya","Wei","Noah","Fatima","Leo","Maya","Diego"];
+const verbs = ["logged an encounter with", "added", "reviewed", "flagged"];
+
+function randomFeedItem() {
+  const m = bacteria[Math.floor(Math.random() * bacteria.length)];
+  const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  return { m, name, verb };
+}
+
+function buildTicker() {
+  const track = document.getElementById("tickerTrack");
+  if (!track) return;
+  const items = Array.from({ length: 16 }, randomFeedItem);
+  const sequence = [...items, ...items]; // duplicate for seamless loop
+  track.innerHTML = sequence.map(({ m, name, verb }) => `
+    <span class="ticker-item">
+      <strong>${name}</strong> ${verb} <strong>${m.name}</strong>
+    </span>
+  `).join("");
+}
+
+function pushLiveUpdate() {
+  const track = document.getElementById("tickerTrack");
+  if (!track) return;
+  const { m, name, verb } = randomFeedItem();
+  const item = document.createElement("span");
+  item.className = "ticker-item";
+  item.innerHTML = `<strong>${name}</strong> ${verb} <strong>${m.name}</strong>`;
+  track.prepend(item);
+}
+
 window.onload = function () {
     renderGrid();
+    buildTicker();
+    setInterval(pushLiveUpdate, 6000);
 };
 </script>
 </body>
