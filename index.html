@@ -21,7 +21,7 @@
     .ticker-track {
       display: inline-block;
       white-space: nowrap;
-      animation: tickerScroll 25s linear infinite;
+      animation: tickerScroll 90s linear infinite;
     }
     .live-ticker:hover .ticker-track {
       animation-play-state: paused;
@@ -134,7 +134,7 @@
     .ticker-track {
       display: inline-block;
       white-space: nowrap;
-      animation: tickerScroll 25s linear infinite;
+      animation: tickerScroll 90s linear infinite;
     }
     .live-ticker:hover .ticker-track {
       animation-play-state: paused;
@@ -175,10 +175,6 @@
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
 </div>
-<div class="live-ticker">
-  <span class="ticker-dot"></span>
-  <div class="ticker-track" id="tickerTrack"></div>
-</div>
 <div class="hero">
   <div class="hero-eyebrow">🦠 Pathogen Edition</div>
   <h1>What have you <em>encountered?</em></h1>
@@ -191,6 +187,10 @@
   <div class="pill" onclick="setCategory('bacteria')">Bacteria</div>
   <div class="pill" onclick="setCategory('virus')">Viruses</div>
   <div class="pill" onclick="setCategory('parasite')">Parasites</div>
+</div>
+<div class="live-ticker">
+  <span class="ticker-dot"></span>
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 <div class="section-label">Popular pathogens</div>
 <div id="microGrid" class="micro-grid"></div>
@@ -2696,12 +2696,14 @@ function searchMicrobes(text) {
 
 const firstNames = ["Alex","Sam","Jordan","Priya","Wei","Noah","Fatima","Leo","Maya","Diego"];
 const verbs = ["logged an encounter with", "added", "reviewed", "flagged"];
+const locations = ["the United States", "China", "Brazil", "Germany", "India", "Nigeria", "Japan", "the UK", "Canada", "Mexico"];
 
 function randomFeedItem() {
   const m = bacteria[Math.floor(Math.random() * bacteria.length)];
   const name = firstNames[Math.floor(Math.random() * firstNames.length)];
   const verb = verbs[Math.floor(Math.random() * verbs.length)];
-  return { m, name, verb };
+  const loc = locations[Math.floor(Math.random() * locations.length)];
+  return { m, name, verb, loc };
 }
 
 function buildTicker() {
@@ -2709,9 +2711,9 @@ function buildTicker() {
   if (!track) return;
   const items = Array.from({ length: 16 }, randomFeedItem);
   const sequence = [...items, ...items]; // duplicate for seamless loop
-  track.innerHTML = sequence.map(({ m, name, verb }) => `
+  track.innerHTML = sequence.map(({ m, name, verb, loc }) => `
     <span class="ticker-item">
-      <strong>${name}</strong> ${verb} <strong>${m.name}</strong>
+      <strong>${name}</strong> ${verb} <strong>${m.name}</strong> in ${loc}
     </span>
   `).join("");
 }
@@ -2719,10 +2721,10 @@ function buildTicker() {
 function pushLiveUpdate() {
   const track = document.getElementById("tickerTrack");
   if (!track) return;
-  const { m, name, verb } = randomFeedItem();
+  const { m, name, verb, loc } = randomFeedItem();
   const item = document.createElement("span");
   item.className = "ticker-item";
-  item.innerHTML = `<strong>${name}</strong> ${verb} <strong>${m.name}</strong>`;
+  item.innerHTML = `<strong>${name}</strong> ${verb} <strong>${m.name}</strong> in ${loc}`;
   track.prepend(item);
 }
 
