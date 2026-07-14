@@ -99,6 +99,8 @@
     .search-wrap input::placeholder { color: var(--muted); }
     .search-wrap i { color: var(--muted); font-size: 18px; }
     .filters { display: flex; gap: 8px; padding: 14px 24px; overflow-x: auto; border-bottom: 0.5px solid var(--border); scrollbar-width: none; }
+    #gramFilters { padding-top: 4px; padding-bottom: 14px; }
+    #gramFilters .pill { font-size: 11px; padding: 5px 13px; opacity: 0.9; }
     .filters::-webkit-scrollbar { display: none; }
     .pill { flex-shrink: 0; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 0.5px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .pill.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
@@ -188,6 +190,12 @@
   <div class="pill" onclick="setCategory('virus')">Viruses</div>
   <div class="pill" onclick="setCategory('parasite')">Parasites</div>
   <div class="pill" onclick="setCategory('fungi')">Fungi</div>
+</div>
+<div class="filters" id="gramFilters" style="display:none; padding-top:0;">
+  <div class="pill active" onclick="setGramFilter('all')">All Bacteria</div>
+  <div class="pill" onclick="setGramFilter('gram-positive')">Gram +</div>
+  <div class="pill" onclick="setGramFilter('gram-negative')">Gram −</div>
+  <div class="pill" onclick="setGramFilter('acid-fast')">Acid-Fast</div>
 </div>
 <div class="live-ticker">
   <span class="ticker-dot"></span>
@@ -2566,7 +2574,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Dermatophyte',
     gramClass: 'n/a',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Trichophyton_rubrum_var_rodhaini.jpg/960px-Trichophyton_rubrum_var_rodhaini.jpg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Tinea_pedis_-_dermoscopy.jpg/960px-Tinea_pedis_-_dermoscopy.jpg',
     emoji: '👣',
     desc: 'A dermatophyte fungus that thrives in warm, damp environments like locker rooms and shared showers. It infects the outer layer of skin, causing itching, cracking, and peeling, and is usually treated with topical antifungal medication.',
     facts: [
@@ -2586,7 +2594,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Yeast',
     gramClass: 'n/a',
-    img: 'https://wwwn.cdc.gov/phil///PHIL_Images/26757/26757_lores.jpg',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Candida_albicans.jpg/960px-Candida_albicans.jpg',
     emoji: '🍄',
     desc: 'A yeast that lives harmlessly on skin and mucous membranes in most people but can overgrow when the immune system is weakened or the microbiome is disrupted, causing oral thrush, vaginal infections, or in severe cases bloodstream infections.',
     facts: [
@@ -2606,7 +2614,7 @@ const bacteria = [
     category: 'fungi',
     subCategory: 'Mold',
     gramClass: 'n/a',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Aspergillus.jpg?_=20060211163604',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Aspergillus_fumigatus.jpg/960px-Aspergillus_fumigatus.jpg',
     emoji: '🫁',
     desc: 'A common environmental mold found in soil and decaying organic matter. Inhaled spores are usually cleared by a healthy immune system, but in people who are immunocompromised or have underlying lung disease, it can cause serious lung infections.',
     facts: [
@@ -2622,6 +2630,7 @@ const bacteria = [
 
 let currentCategory = "all";
 let currentSubCategory = "all";
+let currentGramFilter = "all";
 let currentMicrobe = null;
 
 function generateCard(m) {
@@ -2676,7 +2685,8 @@ function renderGrid() {
     let filtered = bacteria.filter(m => {
         const matchesCategory = checkCategoryMatch(m.category, currentCategory);
         const matchesSubCategory = currentSubCategory === "all" || m.subCategory === currentSubCategory;
-        return matchesCategory && matchesSubCategory;
+        const matchesGram = currentGramFilter === "all" || (m.category || "").toLowerCase() === currentGramFilter;
+        return matchesCategory && matchesSubCategory && matchesGram;
     });
 
     grid.innerHTML = filtered.map(generateCard).join("");
@@ -2718,6 +2728,7 @@ function closeDetail() {
 function setCategory(category) {
     currentCategory = category;
     currentSubCategory = "all";
+    currentGramFilter = "all";
 
     const pills = document.querySelectorAll('.filters .pill');
     pills.forEach(pill => {
@@ -2728,11 +2739,22 @@ function setCategory(category) {
         }
     });
 
+    const gramFilters = document.getElementById('gramFilters');
+    if (gramFilters) {
+        gramFilters.style.display = category === 'bacteria' ? 'flex' : 'none';
+        gramFilters.querySelectorAll('.pill').forEach((p, i) => p.classList.toggle('active', i === 0));
+    }
+
     renderGrid();
 }
 
-function setSubCategory(sub) {
-    currentSubCategory = sub;
+function setGramFilter(gram) {
+    currentGramFilter = gram;
+    document.querySelectorAll('#gramFilters .pill').forEach(pill => {
+        pill.classList.remove('active');
+        const clickAttr = pill.getAttribute('onclick') || '';
+        if (clickAttr.includes(`'${gram}'`)) pill.classList.add('active');
+    });
     renderGrid();
 }
 
@@ -2750,8 +2772,9 @@ function searchMicrobes(text) {
 
         const matchesCategory = checkCategoryMatch(m.category, currentCategory);
         const matchesSub = currentSubCategory === "all" || m.subCategory === currentSubCategory;
+        const matchesGram = currentGramFilter === "all" || (m.category || "").toLowerCase() === currentGramFilter;
 
-        return matchesSearch && matchesCategory && matchesSub;
+        return matchesSearch && matchesCategory && matchesSub && matchesGram;
     });
     
     grid.innerHTML = filtered.map(generateCard).join("");
