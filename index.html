@@ -115,6 +115,37 @@
     .nav-tabs { position: sticky; bottom: 0; z-index: 50; display: flex; background: var(--surface); border-top: 0.5px solid var(--border); height: 60px; }
     .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--muted); cursor: pointer; gap: 4px; }
     .nav-tab.active { color: var(--accent); }
+
+    /* ── Log & Review feature ── */
+    .log-section { margin-top: 20px; padding-top: 18px; border-top: 0.5px solid var(--border); }
+    .log-section h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 10px; }
+    .star-picker { display: flex; gap: 4px; margin-bottom: 10px; }
+    .star-picker span { font-size: 22px; cursor: pointer; color: var(--border); transition: color 0.1s; }
+    .star-picker span.filled { color: var(--accent); }
+    .log-textarea { width: 100%; min-height: 70px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text); font-family: var(--font); font-size: 13px; resize: vertical; outline: none; }
+    .log-submit-btn { margin-top: 10px; background: var(--accent); color: var(--accent-fg); border: none; padding: 9px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .log-submit-btn:hover { opacity: 0.9; }
+    .log-status { font-size: 11px; color: var(--accent); margin-top: 8px; }
+    .review-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+    .review-card .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .review-card .review-user { font-size: 12px; font-weight: 600; color: var(--text); }
+    .review-card .review-stars { font-size: 11px; color: var(--accent); }
+    .review-card .review-text { font-size: 12px; color: #b5b5be; line-height: 1.5; }
+    .review-card.mine { border-color: var(--accent); }
+
+    .mylog-overlay { position: fixed; inset: 0; z-index: 110; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; justify-content: flex-end; flex-direction: column; }
+    .mylog-overlay.open { display: flex; }
+    .mylog-sheet { background: var(--bg); border-top: 0.5px solid var(--border); border-top-left-radius: 20px; border-top-right-radius: 20px; max-height: 88vh; overflow-y: auto; }
+    .mylog-body { padding: 24px; }
+    .mylog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .mylog-top h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; }
+    .mylog-entry { display: flex; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .mylog-entry:hover { background: var(--surface); }
+    .mylog-entry .mylog-info { flex: 1; }
+    .mylog-entry h3 { font-size: 13px; }
+    .mylog-entry .review-stars { font-size: 11px; color: var(--accent); }
+    .mylog-entry .review-text { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .mylog-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 40px 0; }
     .detail-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; justify-content: flex-end; flex-direction: column; }
     .detail-overlay.open { display: flex; }
     .detail-sheet { background: var(--bg); border-top: 0.5px solid var(--border); border-top-left-radius: 20px; border-top-right-radius: 20px; max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column; }
@@ -176,6 +207,10 @@
 <body>
 <div class="topbar">
   <div class="logo">micro<span>boxd</span></div>
+  <div class="topbar-right">
+    <span class="badge-count" id="logCount">0 logged</span>
+    <div class="pill" style="margin:0;" onclick="openMyLog()">My Log</div>
+  </div>
 </div>
 <div class="hero">
   <div class="hero-eyebrow">🦠 Pathogen Edition</div>
@@ -219,15 +254,37 @@
       </div>
       <div id="sheetFacts"></div>
       <p class="desc-text" id="sheetDesc"></p>
+
+      <div class="log-section">
+        <h4>Your Log</h4>
+        <div class="star-picker" id="starPicker">
+          <span data-v="1" onclick="selectStar(1)">★</span>
+          <span data-v="2" onclick="selectStar(2)">★</span>
+          <span data-v="3" onclick="selectStar(3)">★</span>
+          <span data-v="4" onclick="selectStar(4)">★</span>
+          <span data-v="5" onclick="selectStar(5)">★</span>
+        </div>
+        <textarea class="log-textarea" id="logText" placeholder="Notes on your encounter (optional)..."></textarea>
+        <button class="log-submit-btn" onclick="submitLog()">Log this pathogen</button>
+        <div class="log-status" id="logStatus"></div>
+      </div>
+
+      <div class="log-section">
+        <h4>Reviews</h4>
+        <div id="reviewsList"></div>
+      </div>
     </div>
   </div>
 </div>
-          <h2 id="sheetName"></h2>
-          <div class="sci-name" id="sheetSci"></div>
-        </div>
-        <div class="close-btn" onclick="closeDetail()">✕</div>
+
+<div class="mylog-overlay" id="mylogOverlay">
+  <div class="mylog-sheet">
+    <div class="mylog-body">
+      <div class="mylog-top">
+        <h2>My Log</h2>
+        <div class="close-btn" onclick="closeMyLog()">✕</div>
       </div>
-      <p class="desc-text" id="sheetDesc"></p>
+      <div id="mylogList"></div>
     </div>
   </div>
 </div>
@@ -3722,6 +3779,8 @@ let currentCategory = "all";
 let currentSubCategory = "all";
 let currentGramFilter = "all";
 let currentMicrobe = null;
+let myLogs = {}; // in-memory only: { [microbeId]: { stars, text, date } }
+let selectedStars = 0;
 
 function generateCard(m) {
     let badge = "";
@@ -3811,8 +3870,105 @@ function openDetail(id) {
 
     document.getElementById("sheetFacts").innerHTML = factsHtml;
     document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
-    
+
+    // reset + prefill the log form for this microbe
+    const existing = myLogs[currentMicrobe.id];
+    selectedStars = existing ? existing.stars : 0;
+    document.getElementById("logText").value = existing ? existing.text : "";
+    document.getElementById("logStatus").textContent = existing ? "You logged this on " + existing.date : "";
+    updateStarUI();
+    renderReviews(currentMicrobe);
+
     document.getElementById("detailOverlay").classList.add("open");
+}
+
+function selectStar(n) {
+    selectedStars = n;
+    updateStarUI();
+}
+
+function updateStarUI() {
+    document.querySelectorAll('#starPicker span').forEach(star => {
+        star.classList.toggle('filled', Number(star.dataset.v) <= selectedStars);
+    });
+}
+
+function submitLog() {
+    if (!currentMicrobe) return;
+    if (selectedStars === 0) {
+        document.getElementById("logStatus").textContent = "Pick a star rating first.";
+        return;
+    }
+    const text = document.getElementById("logText").value.trim();
+    const isNew = !myLogs[currentMicrobe.id];
+    myLogs[currentMicrobe.id] = {
+        stars: selectedStars,
+        text: text,
+        date: new Date().toLocaleDateString()
+    };
+    document.getElementById("logStatus").textContent = "Saved — logged on " + myLogs[currentMicrobe.id].date;
+    updateLogCount();
+    renderReviews(currentMicrobe);
+}
+
+function renderReviews(m) {
+    const list = document.getElementById("reviewsList");
+    const communityReviews = (m.reviews || []).map(r => `
+        <div class="review-card">
+            <div class="review-top">
+                <span class="review-user">${r.user}</span>
+                <span class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+            </div>
+            <div class="review-text">${r.text}</div>
+        </div>
+    `).join("");
+
+    const mine = myLogs[m.id];
+    const myReviewHtml = mine ? `
+        <div class="review-card mine">
+            <div class="review-top">
+                <span class="review-user">You</span>
+                <span class="review-stars">${'★'.repeat(mine.stars)}${'☆'.repeat(5 - mine.stars)}</span>
+            </div>
+            <div class="review-text">${mine.text || '<em style="color:var(--muted)">No notes added.</em>'}</div>
+        </div>
+    ` : "";
+
+    const combined = myReviewHtml + communityReviews;
+    list.innerHTML = combined || '<div style="font-size:12px; color:var(--muted);">No reviews yet — be the first to log this one.</div>';
+}
+
+function updateLogCount() {
+    const el = document.getElementById("logCount");
+    if (el) el.textContent = `${Object.keys(myLogs).length} logged`;
+}
+
+function openMyLog() {
+    const list = document.getElementById("mylogList");
+    const ids = Object.keys(myLogs);
+    if (ids.length === 0) {
+        list.innerHTML = '<div class="mylog-empty">You haven\'t logged any pathogens yet. Open one and rate it to start your log.</div>';
+    } else {
+        list.innerHTML = ids.map(id => {
+            const m = bacteria.find(x => x.id == Number(id));
+            const entry = myLogs[id];
+            if (!m || !entry) return "";
+            return `
+                <div class="mylog-entry" onclick="closeMyLog(); openDetail(${m.id});">
+                    <div class="mylog-info">
+                        <h3>${m.name}</h3>
+                        <div class="review-stars">${'★'.repeat(entry.stars)}${'☆'.repeat(5 - entry.stars)} · ${entry.date}</div>
+                        ${entry.text ? `<div class="review-text">${entry.text}</div>` : ""}
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+    document.getElementById("mylogOverlay").classList.add("open");
+}
+
+function closeMyLog() {
+    document.getElementById("mylogOverlay").classList.remove("open");
 }
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
