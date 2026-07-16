@@ -109,6 +109,13 @@
     }
     .topbar-btn:hover { color: var(--text); border-color: #444; }
     .topbar-btn.primary { border-color: var(--accent); color: var(--accent); }
+
+    .sev-badge { display:inline-block; font-size:9px; padding:2px 8px; border-radius:4px; font-weight:700; letter-spacing:0.05em; margin-bottom:5px; margin-right:4px; }
+    .sev-badge.sev-mild { background:#1a3a1e; color:var(--benign); }
+    .sev-badge.sev-moderate { background:#3a2f16; color:var(--moderate); }
+    .sev-badge.sev-lethal { background:#3a1a1a; color:var(--lethal); }
+    .sev-badge.sev-mild-mod { background:linear-gradient(90deg,#1a3a1e,#3a2f16); color:#e8e6e0; }
+    .sev-badge.sev-mod-lethal { background:linear-gradient(90deg,#3a2f16,#3a1a1a); color:#e8e6e0; }
     .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.3px; color: var(--accent); }
     .logo span { color: var(--text); font-style: italic; }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
@@ -281,6 +288,7 @@
         <div>
           <h2 id="sheetName"></h2>
           <div class="sci-name" id="sheetSci"></div>
+          <div id="sheetSeverity" style="margin-top:6px;"></div>
         </div>
         <div class="close-btn" onclick="closeDetail()">✕</div>
       </div>
@@ -343,7 +351,7 @@
 
 const bacteria = [
   {
-    id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'mild to lethal',
+    id: 1, name: 'E. coli', sci: 'Escherichia coli', severity: 'moderate to lethal',
     category: 'gram-negative', subCategory: 'Gram −', gramClass: 'gram-neg',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Escherichia_coli_electron_microscopy.jpg/960px-Escherichia_coli_electron_microscopy.jpg',
     emoji: '🦠',
@@ -568,7 +576,7 @@ const bacteria = [
     id: 19,
     name: 'Group B Strep',
     sci: 'Streptococcus agalactiae',
-    severity: 'generally mild',
+    severity: 'moderate to lethal',
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -797,7 +805,7 @@ const bacteria = [
     id: 31, // Adjusted from 31 to 32 to fill the empty sequence gap
     name: 'Bacillus cereus',
     sci: 'Bacillus cereus',
-    severity: 'Mild to Moderate',
+    severity: 'mild to moderate',
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -816,7 +824,7 @@ const bacteria = [
     id: 32,
     name: 'Clostridium tetani',
     sci: 'Clostridium tetani',
-    severity: 'Lethal',
+    severity: 'lethal',
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -1272,7 +1280,7 @@ const bacteria = [
  id: 33,
   name: 'Francisella Tularensis (Tularemia) ',
   sci: 'Francisella Tularensis ',
-  severity: 'Moderate to lethal',
+  severity: 'moderate to lethal',
   category: 'gram-negative',
   subCategory: 'Gram -',
   gramClass: 'gram-neg',
@@ -1350,7 +1358,7 @@ const bacteria = [
     id: 59,
     name: 'Klebsiella oxytoca',
     sci: 'Klebsiella oxytoca',
-    severity: 'varies',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1410,7 +1418,7 @@ const bacteria = [
     id: 62,
     name: 'Shigella sonnei',
     sci: 'Shigella sonnei',
-    severity: 'generally mild',
+    severity: 'mild to moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1450,7 +1458,7 @@ const bacteria = [
     id: 64,
     name: 'Enterobacter cloacae',
     sci: 'Enterobacter cloacae',
-    severity: 'varies',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1490,7 +1498,7 @@ const bacteria = [
     id: 66,
     name: 'Serratia marcescens',
     sci: 'Serratia marcescens',
-    severity: 'varies',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1550,7 +1558,7 @@ const bacteria = [
     id: 69,
     name: 'S. maltophilia',
     sci: 'Stenotrophomonas maltophilia',
-    severity: 'varies',
+    severity: 'moderate to lethal',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1896,7 +1904,7 @@ const bacteria = [
     id: 84, // Or whichever sequential ID fits your dataset
     name: 'Rickettsia rickettsii',
     sci: 'Rickettsia rickettsii',
-    severity: 'severe',
+    severity: 'lethal',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1916,7 +1924,7 @@ const bacteria = [
     id: 85, 
     name: 'Rickettsia prowazekii',
     sci: 'Rickettsia prowazekii',
-    severity: 'severe',
+    severity: 'lethal',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -1937,7 +1945,7 @@ const bacteria = [
     id: 87, 
     name: 'Leptospira interrogans',
     sci: 'Leptospira interrogans',
-    severity: 'severe',
+    severity: 'moderate to lethal',
     category: 'gram-negative',
     subCategory: 'Gram - / Spirochete',
     gramClass: 'gram-neg',
@@ -1979,7 +1987,7 @@ const bacteria = [
     id: 89, 
     name: 'Burkholderia pseudomallei',
     sci: 'Burkholderia pseudomallei',
-    severity: 'severe',
+    severity: 'lethal',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2063,7 +2071,7 @@ const bacteria = [
     id: 93, 
     name: 'Anaplasma phagocytophilum',
     sci: 'Anaplasma phagocytophilum',
-    severity: 'severe',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2084,7 +2092,7 @@ const bacteria = [
     id: 94, 
     name: 'Ehrlichia chaffeensis',
     sci: 'Ehrlichia chaffeensis',
-    severity: 'severe',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2124,7 +2132,7 @@ const bacteria = [
     id: 96, 
     name: 'Thermus aquaticus',
     sci: 'Thermus aquaticus',
-    severity: 'none', 
+    severity: 'mild', 
     category: 'gram-negative', 
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2144,7 +2152,7 @@ const bacteria = [
     id: 97, 
     name: 'Rhizobium leguminosarum',
     sci: 'Rhizobium leguminosarum',
-    severity: 'none', 
+    severity: 'mild', 
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2286,7 +2294,7 @@ const bacteria = [
     id: 104,  
     name: 'Kocuria rosea',
     sci: 'Kocuria rosea (formerly Micrococcus roseus)',
-    severity: 'none',  
+    severity: 'mild',  
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -2306,7 +2314,7 @@ const bacteria = [
     id: 110,
     name: 'Mycobacterium ulcerans',
     sci: 'Mycobacterium ulcerans',
-    severity: 'severe to chronic',
+    severity: 'moderate',
     category: 'acid-fast',
     subCategory: 'Acid-Fast',
     gramClass: 'acid-fast',
@@ -2426,7 +2434,7 @@ const bacteria = [
     id: 111,
     name: 'Mycobacterium kansasii',
     sci: 'Mycobacterium kansasii',
-    severity: 'moderate to severe',
+    severity: 'moderate to lethal',
     category: 'acid-fast',
     subCategory: 'Acid-Fast',
     gramClass: 'acid-fast',
@@ -2446,7 +2454,7 @@ const bacteria = [
     id: 112,
     name: 'Rhodococcus equi',
     sci: 'Rhodococcus equi',
-    severity: 'severe to lethal',
+    severity: 'moderate to lethal',
     category: 'gram-positive', 
     subCategory: 'Gram + / Variable',
     gramClass: 'gram-pos',
@@ -2506,7 +2514,7 @@ const bacteria = [
     id: 116,
     name: 'Mycobacterium abscessus',
     sci: 'Mycobacterium abscessus',
-    severity: 'severe to chronic',
+    severity: 'moderate to lethal',
     category: 'acid-fast',
     subCategory: 'Acid-Fast',
     gramClass: 'acid-fast',
@@ -2546,7 +2554,7 @@ const bacteria = [
     id: 118,
     name: 'Legionella micdadei',
     sci: 'Legionella micdadei',
-    severity: 'severe',
+    severity: 'moderate to lethal',
     category: 'gram-negative',
     subCategory: 'Gram - / Weak Acid-Fast',
     gramClass: 'gram-neg',
@@ -2586,7 +2594,7 @@ const bacteria = [
     id: 120,
     name: 'Burkholderia cepacia',
     sci: 'Burkholderia cepacia',
-    severity: 'severe to lethal',
+    severity: 'moderate to lethal',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2606,7 +2614,7 @@ const bacteria = [
     id: 121,
     name: 'P. gingivalis',
     sci: 'Porphyromonas gingivalis',
-    severity: 'moderate to chronic',
+    severity: 'moderate',
     category: 'gram-negative',
     subCategory: 'Gram -',
     gramClass: 'gram-neg',
@@ -2626,7 +2634,7 @@ const bacteria = [
     id: 122,
     name: 'Actinomyces israelii',
     sci: 'Actinomyces israelii',
-    severity: 'severe to chronic',
+    severity: 'moderate',
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -2646,7 +2654,7 @@ const bacteria = [
     id: 123,
     name: 'Streptococcus bovis',
     sci: 'Streptococcus bovis',
-    severity: 'severe',
+    severity: 'moderate to lethal',
     category: 'gram-positive',
     subCategory: 'Gram +',
     gramClass: 'gram-pos',
@@ -2686,7 +2694,7 @@ const bacteria = [
     id: 125,
     name: 'Candidiasis',
     sci: 'Candida albicans',
-    severity: 'mild to severe',
+    severity: 'moderate to lethal',
     category: 'fungi',
     subCategory: 'Yeast',
     gramClass: 'n/a',
@@ -2706,7 +2714,7 @@ const bacteria = [
     id: 126,
     name: 'Aspergillosis',
     sci: 'Aspergillus fumigatus',
-    severity: 'severe',
+    severity: 'moderate to lethal',
     category: 'fungi',
     subCategory: 'Mold',
     gramClass: 'n/a',
@@ -3206,7 +3214,7 @@ const bacteria = [
   id: 151,
   name: 'Vibrio alginolyticus',
   sci: 'Vibrio alginolyticus',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'gram-negative',
   subCategory: 'Vibrionaceae',
   gramClass: 'Gram-negative rod',
@@ -3226,7 +3234,7 @@ const bacteria = [
   id: 152,
   name: 'Vibrio mimicus',
   sci: 'Vibrio mimicus',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'gram-negative',
   subCategory: 'Vibrionaceae',
   gramClass: 'Gram-negative rod',
@@ -3306,7 +3314,7 @@ const bacteria = [
   id: 156,
   name: 'Campylobacter upsaliensis',
   sci: 'Campylobacter upsaliensis',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'gram-negative',
   subCategory: 'Campylobacteraceae',
   gramClass: 'Gram-negative, curved/spiral rod',
@@ -3546,7 +3554,7 @@ const bacteria = [
   id: 168,
   name: 'Fusobacterium periodonticum',
   sci: 'Fusobacterium periodonticum',
-  severity: 'low-moderate',
+  severity: 'mild to moderate',
   category: 'gram-negative',
   subCategory: 'Fusobacteriaceae',
   gramClass: 'Gram-negative anaerobic rod',
@@ -3646,7 +3654,7 @@ const bacteria = [
   id: 173,
   name: 'Brucella suis',
   sci: 'Brucella suis',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate',
   category: 'gram-negative',
   subCategory: 'Brucellaceae',
   gramClass: 'Gram-negative coccobacillus',
@@ -3686,7 +3694,7 @@ const bacteria = [
   id: 175,
   name: 'Brucella ovis',
   sci: 'Brucella ovis',
-  severity: 'mild-to-moderate',
+  severity: 'mild',
   category: 'gram-negative',
   subCategory: 'Brucellaceae',
   gramClass: 'Gram-negative coccobacillus',
@@ -3706,7 +3714,7 @@ const bacteria = [
   id: 176,
   name: 'Borrelia recurrentis',
   sci: 'Borrelia recurrentis',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'spirochete',
   subCategory: 'Spirochaetaceae',
   gramClass: 'Gram-negative spirochete',
@@ -3806,7 +3814,7 @@ const bacteria = [
   id: 181,
   name: 'Chlamydia pecorum',
   sci: 'Chlamydia pecorum',
-  severity: 'low',
+  severity: 'mild',
   category: 'chlamydiae',
   subCategory: 'Chlamydiaceae',
   gramClass: 'Gram-negative, obligate intracellular',
@@ -3826,7 +3834,7 @@ const bacteria = [
   id: 182,
   name: 'Tropheryma whipplei',
   sci: 'Tropheryma whipplei',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinobacteria',
   subCategory: 'Tropherymataceae',
   gramClass: 'Gram-positive bacillus (actinobacterium)',
@@ -3846,7 +3854,7 @@ const bacteria = [
   id: 183,
   name: 'Lawsonia intracellularis',
   sci: 'Lawsonia intracellularis',
-  severity: 'high',
+  severity: 'mild',
   category: 'gram-negative',
   subCategory: 'Desulfovibrionaceae',
   gramClass: 'Gram-negative, obligate intracellular',
@@ -3866,7 +3874,7 @@ const bacteria = [
   id: 184,
   name: 'Orientia tsutsugamushi',
   sci: 'Orientia tsutsugamushi',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'rickettsiales',
   subCategory: 'Rickettsiaceae',
   gramClass: 'Gram-negative, obligate intracellular coccobacillus',
@@ -3987,7 +3995,7 @@ const bacteria = [
   id: 190,
   name: 'Elizabethkingia anophelis',
   sci: 'Elizabethkingia anophelis',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'flavobacteriaceae',
   subCategory: 'Flavobacteriaceae',
   gramClass: 'Gram-negative, non-motile rod',
@@ -4007,7 +4015,7 @@ const bacteria = [
   id: 191,
   name: 'Elizabethkingia meningoseptica',
   sci: 'Elizabethkingia meningoseptica',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'flavobacteriaceae',
   subCategory: 'Flavobacteriaceae',
   gramClass: 'Gram-negative, non-motile rod',
@@ -4027,7 +4035,7 @@ const bacteria = [
   id: 192,
   name: 'Chromobacterium violaceum',
   sci: 'Chromobacterium violaceum',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'neisseriales',
   subCategory: 'Chromobacteriaceae',
   gramClass: 'Gram-negative, facultative anaerobic rod',
@@ -4067,7 +4075,7 @@ const bacteria = [
   id: 194,
   name: 'Capnocytophaga canimorsus',
   sci: 'Capnocytophaga canimorsus',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'flavobacteriaceae',
   subCategory: 'Flavobacteriaceae',
   gramClass: 'Gram-negative, capnophilic, fusiform rod',
@@ -4267,7 +4275,7 @@ const bacteria = [
   id: 204,
   name: 'Abiotrophia defectiva',
   sci: 'Abiotrophia defectiva',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'lactobacillales',
   subCategory: 'Aerococcaceae',
   gramClass: 'Gram-positive, pleomorphic coccobacillus',
@@ -4287,7 +4295,7 @@ const bacteria = [
   id: 205,
   name: 'Granulicatella adiacens',
   sci: 'Granulicatella adiacens',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'bacillales',
   subCategory: 'Carnobacteriaceae',
   gramClass: 'Gram-positive, pleomorphic coccus',
@@ -4387,7 +4395,7 @@ const bacteria = [
   id: 211,
   name: 'Nocardia farcinica',
   sci: 'Nocardia farcinica',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Nocardiaceae',
   gramClass: 'Gram-positive, partially acid-fast, branching bacilli',
@@ -4427,7 +4435,7 @@ const bacteria = [
   id: 213,
   name: 'Nocardia nova',
   sci: 'Nocardia nova',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Nocardiaceae',
   gramClass: 'Gram-positive, partially acid-fast, branching bacilli',
@@ -4447,7 +4455,7 @@ const bacteria = [
   id: 214,
   name: 'Nocardia cyriacigeorgica',
   sci: 'Nocardia cyriacigeorgica',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Nocardiaceae',
   gramClass: 'Gram-positive, partially acid-fast, branching bacilli',
@@ -4507,7 +4515,7 @@ const bacteria = [
   id: 217,
   name: 'Actinomyces meyeri',
   sci: 'Actinomyces meyeri',
-  severity: 'high',
+  severity: 'moderate',
   category: 'actinomycetota',
   subCategory: 'Actinomycetaceae',
   gramClass: 'Gram-positive, non-spore-forming, anaerobic rod',
@@ -4547,7 +4555,7 @@ const bacteria = [
   id: 219,
   name: 'Mycobacterium szulgai',
   sci: 'Mycobacterium szulgai',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Mycobacteriaceae',
   gramClass: 'Gram-positive, acid-fast, non-motile bacillus',
@@ -4587,7 +4595,7 @@ const bacteria = [
   id: 221,
   name: 'Mycobacterium haemophilum',
   sci: 'Mycobacterium haemophilum',
-  severity: 'moderate-to-lethal',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Mycobacteriaceae',
   gramClass: 'Gram-positive, acid-fast, non-motile bacillus',
@@ -4627,7 +4635,7 @@ const bacteria = [
   id: 223,
   name: 'Mycobacterium genavense',
   sci: 'Mycobacterium genavense',
-  severity: 'high',
+  severity: 'moderate to lethal',
   category: 'actinomycetota',
   subCategory: 'Mycobacteriaceae',
   gramClass: 'Gram-positive, acid-fast, non-motile bacillus',
@@ -5591,6 +5599,14 @@ async function signOutUser() {
     await sbClient.auth.signOut();
 }
 
+const SEVERITY_MAP = {
+    'mild': { cls: 'sev-mild', label: 'MILD' },
+    'moderate': { cls: 'sev-moderate', label: 'MODERATE' },
+    'lethal': { cls: 'sev-lethal', label: 'LETHAL' },
+    'mild to moderate': { cls: 'sev-mild-mod', label: 'MILD–MOD' },
+    'moderate to lethal': { cls: 'sev-mod-lethal', label: 'MOD–LETHAL' }
+};
+
 function generateCard(m) {
     let badge = "";
     const cat = (m.category || "").toLowerCase();
@@ -5611,11 +5627,15 @@ function generateCard(m) {
         badge = '<span style="display:inline-block; font-size:9px; background:#9f7aea; padding:2px 8px; border-radius:4px; color:#f7fafc; font-weight:700; letter-spacing:0.05em; margin-bottom:5px;">FUNGI</span>';
     }
 
+    const sevInfo = SEVERITY_MAP[(m.severity || '').toLowerCase()];
+    const sevBadge = sevInfo ? `<span class="sev-badge ${sevInfo.cls}">${sevInfo.label}</span>` : '';
+
     return `
     <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
+        <div style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
+            <div style="position:absolute; top:6px; right:6px;">${sevBadge}</div>
         </div>
         <div class="card-info">
             <div style="min-height: 15px;">${badge}</div>
@@ -5658,6 +5678,11 @@ function openDetail(id) {
 
     document.getElementById("sheetName").textContent = currentMicrobe.name;
     document.getElementById("sheetSci").innerHTML = `<em>${currentMicrobe.sci}</em>`;
+
+    const sevInfo = SEVERITY_MAP[(currentMicrobe.severity || '').toLowerCase()];
+    document.getElementById("sheetSeverity").innerHTML = sevInfo
+        ? `<span class="sev-badge ${sevInfo.cls}" style="font-size:10px; padding:3px 10px;">${sevInfo.label}</span>`
+        : '';
 
     const imgContainer = document.getElementById("sheetImgContainer");
     const imgEl = document.getElementById("sheetImg");
