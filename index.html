@@ -184,6 +184,40 @@
     .auth-body { padding: 24px; }
     .auth-tabs { display: flex; gap: 8px; margin-top: 4px; }
     .auth-input { width: 100%; background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: var(--font); font-size: 13px; outline: none; margin-top: 10px; }
+
+    /* ── Image lightbox ── */
+    .image-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .image-lightbox.open { display: flex; }
+    .image-lightbox img {
+      max-width: 92vw;
+      max-height: 88vh;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 16px;
+      cursor: pointer;
+    }
     .detail-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; justify-content: flex-end; flex-direction: column; }
     .detail-overlay.open { display: flex; }
     .detail-sheet { background: var(--bg); border-top: 0.5px solid var(--border); border-top-left-radius: 20px; border-top-right-radius: 20px; max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column; }
@@ -285,9 +319,14 @@
 <div id="microGrid" class="micro-grid"></div>
 <div id="detailOverlay" class="detail-overlay">
   <div class="detail-sheet">
-    <div id="sheetImgContainer" style="width: 100%; height: 200px; background: #000; overflow: hidden; display: none;">
+    <div id="sheetImgContainer" style="width: 100%; height: 260px; background: #000; overflow: hidden; display: none; cursor: pointer;" onclick="openImageLightbox()">
       <img id="sheetImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"
            onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
+    </div>
+
+    <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
+      <div class="lightbox-close" onclick="closeImageLightbox()">✕</div>
+      <img id="lightboxImg" src="" alt="" />
     </div>
     <div class="sheet-body">
       <div class="sheet-top">
@@ -7033,6 +7072,16 @@ function closeMyLog() {
 }
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
+}
+
+function openImageLightbox() {
+    if (!currentMicrobe) return;
+    document.getElementById("lightboxImg").src = currentMicrobe.img;
+    document.getElementById("imageLightbox").classList.add("open");
+}
+
+function closeImageLightbox() {
+    document.getElementById("imageLightbox").classList.remove("open");
 }
 
 function setCategory(category) {
