@@ -7588,7 +7588,8 @@ function generateCard(m) {
 
     return `
     <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
+        <div style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border); cursor: zoom-in;"
+             onclick="event.stopPropagation(); openImageLightbox('${(m.img || '').replace(/'/g, "\\'")}');">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
             <div style="position:absolute; top:6px; right:6px;">${sevBadge}</div>
@@ -7788,9 +7789,10 @@ function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
 }
 
-function openImageLightbox() {
-    if (!currentMicrobe) return;
-    document.getElementById("lightboxImg").src = currentMicrobe.img;
+function openImageLightbox(src) {
+    const url = src || (currentMicrobe && currentMicrobe.img);
+    if (!url) return;
+    document.getElementById("lightboxImg").src = url;
     document.getElementById("imageLightbox").classList.add("open");
 }
 
