@@ -7587,9 +7587,8 @@ function generateCard(m) {
     const sevBadge = sevInfo ? `<span class="sev-badge ${sevInfo.cls}">${sevInfo.label}</span>` : '';
 
     return `
-    <div class="micro-card" onclick="openDetail('${m.id}')">
-        <div style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border); cursor: zoom-in;"
-             onclick="event.stopPropagation(); openImageLightbox('${(m.img || '').replace(/'/g, "\\'")}');">
+    <div class="micro-card" onclick="handleCardClick(event, '${m.id}', '${(m.img || '').replace(/'/g, "\\'")}')">
+        <div class="card-img-wrap" style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border); cursor: zoom-in;">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
             <div style="position:absolute; top:6px; right:6px;">${sevBadge}</div>
@@ -7787,6 +7786,14 @@ function closeMyLog() {
 }
 function closeDetail() {
     document.getElementById("detailOverlay").classList.remove("open");
+}
+
+function handleCardClick(evt, id, imgSrc) {
+    if (evt.target.closest('.card-img-wrap')) {
+        openImageLightbox(imgSrc);
+    } else {
+        openDetail(id);
+    }
 }
 
 function openImageLightbox(src) {
