@@ -128,6 +128,17 @@
     .search-wrap input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 14px; font-family: var(--font); }
     .search-wrap input::placeholder { color: var(--muted); }
     .search-wrap i { color: var(--muted); font-size: 18px; }
+
+    .stats-bar { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+    .stat-item { font-size: 12px; color: var(--muted); }
+    .stat-item strong { color: var(--accent); font-weight: 600; }
+    .random-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; font-weight: 500; color: var(--text); background: var(--surface); border: 0.5px solid var(--border); padding: 8px 16px; border-radius: 20px; cursor: pointer; width: fit-content; transition: all 0.15s; }
+    .random-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .random-btn i { font-size: 15px; }
+
+    .outbreak-box { margin-top: 16px; background: var(--accent-dim); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .outbreak-box .outbreak-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .outbreak-box .outbreak-text { font-size: 12px; color: var(--text); line-height: 1.5; }
     .filters { display: flex; gap: 8px; padding: 14px 24px; overflow-x: auto; border-bottom: 0.5px solid var(--border); scrollbar-width: none; }
     #gramFilters { padding-top: 4px; padding-bottom: 14px; }
     #gramFilters .pill { font-size: 11px; padding: 5px 13px; opacity: 0.9; }
@@ -222,7 +233,7 @@
     .detail-overlay.open { display: flex; }
     .detail-sheet { background: var(--bg); border-top: 0.5px solid var(--border); border-top-left-radius: 20px; border-top-right-radius: 20px; max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column; }
     .sheet-body { padding: 24px 24px 40px; }
-    .sheet-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .sheet-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
     .sheet-top h2 { font-family: var(--serif); font-size: 24px; font-weight: 400; }
     .sci-name { font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
     .close-btn { width: 32px; height: 32px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -291,6 +302,8 @@
   <div class="search-wrap">
     <input type="text" id="searchInput" placeholder="Search by name, category..." oninput="searchMicrobes(this.value)" />
   </div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="random-btn" onclick="showRandomMicrobe()"><i class="ti ti-arrows-shuffle"></i> Surprise me</div>
 </div>
 <div class="filters">
   <div class="pill active" onclick="setCategory('all')">All</div>
@@ -325,18 +338,17 @@
 <div id="microGrid" class="micro-grid"></div>
 <div id="detailOverlay" class="detail-overlay">
   <div class="detail-sheet">
-    <div id="sheetImgContainer" style="width: 100%; height: 260px; background: #000; overflow: hidden; display: none; cursor: pointer;" onclick="openImageLightbox()">
-      <img id="sheetImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"
-           onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
-    </div>
-
     <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
       <div class="lightbox-close" onclick="closeImageLightbox()">✕</div>
       <img id="lightboxImg" src="" alt="" />
     </div>
     <div class="sheet-body">
       <div class="sheet-top">
-        <div>
+        <div id="sheetImgContainer" style="width: 84px; height: 84px; border-radius: 14px; background: #000; overflow: hidden; display: none; cursor: pointer; flex-shrink: 0;" onclick="openImageLightbox()">
+          <img id="sheetImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"
+               onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
+        </div>
+        <div style="flex: 1; min-width: 0;">
           <h2 id="sheetName"></h2>
           <div class="sci-name" id="sheetSci"></div>
           <div id="sheetSeverity" style="margin-top:6px;"></div>
@@ -345,6 +357,7 @@
       </div>
       <div id="sheetFacts"></div>
       <p class="desc-text" id="sheetDesc"></p>
+      <div id="sheetOutbreak"></div>
 
       <div class="log-section">
         <h4>Your Log</h4>
@@ -407,6 +420,7 @@ const bacteria = [
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Escherichia_coli_electron_microscopy.jpg/960px-Escherichia_coli_electron_microscopy.jpg',
     emoji: '🦠',
     desc: 'One of the most studied organisms in biology. A facultative anaerobe living in the intestines of warm-blooded animals. Mostly harmless — but pathogenic strains like O157:H7 cause severe food poisoning.',
+    outbreak: '2011 Germany E. coli O104:H4 outbreak — traced to contaminated fenugreek sprouts, sickened over 3,000 people and caused 53 deaths, one of the deadliest E. coli outbreaks on record.',
     facts: [{ l: 'Shape', v: 'Rod (bacillus)' }, { l: 'Gram', v: 'Negative' }, { l: 'Habitat', v: 'Intestines' }, { l: 'Rating', v: 'Moderate' }, { l: 'O₂', v: 'Facultative' }],
     reviews: [{ user: 'DrMaria', stars: 4, text: 'Found this in a water sample during fieldwork in Kenya. The rod-shaped cells under phase contrast were unmistakable.', photo: null }, { user: 'LabRat99', stars: 3, text: 'Classic model organism. Grows overnight on LB agar, golden colonies if you add the right plasmid!', photo: null }]
   },
@@ -506,6 +520,7 @@ const bacteria = [
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Neutrophil_with_anthrax_copy.jpg/960px-Neutrophil_with_anthrax_copy.jpg',
     emoji: '⚠️',
     desc: 'The anthrax bacterium. Forms tough, resistant endospores that can survive in soil for decades. Large, square-ended rods that appear in bamboo-cane chains. A significant bioterrorism concern.',
+    outbreak: '2001 US anthrax letters — spores mailed to media offices and senators killed 5 people and infected 17 others, prompting a major overhaul of US biodefense policy.',
     facts: [
       { l: 'Shape', v: 'Large rod' },
       { l: 'Gram', v: 'Positive' },
@@ -8103,7 +8118,7 @@ function generateCard(m) {
 
     return `
     <div class="micro-card" onclick="handleCardClick(event, '${m.id}', '${(m.img || '').replace(/'/g, "\\'")}')">
-        <div class="card-img-wrap" style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border); cursor: zoom-in;">
+        <div class="card-img-wrap" style="position:relative; width: 100%; height: 130px; background: #000; overflow: hidden; border-bottom: 0.5px solid var(--border);">
             <img src="${m.img}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;"
                  onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/No_image_available_600x450.svg';">
             <div style="position:absolute; top:6px; right:6px;">${sevBadge}</div>
@@ -8128,6 +8143,35 @@ function checkCategoryMatch(microbeCategory, filterCategory) {
     }
     
     return cat === filter;
+}
+
+function renderStatsBar() {
+    const el = document.getElementById('statsBar');
+    if (!el) return;
+    const total = bacteria.length;
+    const counts = { bacteria: 0, virus: 0, parasite: 0, fungi: 0 };
+    bacteria.forEach(m => {
+        const cat = (m.category || '').toLowerCase();
+        if (cat === 'fungi') counts.fungi++;
+        else if (cat === 'parasite') counts.parasite++;
+        else if (cat === 'virus') counts.virus++;
+        else counts.bacteria++;
+    });
+    el.innerHTML = `
+        <span class="stat-item"><strong>${total}</strong> pathogens</span>
+        <span class="stat-item"><strong>${counts.bacteria}</strong> bacteria</span>
+        <span class="stat-item"><strong>${counts.fungi}</strong> fungi</span>
+        <span class="stat-item"><strong>${counts.parasite}</strong> parasites</span>
+    `;
+}
+
+function showRandomMicrobe() {
+    if (!bacteria.length) return;
+    const pick = bacteria[Math.floor(Math.random() * bacteria.length)];
+    openDetail(pick.id);
+    if (pick.img) {
+        openImageLightbox(pick.img);
+    }
 }
 
 function renderGrid() {
@@ -8179,6 +8223,18 @@ function openDetail(id) {
 
     document.getElementById("sheetFacts").innerHTML = factsHtml;
     document.getElementById("sheetDesc").textContent = currentMicrobe.desc;
+
+    const outbreakEl = document.getElementById("sheetOutbreak");
+    if (currentMicrobe.outbreak) {
+        outbreakEl.innerHTML = `
+            <div class="outbreak-box">
+                <div class="outbreak-label"><i class="ti ti-flag"></i> Notable outbreak</div>
+                <div class="outbreak-text">${currentMicrobe.outbreak}</div>
+            </div>
+        `;
+    } else {
+        outbreakEl.innerHTML = '';
+    }
 
     // reset + prefill the log form for this microbe
     const existing = myLogs[currentMicrobe.id];
@@ -8450,6 +8506,7 @@ function pushLiveUpdate() {
 
 window.onload = function () {
     renderGrid();
+    renderStatsBar();
     buildTicker();
     setInterval(pushLiveUpdate, 6000);
 };
