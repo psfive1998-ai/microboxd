@@ -1842,7 +1842,7 @@ const bacteria = [
 }
   ,
 {
-    id: 78, 
+    id: 700, 
     name: 'Campylobacter jejuni',
     sci: 'Campylobacter jejuni',
     severity: 'moderate',
@@ -1863,7 +1863,7 @@ const bacteria = [
 },
 
 {
-    id: 79, 
+    id: 701, 
     name: 'Bacteroides fragilis',
     sci: 'Bacteroides fragilis',
     severity: 'moderate',
@@ -10711,7 +10711,6 @@ const bacteria = [
   reviews: []
 },
   {
- {
   id: 522,
   name: 'Haplorchis pumilio',
   sci: 'Haplorchis pumilio',
@@ -11056,6 +11055,7 @@ function renderStatsBar() {
     el.innerHTML = `
         <span class="stat-item"><strong>${total}</strong> pathogens</span>
         <span class="stat-item"><strong>${counts.bacteria}</strong> bacteria</span>
+        <span class="stat-item"><strong>${counts.virus}</strong> viruses</span>
         <span class="stat-item"><strong>${counts.fungi}</strong> fungi</span>
         <span class="stat-item"><strong>${counts.parasite}</strong> parasites</span>
     `;
