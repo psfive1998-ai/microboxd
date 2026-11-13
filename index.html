@@ -12804,16 +12804,25 @@ const sbClient = supabase.createClient(
   'sb_publishable_luIScwMzXejM0ifHBznu2Q_XQQCJ_iW'
 );
 
-sbClient.auth.onAuthStateChange(async (event, session) => {
+sbClient.auth.onAuthStateChange((event, session) => {
     currentUser = session ? session.user : null;
     updateAuthUI();
-    if (currentUser) {
-        await loadLogsFromDB();
-        closeAuthModal();
-    } else {
-        myLogs = {};
-        updateLogCount();
-    }
+
+    // Don't await Supabase calls inside this callback (it deadlocks).
+    // Defer them so the auth lock is released first.
+    setTimeout(async () => {
+        try {
+            if (currentUser) {
+                await loadLogsFromDB();
+                closeAuthModal();
+            } else {
+                myLogs = {};
+                updateLogCount();
+            }
+        } catch (e) {
+            console.error('Auth state handler failed:', e);
+        }
+    }, 0);
 });
 
 async function loadLogsFromDB() {
