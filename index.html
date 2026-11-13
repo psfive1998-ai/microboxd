@@ -12804,25 +12804,58 @@ const sbClient = supabase.createClient(
   'sb_publishable_luIScwMzXejM0ifHBznu2Q_XQQCJ_iW'
 );
 
-sbClient.auth.onAuthStateChange((event, session) => {
-    currentUser = session ? session.user : null;
-    updateAuthUI();
+async function loadLogsFromDB() {
+    if (!currentUser) return;
+    try {
+        const { data, error } = await sbClient
+            .from('logs')
+            .select('*')
+            .eq('user_id', currentUser.id);
+        if (error) { console.error('Failed to load logs:', error.message); return; }
+        myLogs = {};
+        (data || []).forEach(row => {
+            myLogs[row.microbe_id] = {
+                stars: row.stars,
+                text: row.text || '',
+                date: new Date(row.created_at).toLocaleDateString()
+            };
+        });
+        updateLogCount();
+        if (currentMicrobe) renderReviews(currentMicrobe);
+    } catch (e) {
+        console.error('loadLogsFromDB crashed:', e);
+    }
+}
 
-    // Don't await Supabase calls inside this callback (it deadlocks).
-    // Defer them so the auth lock is released first.
-    setTimeout(async () => {
-        try {
-            if (currentUser) {
-                await loadLogsFromDB();
-                closeAuthModal();
-            } else {
-                myLogs = {};
-                updateLogCount();
-            }
-        } catch (e) {
-            console.error('Auth state handler failed:', e);
+async function submitAuth() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const statusEl = document.getElementById('authStatus');
+
+    if (!email || !password) { statusEl.textContent = 'Enter an email and password.'; return; }
+    if (password.length < 6) { statusEl.textContent = 'Password must be at least 6 characters.'; return; }
+    statusEl.textContent = 'Working...';
+
+    try {
+        if (authMode === 'signup') {
+            const { data, error } = await sbClient.auth.signUp({
+                email, password,
+                options: { emailRedirectTo: window.location.origin + window.location.pathname }
+            });
+            if (error) { statusEl.textContent = error.message; return; }
+            statusEl.textContent = data.session
+                ? 'Account created!'
+                : 'Check your email to confirm your account, then log in.';
+        } else {
+            const { error } = await sbClient.auth.signInWithPassword({ email, password });
+            if (error) { statusEl.textContent = error.message; return; }
+            statusEl.textContent = 'Logged in!';
         }
-    }, 0);
+    } catch (e) {
+        console.error(e);
+        statusEl.textContent = 'Something went wrong: ' + (e.message || e);
+    }
+}
 });
 
 async function loadLogsFromDB() {
